@@ -16,6 +16,8 @@ export class ScreenViewComponent implements OnInit {
   screen?: Screen;
   loading: boolean = true; // Indicador para mostrar el loading
 
+  customers: any[] = []; // Aquí puedes definir el tipo adecuado para los clientes
+
   constructor(
     private screensService: ScreenService,
     private router: Router,
@@ -35,11 +37,27 @@ export class ScreenViewComponent implements OnInit {
       next: (data) => {
         this.screen = data;
         this.loading = false;
+        this.initCustomerPolling();
       },
       error: (err) => {
         console.error('Error fetching screen', err);
         this.loading = false;
       },
     });
+  }
+
+  initCustomerPolling() {
+    setInterval(() => {
+      if (this.screen && this.screen._id) {
+        this.screensService.getScreenCustomers(this.screen._id).subscribe({
+          next: (data) => {
+            this.customers = data;
+          },
+          error: (err) => {
+            console.error('Error fetching customers for screen', err);
+          },
+        });
+      }
+    }, 5000); // Polling cada 5 segundos
   }
 }

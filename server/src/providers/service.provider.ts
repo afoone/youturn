@@ -1,3 +1,4 @@
+import { ObjectId } from 'mongoose'
 import { Service, ServiceModel } from '../models/service.model'
 
 class ServiceProvider {
@@ -10,7 +11,7 @@ class ServiceProvider {
     return await ServiceModel.find().populate('childrenOfService').exec()
   }
 
-  async getServiceById(id: string) {
+  async getServiceById(id: string | ObjectId) {
     return await ServiceModel.findById(id).populate('childrenOfService').exec()
   }
 

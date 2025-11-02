@@ -20,6 +20,7 @@ export class ServiceService {
   }
 
   updateService(service: Service): Observable<Service> {
+    console.log('Updating service:', service);
     return this.http.put<Service>(`${this.apiUrl}/${service._id}`, service);
   }
 

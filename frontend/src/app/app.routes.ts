@@ -13,6 +13,7 @@ import { OperatorCreateComponent } from './components/operators/operator-create/
 import { ScreenCreateComponent } from './components/screen/screen-create/screen-create.component';
 import { ScreensComponent } from './components/screen/screens/screens.component';
 import { ScreenViewComponent } from './components/screen/screen-view/screen-view.component';
+import { TicketPointComponent } from './pages/ticket-point/ticket-point.component';
 
 export const routes: Routes = [
   { path: 'enterprises', component: EnterprisesComponent },
@@ -44,6 +45,8 @@ export const routes: Routes = [
   { path: 'screens/new', component: ScreenCreateComponent, pathMatch: 'full' },
   { path: 'screens', component: ScreensComponent },
   { path: 'screens/:id/view', component: ScreenViewComponent },
+
+  { path: 'ticket-point/:id', component: TicketPointComponent },
 
   { path: '', redirectTo: '/queue', pathMatch: 'full' },
 ];

@@ -63,6 +63,51 @@ class OperatorController {
     }
   }
 
+  async waitingRoom(req: Request, res: Response): Promise<void> {
+    try {
+      const { id } = req.params
+      const waitingServices = await operatorService.waitingRoom(id)
+      // Lógica para la sala de espera
+      res.json(waitingServices)
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Error in waiting room'
+      res.status(500).json({ message: errorMessage })
+    }
+  }
+
+  async getInServiceCustomer(req: Request, res: Response): Promise<void> {
+    try {
+      const { id } = req.params
+      const inServiceCustomer = await operatorService.getInServiceCustomer(id)
+      res.json(inServiceCustomer)
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Error getting in-service customer'
+      res.status(500).json({ message: errorMessage })
+    }
+  }
+
+  async attendCustomer(req: Request, res: Response): Promise<void> {
+    try {
+      const { customerId } = req.params
+      const attendedCustomer = await operatorService.attendCustomer(customerId)
+      res.json(attendedCustomer)
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Error attending customer'
+      res.status(500).json({ message: errorMessage })
+    }
+  }
+
+  async completeService(req: Request, res: Response): Promise<void> {
+    try {
+      const { customerId } = req.params
+      const completedCustomer = await operatorService.completeService(customerId)
+      res.json(completedCustomer)
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Error completing service'
+      res.status(500).json({ message: errorMessage })
+    }
+  }
+
   async deleteOperator(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params

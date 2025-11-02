@@ -30,4 +30,8 @@ export class ScreenService {
   getScreenById(id: string): Observable<Screen> {
     return this.http.get<Screen>(`${this.apiUrl}/${id}`);
   }
+
+  getScreenCustomers(id: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/${id}/customers`);
+  }
 }

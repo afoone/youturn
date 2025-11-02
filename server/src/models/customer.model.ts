@@ -1,13 +1,14 @@
-// customer.model.ts
-import { Schema } from 'mongoose'
+import { Schema, model, Document, Types } from 'mongoose'
 import { Service } from './service.model'
+import { Operator } from './operator.model'
 
+// Interfaz pura de dominio
 export interface Customer {
   queuedTime: number
   inputData?: string
   serviceId: string
-  service: Service
-  status: 'QUEUED' | 'IN_SERVICE' | 'COMPLETED' | 'CANCELLED' | 'POSTPONED' | 'RECALLED' | 'CALLED'
+  service: Types.ObjectId | Service
+  status: 'QUEUED' | 'IN_SERVICE' | 'COMPLETED' | 'CANCELLED' | 'POSTPONED' | 'RECALLED' | 'CALLING'
   comments?: string
   postponedStatus?: string
   postponPeriod?: number
@@ -21,15 +22,24 @@ export interface Customer {
   extraData?: string
   orderInQueue?: number
   ticketNumber?: string
+  operator?: Types.ObjectId | Operator
 }
 
-export const customerSchema = new Schema<Customer>(
+// Documento de Mongoose (incluye _id y métodos)
+export interface CustomerDocument extends Customer, Document {}
+
+// Schema
+const customerSchema = new Schema<CustomerDocument>(
   {
     queuedTime: { type: Number, required: true },
     inputData: String,
     serviceId: { type: String, required: true },
     service: { type: Schema.Types.ObjectId, ref: 'Service', required: true },
-    status: { type: String, required: true },
+    status: {
+      type: String,
+      enum: ['QUEUED', 'IN_SERVICE', 'COMPLETED', 'CANCELLED', 'POSTPONED', 'RECALLED', 'CALLING'],
+      required: true,
+    },
     comments: String,
     postponedStatus: String,
     postponPeriod: Number,
@@ -43,6 +53,12 @@ export const customerSchema = new Schema<Customer>(
     extraData: String,
     orderInQueue: Number,
     ticketNumber: String,
+    operator: { type: Schema.Types.ObjectId, ref: 'Operator' },
   },
-  { _id: false } // 👈 clave: no genera _id nuevo para subdocumentos
+  {
+    timestamps: true,
+    versionKey: false,
+  }
 )
+
+export const CustomerModel = model<CustomerDocument>('Customer', customerSchema)

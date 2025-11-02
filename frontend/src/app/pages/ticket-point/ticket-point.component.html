@@ -1,0 +1,24 @@
+<div class="queue-container">
+  <p-dropdown
+    [options]="serviceOptions"
+    [(ngModel)]="selectedService"
+    placeholder="Select a Service"
+    optionLabel="label"
+    optionValue="value"
+  >
+  </p-dropdown>
+  <afoone-service-card
+    *ngFor="let service of services"
+    [service]="service"
+    (selectService)="addToQueue($event)"
+  ></afoone-service-card>
+  <p>Selected Service: {{ selectedService }}</p>
+  <!-- <button pButton type="button" label="Add to queue" (click)="addToQueue()">
+    Add to queue of {{ selectedService }}
+  </button> -->
+
+  <div>
+    <p>las ticket</p>
+    <p>Ticket Number: {{ createdCustomer?.ticketNumber }}</p>
+  </div>
+</div>

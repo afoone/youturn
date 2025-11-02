@@ -1,22 +1,27 @@
-import mongoose, { Document, Schema, ObjectId } from 'mongoose'
+import mongoose, { Document, Schema, Types } from 'mongoose'
 import { Service } from './service.model'
-import { Customer, customerSchema } from './customer.model'
+import { Customer } from './customer.model'
 
+// 1️⃣ Tipo “puro” de la cola
 export type QueueElement = {
-  _id: ObjectId
-  customer: Customer
+  _id: Types.ObjectId
+  customer: Types.ObjectId  // guardamos solo referencia
   timestamp: number
   status: string
 }
 
-export interface ServiceQueue extends Document {
-  _id: ObjectId
-  service: Service
+// 2️⃣ Tipo “puro” de ServiceQueue (sin métodos de Mongoose)
+export interface ServiceQueue {
+  service: Types.ObjectId
   queue: QueueElement[]
   count: number
 }
 
-const serviceQueueSchema = new Schema<ServiceQueue>(
+// 3️⃣ Tipo del documento de Mongoose
+export interface ServiceQueueDocument extends ServiceQueue, Document {}
+
+// 4️⃣ Schema de Mongoose
+const serviceQueueSchema = new Schema<ServiceQueueDocument>(
   {
     service: {
       type: Schema.Types.ObjectId,
@@ -25,7 +30,7 @@ const serviceQueueSchema = new Schema<ServiceQueue>(
     },
     queue: [
       {
-        customer: customerSchema, // aquí uso el schema embebido
+        customer: { type: Schema.Types.ObjectId, ref: 'Customer', required: true },
         timestamp: { type: Number, required: true },
         status: { type: String, required: true },
       },
@@ -35,7 +40,8 @@ const serviceQueueSchema = new Schema<ServiceQueue>(
   { collection: 'serviceQueues' }
 )
 
-export const ServiceQueueModel = mongoose.model<ServiceQueue>(
+// 5️⃣ Modelo de Mongoose
+export const ServiceQueueModel = mongoose.model<ServiceQueueDocument>(
   'ServiceQueue',
   serviceQueueSchema
 )

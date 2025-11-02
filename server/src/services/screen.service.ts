@@ -1,3 +1,4 @@
+import { ObjectId, Types } from 'mongoose'
 import { Customer } from '../models/customer.model'
 import { ScreenDocument } from '../models/screen.model'
 import { screenProvider } from '../providers/screen.provider'
@@ -28,15 +29,15 @@ class ScreenService {
     // get services assigned to screen
     const screen = await screenProvider.getScreenById(id)
 
-    const serviceIds = (screen?.services || []).map(s => s._id)
+    const serviceIds: (string | Types.ObjectId)[] = (screen?.services || []).map(s => s._id as Types.ObjectId)
 
     if (serviceIds.length === 0) {
       return []
     }
 
     // get customers on CALLED STATE from service queues
-    // const callingCustomers = await serviceQueueProvider.getServiceQueuesByServiceIds(serviceIds)
-    return []
+    const callingCustomers = await serviceQueueProvider.getCustomersByServiceIdsAndState(serviceIds, 'CALLING')
+    return callingCustomers
   }
 }
 

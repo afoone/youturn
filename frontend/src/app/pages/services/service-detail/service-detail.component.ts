@@ -53,14 +53,14 @@ export class ServiceDetailComponent implements OnInit {
   onSubmit() {
     if (this.serviceForm.invalid) return;
 
-    const updatedEnterprise: Service = {
-      id: this.serviceId,
+    const updatedService: Service = {
+      _id: this.serviceId,
       ...this.serviceForm.value,
     };
 
-    this.serviceService.updateService(updatedEnterprise).subscribe({
+    this.serviceService.updateService(updatedService).subscribe({
       next: () => this.router.navigate(['/services']),
-      error: (err: any) => console.error('Error updating enterprise:', err),
+      error: (err: any) => console.error('Error updating service:', err),
     });
   }
 }
