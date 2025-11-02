@@ -1,0 +1,29 @@
+<form [formGroup]="operatorForm" (ngSubmit)="onSubmit()">
+  <div class="p-fluid">
+    <label for="name">Name</label>
+    <input pInputText id="name" formControlName="name" />
+    <small *ngIf="operatorForm.get('name')?.invalid && operatorForm.get('name')?.touched" class="p-error">
+      Name is required
+    </small>
+
+    <label for="email">Email</label>
+    <input pInputText id="email" formControlName="email" />
+    <small *ngIf="operatorForm.get('email')?.invalid && operatorForm.get('email')?.touched" class="p-error">
+      Enter a valid email
+    </small>
+
+    <label for="phone">Phone</label>
+    <input pInputText id="phone" formControlName="phone" />
+    <small *ngIf="operatorForm.get('phone')?.invalid && operatorForm.get('phone')?.touched" class="p-error">
+      Phone is required
+    </small>
+
+    <label for="address">Address</label>
+    <input pInputText id="address" formControlName="address" />
+    <small *ngIf="operatorForm.get('address')?.invalid && operatorForm.get('address')?.touched" class="p-error">
+      Address is required
+    </small>
+
+    <button pButton type="submit" label="Save" class="p-mt-3" [disabled]="operatorForm.invalid"></button>
+  </div>
+</form>

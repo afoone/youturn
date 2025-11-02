@@ -1,0 +1,54 @@
+<div class="p-grid p-justify-center">
+  <div class="p-col-12 p-md-6">
+    <form [formGroup]="serviceForm" (ngSubmit)="onSubmit()">
+      <div class="p-field">
+        <label for="name">Name</label>
+        <input
+          id="name"
+          pInputText
+          formControlName="name"
+          class="p-inputtext"
+        />
+        <small
+          class="p-error"
+          *ngIf="
+            serviceForm.get('name')?.invalid && serviceForm.get('name')?.touched
+          "
+        >
+          Name is required
+        </small>
+      </div>
+
+      <div class="p-field">
+        <label for="description">description</label>
+        <input
+          id="description"
+          type="description"
+          pInputText
+          formControlName="description"
+          class="p-inputtext"
+        />
+      </div>
+
+      <div class="p-field">
+        <label for="prefix">prefix</label>
+        <input
+          id="prefix"
+          type="prefix"
+          pInputText
+          formControlName="prefix"
+          class="p-inputtext"
+        />
+      </div>
+
+      <button
+        pButton
+        type="submit"
+        label="Create Service"
+        icon="pi pi-check"
+        class="p-button-success"
+        [disabled]="serviceForm.invalid"
+      ></button>
+    </form>
+  </div>
+</div>

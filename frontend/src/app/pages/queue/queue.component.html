@@ -1,0 +1,26 @@
+<h1>Queue</h1>
+<p>
+  Welcome to the Queue page. Here you can manage your tasks and view the current
+  queue status.
+</p>
+
+<div class="queue-container">
+  <p-dropdown
+    [options]="serviceOptions"
+    [(ngModel)]="selectedService"
+    placeholder="Select a Service"
+    optionLabel="label"
+    optionValue="value"
+  >
+  </p-dropdown>
+  <p>Selected Service: {{ selectedService }}</p>
+  <button pButton type="button" label="Add to queue" (click)="addToQueue()">
+    Add to queue of {{ selectedService }}
+  </button>
+
+  <div>
+    <p>las ticket</p>
+    <p>Ticket Number: {{ createdCustomer?.ticketNumber }}</p>
+  </div>
+
+</div>

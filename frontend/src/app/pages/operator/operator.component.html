@@ -1,0 +1,11 @@
+<div class="operator-dashboard">
+  <p-dropdown
+    [options]="operators"
+    optionLabel="positionName"
+    placeholder="Select Operator"
+    [(ngModel)]="selectedOperator"
+    (onChange)="onOperatorChange($event.value)"
+  ></p-dropdown>
+
+  <p-button label="Next Customer" (onClick)=" nextCustomer()"></p-button>
+</div>

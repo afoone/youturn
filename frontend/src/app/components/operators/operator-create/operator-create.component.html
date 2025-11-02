@@ -1,0 +1,95 @@
+<div class="p-grid p-justify-center">
+  <div class="p-col-12 p-md-6">
+    <form [formGroup]="operatorForm" (ngSubmit)="onSubmit()">
+      <div class="p-field">
+        <label for="positionName">Position Name</label>
+        <input
+          id="positionName"
+          pInputText
+          formControlName="positionName"
+          class="p-inputtext"
+        />
+        <small
+          class="p-error"
+          *ngIf="
+            operatorForm.get('positionName')?.invalid &&
+            operatorForm.get('positionName')?.touched
+          "
+        >
+          Position Name is required
+        </small>
+      </div>
+
+      <div class="p-field">
+        <label for="description">Description</label>
+        <input
+          id="description"
+          pInputText
+          formControlName="description"
+          class="p-inputtext"
+        />
+        <small
+          class="p-error"
+          *ngIf="
+            operatorForm.get('description')?.invalid &&
+            operatorForm.get('description')?.touched
+          "
+        >
+          Description is required
+        </small>
+      </div>
+
+      <div class="p-field">
+        <label for="services">Services</label>
+        <p-multiSelect
+          id="services"
+          formControlName="services"
+          [options]="availableServices"
+          optionLabel="name"
+          optionValue="_id"
+          placeholder="Select Services"
+          [filter]="true"
+          [showClear]="true"
+        ></p-multiSelect>
+
+        <small
+          class="p-error"
+          *ngIf="
+            operatorForm.get('services')?.invalid &&
+            operatorForm.get('services')?.touched
+          "
+        >
+          At least one service must be selected
+        </small>
+      </div>
+
+      <div class="p-field">
+        <label for="pathDescription">Path Description</label>
+        <input
+          id="pathDescription"
+          pInputText
+          formControlName="pathDescription"
+          class="p-inputtext"
+        />
+        <small
+          class="p-error"
+          *ngIf="
+            operatorForm.get('pathDescription')?.invalid &&
+            operatorForm.get('pathDescription')?.touched
+          "
+        >
+          Path Description is required
+        </small>
+      </div>
+
+      <button
+        pButton
+        type="submit"
+        label="Create Operator"
+        icon="pi pi-check"
+        class="p-button-success"
+        [disabled]="operatorForm.invalid"
+      ></button>
+    </form>
+  </div>
+</div>

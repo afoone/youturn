@@ -1,0 +1,52 @@
+<!-- app.component.html -->
+<nav>
+  <ul>
+    <li>
+      <a
+        routerLink="/operator-dashboard"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        Operator Board
+      </a>
+    </li>
+    <li>
+      <a
+        routerLink="/queue"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        Queue
+      </a>
+    </li>
+    <li>
+      <a
+        routerLink="/services"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        Services
+      </a>
+    </li>
+    <li>
+      <a
+        routerLink="/operators"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        Operators
+      </a>
+    </li>
+    <li>
+      <a
+        routerLink="/screens"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        Screens
+      </a>
+    </li>
+  </ul>
+</nav>
+
+<router-outlet></router-outlet>

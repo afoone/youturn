@@ -1,0 +1,21 @@
+version: "3.8"
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"  # Exponemos el puerto 27017 para acceder a MongoDB
+    volumes:
+      - ./mongodb-data:/data/db  # Volumen para persistir los datos
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: rootuser
+      MONGO_INITDB_ROOT_PASSWORD: rootpassword
+    networks:
+      - backend
+
+volumes:
+  mongodb-data:
+
+networks:
+  backend:
+    driver: bridge

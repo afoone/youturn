@@ -1,0 +1,46 @@
+<form [formGroup]="serviceForm" (ngSubmit)="onSubmit()">
+  <div class="p-fluid">
+    <label for="name">Name</label>
+    <input pInputText id="name" formControlName="name" />
+    <small
+      *ngIf="
+        serviceForm.get('name')?.invalid && serviceForm.get('name')?.touched
+      "
+      class="p-error"
+    >
+      Name is required
+    </small>
+
+    <label for="description">Description</label>
+    <input pInputText id="description" formControlName="description" />
+    <small
+      *ngIf="
+        serviceForm.get('description')?.invalid &&
+        serviceForm.get('description')?.touched
+      "
+      class="p-error"
+    >
+      Description is required
+    </small>
+
+    <label for="prefix">Prefix</label>
+    <input pInputText id="prefix" formControlName="prefix" />
+    <small
+      *ngIf="
+        serviceForm.get('prefix')?.invalid &&
+        serviceForm.get('prefix')?.touched
+      "
+      class="p-error"
+    >
+      Prefix is required
+    </small>
+
+    <button
+      pButton
+      type="submit"
+      label="Save"
+      class="p-mt-3"
+      [disabled]="serviceForm.invalid"
+    ></button>
+  </div>
+</form>
