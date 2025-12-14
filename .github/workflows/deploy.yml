@@ -1,0 +1,68 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - develop
+
+concurrency:
+  group: deploy-develop  # Identificador único para este workflow
+  cancel-in-progress: true  # Cancela cualquier ejecución anterior en curso
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Build Docker image
+      run: docker build --cache-from afoone/ha-multicast:latest --tag afoone/ha-multicast:latest .
+
+    - name: Docker login
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+    
+    - name: Tag and push Docker image
+      run: |
+        VERSION=$(jq -r '.version' server/package.json)
+        docker tag afoone/your-turn:latest afoone/your-turn:$VERSION
+        docker push afoone/your-turn:latest
+        docker push afoone/your-turn:$VERSION
+
+    - name: Set up SSH key
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+    - name: Create SSH directory
+      run: mkdir -p ~/.ssh
+
+    - name: Add host key to known_hosts
+      run: ssh-keyscan -H iprocuratio.com >> ~/.ssh/known_hosts
+
+    - name: Run docker image
+      run: |
+        ssh atienda@iprocuratio.com 'bash -s' << 'EOF'
+          cd /opt/docker/siemens/siemens-ha-multicast/
+          docker stop yourturn 2>/dev/null && docker rm yourturn 2>/dev/null || true
+          docker pull afoone/your-turn:latest
+          docker run -d \
+          --name yourturn \
+          --network frontnet \
+          --label "traefik.enable=true" \
+          --label "traefik.http.routers.yourturn.rule=Host(\`yourturn.iprocuratio.com\`)" \
+          --label "traefik.http.routers.yourturn.entrypoints=websecure" \
+          --label "traefik.http.routers.yourturn.tls.certresolver=myresolver" \
+          --label "traefik.http.middlewares.hstsHeader.headers.stsSeconds=31536000" \
+          --label "traefik.http.middlewares.hstsHeader.headers.stsIncludeSubdomains=true" \
+          --label "traefik.http.middlewares.hstsHeader.headers.stsPreload=true" \
+          --label "traefik.http.routers.yourturn.middlewares=hstsHeader@docker" \
+          afoone/your-turn:latest
+        EOF
+
+        

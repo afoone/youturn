@@ -1,21 +1,25 @@
+version: '3'
 services:
-  db:
-    image: mongo:latest
-    container_name: mongodb
+  frontend:
+    build: 
+      context: .
+      dockerfile: ./frontend/Dockerfile
     ports:
-      - "27017:27017"  # Exponemos el puerto 27017 para acceder a MongoDB
-    volumes:
-      - ./mongodb-data:/data/db  # Volumen para persistir los datos
-      - ./mongo-init:/docker-entrypoint-initdb.d  # Scripts de inicialización
-    environment:
-      # Estas variables crean el usuario root y habilitan autenticación
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: 07QLeXU25bgfrmRiqBrh
-      # Base de datos para los scripts de inicialización
-      MONGO_INITDB_DATABASE: yourturn
-    networks:
-      - backend
-
-networks:
+      - "3001:3000"  
   backend:
-    driver: bridge
+    build: 
+      context: .
+      dockerfile: ./server/Dockerfile    
+    ports:
+      - "3000:3000"
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Sql12345@
+      - MSSQL_PID=Developer
+    ports:
+      - "1433:1433"
+    volumes:
+      - ../sql_server_data:/var/opt/mssql
