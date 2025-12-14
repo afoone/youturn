@@ -1,18 +1,72 @@
-<div>
-  <h1>{{ screen?.name }}</h1>
+<div class="screen-container">
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <p-progressSpinner></p-progressSpinner>
+    <p>Cargando pantalla...</p>
+  </div>
 
-  <p-table [value]="customers">
-    <ng-template pTemplate="header">
-      <tr>
-        <th id="customer-ticket">Cliente</th>
-        <th id="customer-position">Mesa</th>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-customer>
-      <tr>
-        <td>{{ customer.ticketNumber }}</td>
-        <td>{{ customer?.operator?.positionName }}</td>
-      </tr>
-    </ng-template>
-  </p-table>
+  <!-- Main Screen Content -->
+  <div *ngIf="!loading" class="screen-content">
+    <div class="content-layout">
+      <!-- Left Sidebar (20%) -->
+      <aside class="left-sidebar">
+        <div class="sidebar-content">
+          <div class="screen-info">
+            <h1 class="screen-title">{{ screen?.name || 'Pantalla de Información' }}</h1>
+            <p *ngIf="screen?.location" class="screen-location">📍 {{ screen?.location }}</p>
+          </div>
+          
+          <div class="time-section">
+            <div class="time-display">{{ getFormattedTime() }}</div>
+            <div class="date-display">{{ getFormattedDate() }}</div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Right Content (80%) - Table -->
+      <main class="right-content">
+        <div *ngIf="customers.length === 0" class="empty-state">
+          <div class="empty-icon">🔇</div>
+          <p class="empty-message">No hay clientes siendo llamados en este momento</p>
+          <p class="empty-submessage">Por favor, espere su turno</p>
+        </div>
+
+        <div *ngIf="customers.length > 0" class="table-container">
+          <table class="customers-table">
+            <thead>
+              <tr>
+                <th class="col-ticket">Ticket</th>
+                <th class="col-operator">Diríjase a</th>
+                <th class="col-location" *ngIf="hasLocationInfo()">Ubicación</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="let customer of customers; trackBy: trackByCustomerId"
+                class="customer-row"
+                [class.blinking]="isBlinking(customer._id)"
+                [@fadeIn]
+              >
+                <td class="cell-ticket">
+                  <div class="ticket-display">
+                    <span class="ticket-number">{{ customer.ticketNumber || 'N/A' }}</span>
+                  </div>
+                </td>
+                <td class="cell-operator">
+                  <div class="operator-display">
+                    <span class="operator-name">{{ customer.operator?.positionName || 'Operador' }}</span>
+                  </div>
+                </td>
+                <td class="cell-location" *ngIf="hasLocationInfo()">
+                  <div class="location-display">
+                    <span class="location-text">{{ customer.operator?.pathDescription || '-' }}</span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+  </div>
 </div>

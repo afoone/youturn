@@ -1,6 +1,6 @@
 <div class="p-d-flex p-jc-between p-ai-center">
   <h2>Enterprises</h2>
-  <button pButton label="Add New Enterprise" icon="pi pi-plus" (click)="addCustomer()"></button>
+  <button pButton label="Add New Enterprise" icon="pi pi-plus" (click)="addEnterprise()"></button>
 </div>
 
 <p-table [value]="enterprises" [loading]="loading" [responsive]="true">
@@ -9,16 +9,32 @@
       <th>Name</th>
       <th>Email</th>
       <th>Phone</th>
+      <th>Address</th>
       <th>Actions</th>
     </tr>
   </ng-template>
-  <ng-template pTemplate="body" let-customer>
+  <ng-template pTemplate="body" let-enterprise>
     <tr>
-      <td>{{ customer.name }}</td>
-      <td>{{ customer.email }}</td>
-      <td>{{ customer.phone }}</td>
+      <td>{{ enterprise.name }}</td>
+      <td>{{ enterprise.email }}</td>
+      <td>{{ enterprise.phone }}</td>
+      <td>{{ enterprise.address }}</td>
       <td>
-        <button pButton icon="pi pi-pencil" (click)="editCustomer(customer._id)" label="Edit"></button>
+        <button 
+          pButton 
+          icon="pi pi-pencil" 
+          (click)="editEnterprise(enterprise._id)" 
+          label="Edit"
+          class="p-button-sm p-button-text p-mr-2"
+        ></button>
+        <button 
+          pButton 
+          icon="pi pi-trash" 
+          (click)="deleteEnterprise(enterprise._id)" 
+          label="Delete"
+          severity="danger"
+          class="p-button-sm p-button-text"
+        ></button>
       </td>
     </tr>
   </ng-template>

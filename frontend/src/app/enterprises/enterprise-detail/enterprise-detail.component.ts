@@ -54,7 +54,7 @@ export class EnterpriseDetailComponent implements OnInit {
     if (this.enterpriseForm.invalid) return;
 
     const updatedEnterprise: Enterprise = {
-      id: this.enterpriseId,
+      _id: this.enterpriseId,
       ...this.enterpriseForm.value
     };
 

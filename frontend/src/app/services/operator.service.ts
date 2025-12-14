@@ -65,4 +65,18 @@ export class OperatorService {
       `${this.apiUrl}/${operatorId}/in-service-customer`
     );
   }
+
+  recallCustomer(customerId: string): Observable<Customer> {
+    return this.http.post<Customer>(
+      `${this.apiUrl}/${customerId}/recall`,
+      {}
+    );
+  }
+
+  changeCustomerService(customerId: string, newServiceId: string): Observable<Customer> {
+    return this.http.post<Customer>(
+      `${this.apiUrl}/${customerId}/change-service`,
+      { newServiceId }
+    );
+  }
 }

@@ -35,9 +35,8 @@ export class EnterpriseCreateComponent {
   onSubmit() {
     if (this.enterpriseForm.invalid) return;
 
-    const enterpriseData: Enterprise = {
-      ...this.enterpriseForm.value,
-      id: ''
+    const enterpriseData: Omit<Enterprise, '_id'> = {
+      ...this.enterpriseForm.value
     };
 
     this.enterpriseService.createEnterprise(enterpriseData).subscribe({

@@ -15,13 +15,13 @@ export class EnterpriseService {
     return this.http.get<Enterprise[]>(this.apiUrl);
   }
 
-  createEnterprise(enterprise: Enterprise): Observable<Enterprise> {
+  createEnterprise(enterprise: Omit<Enterprise, '_id'>): Observable<Enterprise> {
     return this.http.post<Enterprise>(this.apiUrl, enterprise);
   }
 
   updateEnterprise(enterprise: Enterprise): Observable<Enterprise> {
     return this.http.put<Enterprise>(
-      `${this.apiUrl}/${enterprise.id}`,
+      `${this.apiUrl}/${enterprise._id}`,
       enterprise
     );
   }

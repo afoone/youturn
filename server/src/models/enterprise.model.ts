@@ -5,7 +5,6 @@ export interface Enterprise extends Document {
   email: string
   address: string
   phone: string
-  createdAt: Date
 }
 
 const EnterpriseSchema = new Schema<Enterprise>(
@@ -14,9 +13,12 @@ const EnterpriseSchema = new Schema<Enterprise>(
     email: { type: String, required: true, unique: true },
     address: { type: String, required: true },
     phone: { type: String, required: true },
-    createdAt: { type: Date, default: Date.now },
   },
-  { collection: 'enterprises' }
+  {
+    timestamps: true,
+    versionKey: false,
+    collection: 'enterprises'
+  }
 )
 
 export const EnterpriseModel = mongoose.model<Enterprise>('Enterprise', EnterpriseSchema)

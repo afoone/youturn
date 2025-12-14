@@ -1,0 +1,449 @@
+.screen-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 2rem;
+  overflow-x: hidden;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  gap: 1.5rem;
+  color: white;
+}
+
+.loading-container p {
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+.screen-content {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Layout Principal */
+.content-layout {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+/* Left Sidebar (20%) */
+.left-sidebar {
+  width: 20%;
+  min-width: 250px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.sidebar-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.screen-info {
+  text-align: center;
+}
+
+.screen-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 0 0 0.5rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  line-height: 1.2;
+}
+
+.screen-location {
+  font-size: 1rem;
+  color: #4a5568;
+  margin: 0;
+}
+
+.time-section {
+  text-align: center;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16px;
+  color: white;
+}
+
+.time-display {
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.date-display {
+  font-size: 1rem;
+  opacity: 0.9;
+  text-transform: capitalize;
+}
+
+.section-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #1a202c;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-align: center;
+  justify-content: center;
+}
+
+.title-icon {
+  font-size: 1.5rem;
+}
+
+/* Right Content (80%) - Table */
+.right-content {
+  width: 80%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* Empty State */
+.empty-state {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  padding: 5rem 2rem;
+  color: #718096;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-icon {
+  font-size: 6rem;
+  margin-bottom: 1.5rem;
+  opacity: 0.5;
+}
+
+.empty-message {
+  font-size: 2rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+  color: #4a5568;
+}
+
+.empty-submessage {
+  font-size: 1.3rem;
+  margin: 0;
+  opacity: 0.8;
+}
+
+/* Table Container */
+.table-container {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.customers-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  min-height: 100%;
+}
+
+.customers-table thead {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.customers-table th {
+  padding: 1.5rem 2rem;
+  text-align: left;
+  font-size: 1.3rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.customers-table tbody tr {
+  border-bottom: 1px solid #e2e8f0;
+  transition: background-color 0.2s ease;
+}
+
+.customers-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.customers-table tbody tr:hover {
+  background-color: #f7fafc;
+}
+
+.customer-row {
+  animation: slideIn 0.5s ease-out;
+}
+
+.cell-ticket,
+.cell-operator,
+.cell-location {
+  padding: 2rem;
+  vertical-align: middle;
+}
+
+.cell-ticket {
+  width: 30%;
+  text-align: center;
+}
+
+.cell-operator {
+  width: 40%;
+}
+
+.cell-location {
+  width: 30%;
+  color: #4a5568;
+}
+
+.ticket-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ticket-number {
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: #667eea;
+  letter-spacing: 0.1em;
+  font-variant-numeric: tabular-nums;
+}
+
+.operator-display {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.operator-name {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #1a202c;
+}
+
+.location-display {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.location-text {
+  font-size: 1.2rem;
+  color: #4a5568;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Blinking Animation - Más lento y sutil */
+.customer-row.blinking {
+  background-color: #fff9e6 !important;
+  border-left: 4px solid rgba(255, 193, 7, 0.8);
+  animation: subtleBlink 3s ease-in-out infinite;
+}
+
+@keyframes subtleBlink {
+  0%, 100% {
+    background-color: #fff9e6;
+    border-left-color: rgba(255, 193, 7, 0.8);
+  }
+  50% {
+    background-color: #fffef5;
+    border-left-color: rgba(255, 193, 7, 0.5);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .content-layout {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .left-sidebar {
+    width: 100%;
+    min-width: auto;
+  }
+
+  .right-content {
+    width: 100%;
+  }
+
+  .screen-title {
+    font-size: 1.5rem;
+  }
+
+  .time-display {
+    font-size: 2.5rem;
+  }
+
+  .ticket-number {
+    font-size: 2.5rem;
+  }
+
+  .operator-name {
+    font-size: 1.5rem;
+  }
+
+  .customers-table th {
+    font-size: 1.1rem;
+    padding: 1rem 1.5rem;
+  }
+
+  .cell-ticket,
+  .cell-operator,
+  .cell-location {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .screen-container {
+    padding: 1rem;
+  }
+
+  .content-layout {
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .left-sidebar {
+    padding: 1.5rem;
+  }
+
+  .screen-title {
+    font-size: 1.3rem;
+  }
+
+  .time-display {
+    font-size: 2rem;
+  }
+
+  .date-display {
+    font-size: 0.9rem;
+  }
+
+  .section-title {
+    font-size: 1.1rem;
+  }
+
+  .customers-table {
+    font-size: 0.9rem;
+  }
+
+  .customers-table th {
+    font-size: 1rem;
+    padding: 1rem;
+  }
+
+  .cell-ticket,
+  .cell-operator,
+  .cell-location {
+    padding: 1rem;
+  }
+
+  .ticket-number {
+    font-size: 2rem;
+  }
+
+  .operator-name {
+    font-size: 1.3rem;
+  }
+
+  .location-text {
+    font-size: 1rem;
+  }
+
+  .empty-message {
+    font-size: 1.5rem;
+  }
+
+  .empty-submessage {
+    font-size: 1.1rem;
+  }
+}
+
+/* Full Screen Mode (para pantallas grandes) */
+@media (min-width: 1920px) {
+  .screen-container {
+    padding: 2rem;
+  }
+
+  .content-layout {
+    padding: 2rem;
+  }
+
+  .screen-title {
+    font-size: 2.2rem;
+  }
+
+  .time-display {
+    font-size: 3.5rem;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+  }
+
+  .customers-table th {
+    font-size: 1.5rem;
+    padding: 2rem 3rem;
+  }
+
+  .cell-ticket,
+  .cell-operator,
+  .cell-location {
+    padding: 2.5rem 3rem;
+  }
+
+  .ticket-number {
+    font-size: 4.5rem;
+  }
+
+  .operator-name {
+    font-size: 2.2rem;
+  }
+
+  .location-text {
+    font-size: 1.4rem;
+  }
+}
+

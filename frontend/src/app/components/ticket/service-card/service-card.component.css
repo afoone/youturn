@@ -1,9 +1,70 @@
 .service-card {
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 16px;
-  margin: 8px 0;
-  width: 100%;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
   cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid transparent;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.service-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+
+.service-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15), 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-color: #667eea;
+}
+
+.service-card:hover::before {
+  transform: scaleX(1);
+}
+
+.service-card:active {
+  transform: translateY(-2px) scale(0.98);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.service-card h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1a202c;
+  margin: 0 0 0.75rem 0;
+  line-height: 1.3;
+}
+
+.service-card p {
+  font-size: 1rem;
+  color: #4a5568;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Mejora para dispositivos táctiles */
+@media (hover: none) and (pointer: coarse) {
+  .service-card {
+    min-height: 140px;
+    padding: 2.5rem;
+  }
+
+  .service-card:active {
+    background-color: #f7fafc;
+  }
 }

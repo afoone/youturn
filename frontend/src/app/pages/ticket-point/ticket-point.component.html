@@ -1,24 +1,41 @@
-<div class="queue-container">
-  <p-dropdown
-    [options]="serviceOptions"
-    [(ngModel)]="selectedService"
-    placeholder="Select a Service"
-    optionLabel="label"
-    optionValue="value"
-  >
-  </p-dropdown>
-  <afoone-service-card
-    *ngFor="let service of services"
-    [service]="service"
-    (selectService)="addToQueue($event)"
-  ></afoone-service-card>
-  <p>Selected Service: {{ selectedService }}</p>
-  <!-- <button pButton type="button" label="Add to queue" (click)="addToQueue()">
-    Add to queue of {{ selectedService }}
-  </button> -->
+<div class="ticket-point-container">
+  <div class="header-section" *ngIf="!createdCustomer">
+    <h1 class="main-title">Selecciona un Servicio</h1>
+    <p class="subtitle">Toca el servicio para obtener tu número de ticket</p>
+  </div>
 
-  <div>
-    <p>las ticket</p>
-    <p>Ticket Number: {{ createdCustomer?.ticketNumber }}</p>
+  <div class="services-grid" *ngIf="!createdCustomer">
+    <afoone-service-card
+      *ngFor="let service of services"
+      [service]="service"
+      (selectService)="addToQueue($event)"
+    ></afoone-service-card>
+  </div>
+
+  <div class="ticket-result" *ngIf="createdCustomer">
+    <div class="ticket-card">
+      <div class="ticket-icon">🎫</div>
+      <h2 class="ticket-title">¡Ticket Generado!</h2>
+      <div class="service-name" *ngIf="selectedServiceData">
+        <p class="service-label">Servicio:</p>
+        <p class="service-value">{{ selectedServiceData.name }}</p>
+      </div>
+      <p class="ticket-label">Tu número de ticket es:</p>
+      <p class="ticket-number">{{ createdCustomer?.ticketNumber }}</p>
+      <div class="action-buttons">
+        <button class="action-button pdf-button" (click)="generatePDF()">
+          <span class="button-icon">📄</span>
+          Generar PDF
+        </button>
+        <button class="action-button pkpass-button" (click)="generatePKPass()">
+          <span class="button-icon">📱</span>
+          Generar PKPass
+        </button>
+      </div>
+      <button class="back-button" (click)="goBack()">
+        <span class="back-icon">←</span>
+        Volver a Servicios
+      </button>
+    </div>
   </div>
 </div>

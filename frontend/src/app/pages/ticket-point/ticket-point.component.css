@@ -1,0 +1,240 @@
+.ticket-point-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.header-section {
+  text-align: center;
+  color: white;
+  margin-bottom: 1rem;
+}
+
+.main-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  margin: 0;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 1200px;
+  padding: 0 1rem;
+}
+
+.ticket-result {
+  width: 100%;
+  max-width: 500px;
+  animation: slideIn 0.5s ease-out;
+}
+
+.ticket-card {
+  background: white;
+  border-radius: 20px;
+  padding: 2.5rem;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: pulse 2s infinite;
+}
+
+.ticket-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.ticket-title {
+  font-size: 1.8rem;
+  color: #667eea;
+  margin: 0 0 1rem 0;
+  font-weight: 600;
+}
+
+.service-name {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: linear-gradient(135deg, #f0f4ff 0%, #e8f0fe 100%);
+  border-radius: 12px;
+  border: 2px solid #667eea;
+}
+
+.service-label {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0 0 0.25rem 0;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.service-value {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #667eea;
+  margin: 0;
+}
+
+.ticket-label {
+  font-size: 1rem;
+  color: #666;
+  margin: 1.5rem 0 0.5rem 0;
+}
+
+.ticket-number {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #667eea;
+  margin: 0;
+  letter-spacing: 0.1em;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.action-button {
+  padding: 1rem 1.5rem;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 160px;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.pdf-button {
+  background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
+  color: white;
+}
+
+.pdf-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+}
+
+.pdf-button:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.pkpass-button {
+  background: linear-gradient(135deg, #1f6391 0%, #154360 100%);
+  color: white;
+}
+
+.pkpass-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+}
+
+.pkpass-button:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.button-icon {
+  font-size: 1.3rem;
+}
+
+.back-button {
+  margin-top: 2rem;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #4c63d2 0%, #5a3d7a 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: center;
+  min-width: 200px;
+}
+
+.back-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+}
+
+.back-button:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.back-icon {
+  font-size: 1.3rem;
+  transition: transform 0.3s ease;
+}
+
+.back-button:hover .back-icon {
+  transform: translateX(-4px);
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .main-title {
+    font-size: 2rem;
+  }
+
+  .services-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .ticket-number {
+    font-size: 2.5rem;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .action-button {
+    width: 100%;
+  }
+}

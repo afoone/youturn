@@ -29,9 +29,17 @@
       <td>
         <button
           pButton
+          icon="pi pi-desktop"
+          (click)="viewOperatorBoard(operator._id)"
+          label="Dashboard"
+          class="p-button-sm p-button-text p-mr-2"
+        ></button>
+        <button
+          pButton
           icon="pi pi-pencil"
           (click)="editOperator(operator._id)"
           label="Edit"
+          class="p-button-sm p-button-text"
         ></button>
       </td>
     </tr>

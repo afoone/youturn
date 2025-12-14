@@ -1,0 +1,308 @@
+.operator-dashboard {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 2rem;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  gap: 1rem;
+}
+
+.dashboard-content {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Operator Header */
+.operator-header {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.header-info {
+  flex: 1;
+  min-width: 300px;
+}
+
+.operator-name {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 0 0 0.5rem 0;
+}
+
+.operator-description {
+  font-size: 1.1rem;
+  color: #4a5568;
+  margin: 0 0 0.5rem 0;
+}
+
+.operator-path {
+  font-size: 0.95rem;
+  color: #718096;
+  margin: 0;
+}
+
+.header-stats {
+  display: flex;
+  gap: 1rem;
+}
+
+.stat-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  padding: 1.5rem 2rem;
+  text-align: center;
+  color: white;
+  min-width: 120px;
+}
+
+.stat-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  opacity: 0.9;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Dashboard Grid */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 2rem;
+}
+
+/* Waiting Room Card */
+.waiting-room-card {
+  height: fit-content;
+}
+
+.waiting-room-content {
+  min-height: 200px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #718096;
+}
+
+.empty-state .empty-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.services-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.service-item {
+  background: #f7fafc;
+  border-radius: 12px;
+  padding: 1.25rem;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.service-item.has-waiting {
+  background: #fff5e6;
+  border-color: #ffa726;
+}
+
+.service-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.service-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1a202c;
+}
+
+.service-count {
+  font-size: 0.9rem;
+  color: #718096;
+}
+
+/* Customer Card */
+.customer-card {
+  height: fit-content;
+}
+
+.customer-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.customer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.ticket-display {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.ticket-label {
+  font-size: 0.85rem;
+  color: #718096;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.ticket-number {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #667eea;
+  letter-spacing: 0.1em;
+}
+
+.customer-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: #f7fafc;
+  border-radius: 8px;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.detail-label {
+  font-weight: 500;
+  color: #4a5568;
+}
+
+.detail-value {
+  color: #1a202c;
+  font-weight: 600;
+}
+
+.change-service-section {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background: #fff3cd;
+  border-radius: 8px;
+  border: 1px solid #ffc107;
+}
+
+.service-dropdown {
+  flex: 1;
+  min-width: 200px;
+}
+
+.customer-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.action-button {
+  width: 100%;
+}
+
+.next-customer-btn {
+  margin-top: 1rem;
+}
+
+/* Status Badges */
+::ng-deep .status-calling {
+  background-color: #ff9800 !important;
+}
+
+::ng-deep .status-in-service {
+  background-color: #2196f3 !important;
+}
+
+::ng-deep .status-completed {
+  background-color: #4caf50 !important;
+}
+
+::ng-deep .status-queued {
+  background-color: #9e9e9e !important;
+}
+
+/* Card Styling */
+::ng-deep .p-card {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  border: none;
+}
+
+::ng-deep .p-card-header {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1a202c;
+  padding: 1.5rem 1.5rem 0.5rem;
+}
+
+::ng-deep .p-card-body {
+  padding: 1.5rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .operator-dashboard {
+    padding: 1rem;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .operator-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .header-stats {
+    width: 100%;
+  }
+
+  .stat-card {
+    flex: 1;
+  }
+
+  .ticket-number {
+    font-size: 1.5rem;
+  }
+}
+

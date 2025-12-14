@@ -7,6 +7,7 @@ import { Enterprise } from '../../models/enterprise.model';
 
 @Component({
   selector: 'afoone-enterprises',
+  standalone: true,
   templateUrl: './enterprises.component.html',
   styleUrls: ['./enterprises.component.css'],
   imports: [TableModule, ButtonModule],
@@ -39,12 +40,26 @@ export class EnterprisesComponent implements OnInit {
   }
 
   // Navegar a la página de edición
-  editCustomer(id: string) {
+  editEnterprise(id: string) {
     this.router.navigate([`/enterprises/${id}`]);
   }
 
-  // Navegar a la página para agregar un nuevo cliente
-  addCustomer() {
+  // Navegar a la página para agregar un nuevo enterprise
+  addEnterprise() {
     this.router.navigate(['/enterprises/new']);
+  }
+
+  // Eliminar un enterprise
+  deleteEnterprise(id: string) {
+    if (confirm('Are you sure you want to delete this enterprise?')) {
+      this.enterpriseService.deleteEnterprise(id).subscribe({
+        next: () => {
+          this.getEnterprises(); // Recargar la lista
+        },
+        error: (err) => {
+          console.error('Error deleting enterprise:', err);
+        }
+      });
+    }
   }
 }

@@ -108,6 +108,33 @@ class OperatorController {
     }
   }
 
+  async recallCustomer(req: Request, res: Response): Promise<void> {
+    try {
+      const { customerId } = req.params
+      const recalledCustomer = await operatorService.recallCustomer(customerId)
+      res.json(recalledCustomer)
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Error recalling customer'
+      res.status(500).json({ message: errorMessage })
+    }
+  }
+
+  async changeCustomerService(req: Request, res: Response): Promise<void> {
+    try {
+      const { customerId } = req.params
+      const { newServiceId } = req.body
+      if (!newServiceId) {
+        res.status(400).json({ message: 'newServiceId is required' })
+        return
+      }
+      const updatedCustomer = await operatorService.changeCustomerService(customerId, newServiceId)
+      res.json(updatedCustomer)
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Error changing customer service'
+      res.status(500).json({ message: errorMessage })
+    }
+  }
+
   async deleteOperator(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params

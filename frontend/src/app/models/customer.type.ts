@@ -18,4 +18,6 @@ export type Customer = {
   language?: 'en' | 'es' | 'fr' | 'de';
   ticketNumber?: string;
   operator?: Operator;
+  recallCount?: number;
+  priority?: boolean;
 };

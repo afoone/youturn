@@ -1,0 +1,24 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+::ng-deep .navbar-menubar {
+  border-radius: 0;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  margin-bottom: 0;
+}
+
+::ng-deep .p-menubar .p-menubar-root-list > .p-menuitem > .p-menuitem-link {
+  padding: 1rem 1.5rem;
+  transition: all 0.3s ease;
+}
+
+::ng-deep .p-menubar .p-menubar-root-list > .p-menuitem.active-menu-item > .p-menuitem-link,
+::ng-deep .p-menubar .p-menubar-root-list > .p-menuitem > .p-menuitem-link:hover {
+  background-color: var(--p-primary-color);
+  color: var(--p-primary-contrast-color);
+}
+

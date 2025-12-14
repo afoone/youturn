@@ -43,6 +43,11 @@ export class OperatorsComponent implements OnInit {
     this.router.navigate([`/operators/${id}`]);
   }
 
+  // Navegar al dashboard del operador
+  viewOperatorBoard(id: string) {
+    this.router.navigate([`/operator-dashboard/${id}`]);
+  }
+
   // Navegar a la página para agregar un nuevo operador
   addOperator() {
     this.router.navigate(['/operators/new']);

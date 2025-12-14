@@ -11,8 +11,8 @@ class EnterpriseService {
   }
 
   async createEnterprise(data: Partial<Enterprise>): Promise<Enterprise> {
-    if (!data.name || !data.email || !data.phone) {
-      throw new Error('Missing required fields')
+    if (!data.name || !data.email || !data.phone || !data.address) {
+      throw new Error('Missing required fields: name, email, phone, or address')
     }
     return enterpriseProvider.createEnterprise(data)
   }

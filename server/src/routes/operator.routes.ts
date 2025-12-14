@@ -14,5 +14,7 @@ operatorRouter.post('/:id/waiting-room', operatorController.waitingRoom)
 operatorRouter.get('/:id/in-service-customer', operatorController.getInServiceCustomer)
 operatorRouter.post('/:customerId/attend', operatorController.attendCustomer)
 operatorRouter.post('/:customerId/complete', operatorController.completeService)
+operatorRouter.post('/:customerId/recall', operatorController.recallCustomer)
+operatorRouter.post('/:customerId/change-service', operatorController.changeCustomerService)
 
 export default operatorRouter

@@ -1,4 +1,4 @@
-import { ObjectId, Types } from 'mongoose'
+import { Types } from 'mongoose'
 import { Customer, CustomerDocument, CustomerModel } from '../models/customer.model'
 import { ServiceQueue, ServiceQueueDocument, ServiceQueueModel } from '../models/service-queue.model'
 import { Service } from '../models/service.model'
@@ -89,6 +89,54 @@ class ServiceQueueProvider {
     await newCustomer.save()
 
     return newCustomer
+  }
+
+  async addExistingCustomerToQueue(serviceId: string, customerId: string, priority: boolean = false): Promise<CustomerDocument> {
+    // 1️⃣ Obtener el servicio y el cliente
+    const service = await serviceProvider.getServiceById(serviceId)
+    if (!service) throw new Error('Service not found')
+    
+    const customer = await CustomerModel.findById(customerId)
+    if (!customer) throw new Error('Customer not found')
+
+    // 2️⃣ Remover el cliente de la cola del servicio anterior (si existe)
+    if (customer.service) {
+      await ServiceQueueModel.updateMany(
+        { service: customer.service },
+        {
+          $pull: {
+            queue: { customer: customer._id },
+          },
+        }
+      )
+    }
+
+    // 3️⃣ Actualizar el cliente con el nuevo servicio y prioridad
+    customer.serviceId = serviceId
+    customer.service = service._id as Types.ObjectId
+    customer.priority = priority
+    customer.status = 'QUEUED'
+    customer.operator = undefined // Remover el operador asignado
+    await customer.save()
+
+    // 4️⃣ Añadir el cliente a la nueva cola
+    await ServiceQueueModel.findOneAndUpdate(
+      { service: service._id },
+      {
+        $inc: { count: 1 },
+        $push: {
+          queue: {
+            _id: new Types.ObjectId(),
+            customer: customer._id,
+            timestamp: Date.now(),
+            status: 'QUEUED',
+          },
+        },
+      },
+      { new: true, upsert: true }
+    )
+
+    return customer
   }
 
   async getCustomersByServiceIdsAndState(serviceIds: (string | Types.ObjectId)[], state: string): Promise<Customer[]> {

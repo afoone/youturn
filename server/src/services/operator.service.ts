@@ -34,41 +34,69 @@ class OperatorService {
     // 2️⃣ Obtener todas las colas de los servicios del operador
     const queueServices: ServiceQueue[] = await serviceQueueProvider.getServiceQueuesByServiceIds(operator.services)
 
-    let oldestCustomer: CustomerDocument | null = null
-    let oldestTimestamp = Infinity
+    let oldestPriorityCustomer: CustomerDocument | null = null
+    let oldestPriorityTimestamp = Infinity
+    let oldestNormalCustomer: CustomerDocument | null = null
+    let oldestNormalTimestamp = Infinity
 
+    // 3️⃣ Buscar clientes, separando prioritarios de normales
     for (const queueService of queueServices) {
       for (const queueElement of queueService.queue) {
-        // Traer el customer completo para poder mirar operator
+        // Traer el customer completo para poder mirar operator y priority
         const customer = await CustomerModel.findById(queueElement.customer)
 
         if (!customer) continue
         // Ignorar si ya está asignado a otro operador
         if (customer.operator && customer.operator.toString() !== operatorId) continue
 
-        if (queueElement.timestamp < oldestTimestamp) {
-          oldestTimestamp = queueElement.timestamp
-          oldestCustomer = customer
+        const isPriority = customer.priority === true
+        const timestamp = queueElement.timestamp
+
+        if (isPriority) {
+          // Cliente prioritario
+          if (timestamp < oldestPriorityTimestamp) {
+            oldestPriorityTimestamp = timestamp
+            oldestPriorityCustomer = customer
+          }
+        } else {
+          // Cliente normal
+          if (timestamp < oldestNormalTimestamp) {
+            oldestNormalTimestamp = timestamp
+            oldestNormalCustomer = customer
+          }
         }
       }
     }
 
-    if (!oldestCustomer) throw new Error('No customers available for this operator')
+    // 4️⃣ Priorizar clientes con priority=true, si no hay, usar clientes normales
+    const selectedCustomer = oldestPriorityCustomer || oldestNormalCustomer
 
-    // 3️⃣ Actualizar el customer asignándole operador y estado
-    oldestCustomer.status = 'CALLING'
-    oldestCustomer.operator = operator
-    await oldestCustomer.save()
+    if (!selectedCustomer) throw new Error('No customers available for this operator')
 
-    return oldestCustomer
+    // 5️⃣ Actualizar el customer asignándole operador y estado
+    selectedCustomer.status = 'CALLING'
+    selectedCustomer.operator = operator
+    await selectedCustomer.save()
+
+    return selectedCustomer
   }
 
   async getInServiceCustomer(operatorId: string): Promise<CustomerDocument | null> {
-    // Buscar el cliente que está en servicio para el operador dado
-    const customer = await CustomerModel.findOne({
+    // Buscar el cliente que está en servicio o siendo llamado para el operador dado
+    // Priorizar IN_SERVICE sobre CALLING
+    let customer = await CustomerModel.findOne({
       operator: operatorId,
       status: 'IN_SERVICE',
     })
+    
+    // Si no hay cliente en servicio, buscar uno que esté siendo llamado
+    if (!customer) {
+      customer = await CustomerModel.findOne({
+        operator: operatorId,
+        status: 'CALLING',
+      })
+    }
+    
     return customer
   }
 
@@ -86,7 +114,7 @@ class OperatorService {
       const service = services.find(s => String(s._id) === String(qs.service))
       return {
         label: service ? service.name : 'Unknown Service',
-        count: qs.count,
+        count: qs.queue?.length,
       }
     })
 
@@ -106,7 +134,6 @@ class OperatorService {
         $pull: {
           queue: { customer: customer._id },
         },
-        $inc: { count: -1 },
       }
     )
     await customer.save()
@@ -122,6 +149,40 @@ class OperatorService {
     await customer.save()
 
     return customer
+  }
+
+  async recallCustomer(customerId: string): Promise<CustomerDocument | null> {
+    const customer = await CustomerModel.findById(customerId)
+    if (!customer) throw new Error('Customer not found')
+
+    // Cambiar el estado a CALLING para que vuelva a aparecer en la pantalla
+    customer.status = 'CALLING'
+    
+    // Incrementar el contador de rellamadas si existe
+    if (customer.recallCount) {
+      customer.recallCount += 1
+    } else {
+      customer.recallCount = 1
+    }
+    
+    await customer.save()
+
+    return customer
+  }
+
+  async changeCustomerService(customerId: string, newServiceId: string): Promise<CustomerDocument | null> {
+    const customer = await CustomerModel.findById(customerId)
+    if (!customer) throw new Error('Customer not found')
+
+    // Verificar que el cliente esté en servicio
+    if (customer.status !== 'IN_SERVICE') {
+      throw new Error('Customer must be in service to change service')
+    }
+
+    // Usar el provider para cambiar el servicio (esto remueve de la cola anterior y añade a la nueva con prioridad)
+    const updatedCustomer = await serviceQueueProvider.addExistingCustomerToQueue(newServiceId, customerId, true)
+    
+    return updatedCustomer
   }
 }
 

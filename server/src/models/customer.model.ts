@@ -23,6 +23,7 @@ export interface Customer {
   orderInQueue?: number
   ticketNumber?: string
   operator?: Types.ObjectId | Operator
+  priority?: boolean
 }
 
 // Documento de Mongoose (incluye _id y métodos)
@@ -54,6 +55,7 @@ const customerSchema = new Schema<CustomerDocument>(
     orderInQueue: Number,
     ticketNumber: String,
     operator: { type: Schema.Types.ObjectId, ref: 'Operator' },
+    priority: { type: Boolean, default: false },
   },
   {
     timestamps: true,

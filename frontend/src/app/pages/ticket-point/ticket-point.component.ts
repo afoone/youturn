@@ -7,6 +7,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ServiceCardComponent } from '../../components/ticket/service-card/service-card.component';
 import { Service } from '../../models/service.model';
 import { CommonModule } from '@angular/common';
+import jsPDF from 'jspdf';
 
 @Component({
   selector: 'afoone-ticket-point',
@@ -20,6 +21,7 @@ export class TicketPointComponent implements OnInit {
   selectedService: string = ''; // No undefined, usa string vacío
 
   createdCustomer: any = null;
+  selectedServiceData: Service | null = null;
 
   constructor(
     private _serviceService: ServiceService,
@@ -36,6 +38,7 @@ export class TicketPointComponent implements OnInit {
 
   addToQueue(service: Service): void {
     if (service) {
+      this.selectedServiceData = service;
       this._queueService
         .addToQueue(service._id)
         .subscribe((response) => {
@@ -53,5 +56,103 @@ export class TicketPointComponent implements OnInit {
         value: service._id,
       }));
     });
+  }
+
+  goBack(): void {
+    this.createdCustomer = null;
+    this.selectedServiceData = null;
+  }
+
+  generatePDF(): void {
+    if (!this.createdCustomer || !this.selectedServiceData) {
+      console.error('No hay datos del ticket disponibles');
+      return;
+    }
+
+    // Tamaño de ticket térmico: 80mm de ancho x altura suficiente
+    const ticketWidth = 80; // mm (tamaño estándar de impresoras térmicas)
+    const ticketHeight = 150; // mm (altura suficiente para el contenido)
+    const doc = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: [ticketWidth, ticketHeight]
+    });
+
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const centerX = pageWidth / 2;
+    let yPosition = 10; // Margen superior
+
+    // Línea separadora superior
+    doc.setLineWidth(0.3);
+    doc.line(5, yPosition, pageWidth - 5, yPosition);
+    yPosition += 8;
+
+    // Título
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('TICKET', centerX, yPosition, { align: 'center' });
+    yPosition += 8;
+
+    // Nombre del servicio
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    const serviceName = this.selectedServiceData.name;
+    // Dividir el nombre si es muy largo para que quepa en el ancho del ticket
+    const maxWidth = pageWidth - 10;
+    const serviceLines = doc.splitTextToSize(serviceName, maxWidth);
+    doc.text(serviceLines, centerX, yPosition, { align: 'center' });
+    yPosition += serviceLines.length * 5 + 5;
+
+    // Línea separadora
+    doc.line(5, yPosition, pageWidth - 5, yPosition);
+    yPosition += 8;
+
+    // Número de ticket
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Número de Ticket:', centerX, yPosition, { align: 'center' });
+    yPosition += 15;
+
+    doc.setFontSize(28);
+    doc.setFont('helvetica', 'bold');
+    const ticketNumber = this.createdCustomer.ticketNumber || 'N/A';
+    doc.text(ticketNumber, centerX, yPosition, { align: 'center' });
+    yPosition += 12;
+
+    // Línea separadora
+    doc.line(5, yPosition, pageWidth - 5, yPosition);
+    yPosition += 8;
+
+    // Fecha
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'normal');
+    const date = new Date(this.createdCustomer.queuedTime || Date.now());
+    const formattedDate = date.toLocaleString('es-ES', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+    doc.text(`Fecha: ${formattedDate}`, centerX, yPosition, { align: 'center' });
+    yPosition += 7;
+
+    // Línea separadora inferior
+    doc.line(5, yPosition, pageWidth - 5, yPosition);
+    yPosition += 8;
+
+    // Mensaje final
+    doc.setFontSize(7);
+    doc.setTextColor(100, 100, 100);
+    doc.text('Conserve este ticket', centerX, yPosition, { align: 'center' });
+
+    // Descargar el PDF
+    const fileName = `ticket-${ticketNumber}.pdf`;
+    doc.save(fileName);
+  }
+
+  generatePKPass(): void {
+    // PKPass requiere certificados de Apple y no se puede generar completamente en el frontend
+    alert('La generación de PKPass requiere configuración en el servidor con certificados de Apple. Por favor, use el PDF como alternativa.');
   }
 }

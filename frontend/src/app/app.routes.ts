@@ -32,7 +32,7 @@ export const routes: Routes = [
   },
   { path: 'services/:id', component: ServiceDetailComponent },
   { path: 'queue', component: QueueComponent },
-  { path: 'operator-dashboard', component: OperatorBoardComponent },
+  { path: 'operator-dashboard/:id', component: OperatorBoardComponent },
 
   {
     path: 'operators/new',
