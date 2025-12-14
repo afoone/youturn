@@ -1,20 +1,20 @@
-version: "3.8"
 services:
-  mongodb:
+  db:
     image: mongo:latest
     container_name: mongodb
     ports:
       - "27017:27017"  # Exponemos el puerto 27017 para acceder a MongoDB
     volumes:
       - ./mongodb-data:/data/db  # Volumen para persistir los datos
+      - ./mongo-init:/docker-entrypoint-initdb.d  # Scripts de inicialización
     environment:
-      MONGO_INITDB_ROOT_USERNAME: rootuser
-      MONGO_INITDB_ROOT_PASSWORD: rootpassword
+      # Estas variables crean el usuario root y habilitan autenticación
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: 07QLeXU25bgfrmRiqBrh
+      # Base de datos para los scripts de inicialización
+      MONGO_INITDB_DATABASE: yourturn
     networks:
       - backend
-
-volumes:
-  mongodb-data:
 
 networks:
   backend:
