@@ -1,0 +1,87 @@
+import { User } from '../models/user.model'
+import { userProvider } from '../providers/user.provider'
+import { hashPassword, verifyPassword } from '../utils/crypto.util'
+import { generateToken, JwtPayload } from '../utils/jwt.util'
+
+class AuthService {
+  async register(username: string, email: string, password: string, roles: string[] = []): Promise<{ user: User; token: string }> {
+    // Verificar si el usuario ya existe
+    const existingUser = await userProvider.getUserByUsername(username)
+    if (existingUser) {
+      throw new Error('Username already exists')
+    }
+
+    const existingEmail = await userProvider.getUserByEmail(email)
+    if (existingEmail) {
+      throw new Error('Email already exists')
+    }
+
+    // Hash de la contraseña
+    const hashedPassword = hashPassword(password)
+
+    // Crear usuario
+    const user = await userProvider.createUser({
+      username,
+      email,
+      password: hashedPassword,
+      roles: roles.length > 0 ? roles : ['user'],
+      active: true,
+    })
+
+    // Generar token
+    const userId = String((user as any)._id)
+    const payload: JwtPayload = {
+      userId,
+      username: user.username,
+      roles: user.roles,
+    }
+    const token = generateToken(payload)
+
+    // Remover password del objeto user
+    const userWithoutPassword = user as any
+    delete userWithoutPassword.password
+
+    return { user: userWithoutPassword as User, token }
+  }
+
+  async login(username: string, password: string): Promise<{ user: User; token: string }> {
+    // Buscar usuario
+    const user = await userProvider.getUserByUsername(username)
+    if (!user) {
+      throw new Error('Invalid credentials')
+    }
+
+    // Verificar si está activo
+    if (!user.active) {
+      throw new Error('User account is disabled')
+    }
+
+    // Verificar contraseña
+    const isValidPassword = verifyPassword(password, user.password)
+    if (!isValidPassword) {
+      throw new Error('Invalid credentials')
+    }
+
+    // Generar token
+    const userId = String(user._id)
+    const payload: JwtPayload = {
+      userId,
+      username: user.username,
+      roles: user.roles,
+    }
+    const token = generateToken(payload)
+
+    // Remover password del objeto user
+    const userWithoutPassword = user.toObject()
+    delete (userWithoutPassword as any).password
+
+    return { user: userWithoutPassword as User, token }
+  }
+
+  async getCurrentUser(userId: string): Promise<User | null> {
+    return userProvider.getUserById(userId)
+  }
+}
+
+export const authService = new AuthService()
+
