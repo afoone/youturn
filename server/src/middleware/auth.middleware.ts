@@ -6,6 +6,8 @@ export interface AuthRequest extends Request {
     userId: string
     username: string
     roles: string[]
+    admin: boolean
+    enterpriseId?: string
   }
 }
 
@@ -28,6 +30,8 @@ export function authenticateToken(req: AuthRequest, res: Response, next: NextFun
     userId: payload.userId,
     username: payload.username,
     roles: payload.roles,
+    admin: payload.admin,
+    enterpriseId: payload.enterpriseId,
   }
 
   next()
@@ -43,6 +47,22 @@ export function requireRole(...allowedRoles: string[]) {
     const hasRole = req.user.roles.some((role) => allowedRoles.includes(role))
     if (!hasRole) {
       res.status(403).json({ message: 'Insufficient permissions' })
+      return
+    }
+
+    next()
+  }
+}
+
+export function requireAdmin() {
+  return (req: AuthRequest, res: Response, next: NextFunction): void => {
+    if (!req.user) {
+      res.status(401).json({ message: 'Authentication required' })
+      return
+    }
+
+    if (!req.user.admin) {
+      res.status(403).json({ message: 'Admin access required' })
       return
     }
 

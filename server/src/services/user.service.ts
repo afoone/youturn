@@ -12,6 +12,11 @@ class UserService {
   }
 
   async createUser(data: Partial<User>): Promise<User> {
+    // Validar: si no es admin, debe tener enterprise
+    if (!data.admin && !data.enterprise) {
+      throw new Error('Enterprise is required for non-admin users')
+    }
+
     // Hash de la contraseña si se proporciona
     if (data.password) {
       data.password = hashPassword(data.password)
@@ -22,6 +27,11 @@ class UserService {
       data.roles = ['user']
     }
 
+    // Si es admin, no debe tener enterprise
+    if (data.admin) {
+      data.enterprise = undefined
+    }
+
     const user = await userProvider.createUser(data)
     const userWithoutPassword = user.toObject()
     delete (userWithoutPassword as any).password
@@ -29,6 +39,25 @@ class UserService {
   }
 
   async updateUser(id: string, data: Partial<User>): Promise<User | null> {
+    // Obtener usuario actual para validar
+    const currentUser = await userProvider.getUserById(id)
+    if (!currentUser) {
+      throw new Error('User not found')
+    }
+
+    // Determinar si será admin después de la actualización
+    const willBeAdmin = data.admin !== undefined ? data.admin : currentUser.admin
+
+    // Validar: si no es admin, debe tener enterprise
+    if (!willBeAdmin && !data.enterprise && !currentUser.enterprise) {
+      throw new Error('Enterprise is required for non-admin users')
+    }
+
+    // Si se convierte en admin, remover enterprise
+    if (willBeAdmin) {
+      data.enterprise = undefined
+    }
+
     // Hash de la contraseña si se proporciona
     if (data.password) {
       data.password = hashPassword(data.password)

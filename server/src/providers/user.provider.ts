@@ -2,11 +2,11 @@ import { User, UserModel } from '../models/user.model'
 
 class UserProvider {
   async getUsers(): Promise<User[]> {
-    return UserModel.find().select('-password')
+    return UserModel.find().select('-password').populate('enterprise')
   }
 
   async getUserById(id: string): Promise<User | null> {
-    return UserModel.findById(id).select('-password')
+    return UserModel.findById(id).select('-password').populate('enterprise')
   }
 
   async getUserByUsername(username: string): Promise<User | null> {

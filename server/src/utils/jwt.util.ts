@@ -7,6 +7,8 @@ export interface JwtPayload {
   userId: string
   username: string
   roles: string[]
+  admin: boolean
+  enterpriseId?: string
 }
 
 export function generateToken(payload: JwtPayload): string {

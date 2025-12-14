@@ -1,11 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { MenubarModule } from 'primeng/menubar';
+import { ButtonModule } from 'primeng/button';
 import { MenuItem } from 'primeng/api';
 import { CommonModule } from '@angular/common';
 import { filter } from 'rxjs/operators';
 import { OperatorService } from '../../services/operator.service';
 import { Operator } from '../../models/operator.type';
+import { AuthService } from '../../services/auth.service';
+import { User } from '../../models/user.model';
+import { Subject, takeUntil } from 'rxjs';
 
 interface MenuItemWithRoute extends MenuItem {
   route?: string;
@@ -14,19 +18,30 @@ interface MenuItemWithRoute extends MenuItem {
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [MenubarModule, CommonModule],
+  imports: [MenubarModule, CommonModule, ButtonModule],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css']
 })
-export class NavbarComponent implements OnInit {
+export class NavbarComponent implements OnInit, OnDestroy {
   items: MenuItemWithRoute[] = [];
+  currentUser: User | null = null;
+  private destroy$ = new Subject<void>();
 
   constructor(
     private router: Router,
-    private operatorService: OperatorService
+    private operatorService: OperatorService,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
+    // Suscribirse al usuario actual
+    this.authService.currentUser$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(user => {
+        this.currentUser = user;
+        this.initializeMenuItems();
+      });
+
     // Inicializar el menú con items básicos primero
     this.initializeMenuItems();
     
@@ -35,12 +50,24 @@ export class NavbarComponent implements OnInit {
     
     // Actualizar el estado activo cuando cambia la ruta
     this.router.events
-      .pipe(filter(event => event instanceof NavigationEnd))
+      .pipe(
+        filter(event => event instanceof NavigationEnd),
+        takeUntil(this.destroy$)
+      )
       .subscribe(() => {
         this.updateActiveItem();
       });
 
     this.updateActiveItem();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  logout(): void {
+    this.authService.logout();
   }
 
   private initializeMenuItems() {
@@ -83,6 +110,15 @@ export class NavbarComponent implements OnInit {
         command: () => this.router.navigate(['/enterprises'])
       }
     ];
+
+    // Agregar item de usuarios si es admin
+    if (this.currentUser && this.authService.isAdmin()) {
+      this.items.push({
+        label: 'Users',
+        route: '/users',
+        command: () => this.router.navigate(['/users'])
+      });
+    }
   }
 
   private loadOperators() {

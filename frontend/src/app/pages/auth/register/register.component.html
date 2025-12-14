@@ -1,0 +1,119 @@
+<div class="register-container">
+  <p-card class="register-card">
+    <ng-template pTemplate="header">
+      <div class="register-header">
+        <h2>Registro</h2>
+      </div>
+    </ng-template>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <div class="p-fluid">
+        <div class="p-field">
+          <label for="username">Usuario</label>
+          <input
+            id="username"
+            type="text"
+            pInputText
+            formControlName="username"
+            [class.ng-invalid]="registerForm.get('username')?.invalid && registerForm.get('username')?.touched"
+          />
+          <small
+            class="p-error"
+            *ngIf="registerForm.get('username')?.invalid && registerForm.get('username')?.touched"
+          >
+            El usuario es requerido (mínimo 3 caracteres)
+          </small>
+        </div>
+
+        <div class="p-field">
+          <label for="email">Email</label>
+          <input
+            id="email"
+            type="email"
+            pInputText
+            formControlName="email"
+            [class.ng-invalid]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
+          />
+          <small
+            class="p-error"
+            *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
+          >
+            Email válido requerido
+          </small>
+        </div>
+
+        <div class="p-field">
+          <label for="password">Contraseña</label>
+          <input
+            id="password"
+            type="password"
+            pInputText
+            formControlName="password"
+            [class.ng-invalid]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
+          />
+          <small
+            class="p-error"
+            *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
+          >
+            La contraseña es requerida (mínimo 6 caracteres)
+          </small>
+        </div>
+
+        <div class="p-field">
+          <label for="enterpriseId">Enterprise *</label>
+          <p-dropdown
+            id="enterpriseId"
+            formControlName="enterpriseId"
+            [options]="enterprises"
+            optionLabel="name"
+            optionValue="_id"
+            placeholder="Selecciona una enterprise"
+            [class.ng-invalid]="registerForm.get('enterpriseId')?.invalid && registerForm.get('enterpriseId')?.touched"
+          ></p-dropdown>
+          <small
+            class="p-error"
+            *ngIf="registerForm.get('enterpriseId')?.invalid && registerForm.get('enterpriseId')?.touched"
+          >
+            Enterprise es requerida
+          </small>
+        </div>
+
+        <div class="p-field">
+          <label for="roles">Roles (opcional, separados por coma)</label>
+          <input
+            id="roles"
+            type="text"
+            pInputText
+            [value]="getRolesAsString()"
+            (input)="updateRolesFromString($event)"
+            placeholder="Ej: user, operator"
+          />
+          <small class="p-help-text">
+            Ingresa los roles separados por comas
+          </small>
+        </div>
+
+        <p-message
+          *ngIf="errorMessage"
+          severity="error"
+          [text]="errorMessage"
+          [closable]="true"
+        ></p-message>
+
+        <p-button
+          type="submit"
+          label="Registrarse"
+          icon="pi pi-user-plus"
+          [loading]="loading"
+          [disabled]="registerForm.invalid"
+          styleClass="p-button-primary p-button-block"
+        ></p-button>
+
+        <div class="p-mt-3 text-center">
+          <a routerLink="/login">¿Ya tienes cuenta? Inicia sesión</a>
+        </div>
+      </div>
+    </form>
+  </p-card>
+</div>
+

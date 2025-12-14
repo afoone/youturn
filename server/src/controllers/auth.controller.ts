@@ -4,14 +4,21 @@ import { authService } from '../services/auth.service'
 class AuthController {
   async register(req: Request, res: Response): Promise<void> {
     try {
-      const { username, email, password, roles } = req.body
+      const { username, email, password, roles, enterpriseId, admin } = req.body
 
       if (!username || !email || !password) {
         res.status(400).json({ message: 'Username, email, and password are required' })
         return
       }
 
-      const result = await authService.register(username, email, password, roles || [])
+      const isAdmin = admin === true
+      // Si no es admin, enterpriseId es requerido
+      if (!isAdmin && !enterpriseId) {
+        res.status(400).json({ message: 'Enterprise is required for non-admin users' })
+        return
+      }
+
+      const result = await authService.register(username, email, password, roles || [], enterpriseId, isAdmin)
       res.status(201).json(result)
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Error registering user'

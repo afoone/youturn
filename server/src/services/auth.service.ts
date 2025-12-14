@@ -1,10 +1,11 @@
+import { Types } from 'mongoose'
 import { User } from '../models/user.model'
 import { userProvider } from '../providers/user.provider'
 import { hashPassword, verifyPassword } from '../utils/crypto.util'
 import { generateToken, JwtPayload } from '../utils/jwt.util'
 
 class AuthService {
-  async register(username: string, email: string, password: string, roles: string[] = []): Promise<{ user: User; token: string }> {
+  async register(username: string, email: string, password: string, roles: string[] = [], enterpriseId?: string, admin: boolean = false): Promise<{ user: User; token: string }> {
     // Verificar si el usuario ya existe
     const existingUser = await userProvider.getUserByUsername(username)
     if (existingUser) {
@@ -16,6 +17,11 @@ class AuthService {
       throw new Error('Email already exists')
     }
 
+    // Validar: si no es admin, debe tener enterprise
+    if (!admin && !enterpriseId) {
+      throw new Error('Enterprise is required for non-admin users')
+    }
+
     // Hash de la contraseña
     const hashedPassword = hashPassword(password)
 
@@ -25,6 +31,8 @@ class AuthService {
       email,
       password: hashedPassword,
       roles: roles.length > 0 ? roles : ['user'],
+      admin,
+      enterprise: enterpriseId ? new Types.ObjectId(enterpriseId) : undefined,
       active: true,
     })
 
@@ -34,6 +42,8 @@ class AuthService {
       userId,
       username: user.username,
       roles: user.roles,
+      admin: user.admin,
+      enterpriseId: user.enterprise ? String((user.enterprise as any)._id || user.enterprise) : undefined,
     }
     const token = generateToken(payload)
 
@@ -68,6 +78,8 @@ class AuthService {
       userId,
       username: user.username,
       roles: user.roles,
+      admin: user.admin,
+      enterpriseId: user.enterprise ? String((user.enterprise as any)._id || user.enterprise) : undefined,
     }
     const token = generateToken(payload)
 

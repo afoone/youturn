@@ -1,0 +1,140 @@
+<div class="user-form-container">
+  <p-card>
+    <ng-template pTemplate="header">
+      <div class="form-header">
+        <h2>Editar Usuario</h2>
+      </div>
+    </ng-template>
+
+    <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+      <div class="p-fluid">
+        <div class="p-field">
+          <label for="username">Usuario</label>
+          <input
+            id="username"
+            type="text"
+            pInputText
+            formControlName="username"
+            [class.ng-invalid]="userForm.get('username')?.invalid && userForm.get('username')?.touched"
+          />
+          <small
+            class="p-error"
+            *ngIf="userForm.get('username')?.invalid && userForm.get('username')?.touched"
+          >
+            El usuario es requerido (mínimo 3 caracteres)
+          </small>
+        </div>
+
+        <div class="p-field">
+          <label for="email">Email</label>
+          <input
+            id="email"
+            type="email"
+            pInputText
+            formControlName="email"
+            [class.ng-invalid]="userForm.get('email')?.invalid && userForm.get('email')?.touched"
+          />
+          <small
+            class="p-error"
+            *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched"
+          >
+            Email válido requerido
+          </small>
+        </div>
+
+        <div class="p-field">
+          <p-checkbox
+            formControlName="admin"
+            label="Usuario administrador"
+            [binary]="true"
+          ></p-checkbox>
+          <small class="p-help-text">
+            Los usuarios administradores no requieren enterprise
+          </small>
+        </div>
+
+        <div class="p-field" *ngIf="!userForm.get('admin')?.value">
+          <label for="enterpriseId">Enterprise *</label>
+          <p-dropdown
+            id="enterpriseId"
+            formControlName="enterpriseId"
+            [options]="enterprises"
+            optionLabel="name"
+            optionValue="_id"
+            placeholder="Selecciona una enterprise"
+            [class.ng-invalid]="userForm.get('enterpriseId')?.invalid && userForm.get('enterpriseId')?.touched"
+          ></p-dropdown>
+          <small
+            class="p-error"
+            *ngIf="userForm.get('enterpriseId')?.invalid && userForm.get('enterpriseId')?.touched"
+          >
+            Enterprise es requerida para usuarios no administradores
+          </small>
+        </div>
+
+        <div class="p-field">
+          <label for="password">Nueva Contraseña (dejar vacío para no cambiar)</label>
+          <input
+            id="password"
+            type="password"
+            pInputText
+            formControlName="password"
+            placeholder="Dejar vacío para mantener la contraseña actual"
+          />
+          <small class="p-help-text">
+            Solo completa este campo si deseas cambiar la contraseña
+          </small>
+        </div>
+
+        <div class="p-field">
+          <label for="roles">Roles (separados por coma)</label>
+          <input
+            id="roles"
+            type="text"
+            pInputText
+            [value]="getRolesAsString()"
+            (input)="updateRolesFromString($event)"
+            placeholder="Ej: user, operator"
+          />
+          <small class="p-help-text">
+            Ingresa los roles separados por comas
+          </small>
+        </div>
+
+        <div class="p-field">
+          <p-checkbox
+            formControlName="active"
+            label="Usuario activo"
+            [binary]="true"
+          ></p-checkbox>
+        </div>
+
+        <p-message
+          *ngIf="errorMessage"
+          severity="error"
+          [text]="errorMessage"
+          [closable]="true"
+        ></p-message>
+
+        <div class="form-actions">
+          <p-button
+            type="submit"
+            label="Guardar Cambios"
+            icon="pi pi-check"
+            [loading]="loading"
+            [disabled]="userForm.invalid"
+            styleClass="p-button-success"
+          ></p-button>
+          <p-button
+            type="button"
+            label="Cancelar"
+            icon="pi pi-times"
+            (click)="router.navigate(['/users'])"
+            styleClass="p-button-secondary"
+          ></p-button>
+        </div>
+      </div>
+    </form>
+  </p-card>
+</div>
+

@@ -1,0 +1,43 @@
+.user-form-container {
+  padding: 2rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.form-header {
+  text-align: center;
+  padding: 1rem;
+}
+
+.form-header h2 {
+  margin: 0;
+  color: #333;
+}
+
+.p-field {
+  margin-bottom: 1.5rem;
+}
+
+.p-field label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.p-help-text {
+  display: block;
+  margin-top: 0.25rem;
+  color: #6c757d;
+  font-size: 0.875rem;
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.form-actions p-button {
+  flex: 1;
+}
+

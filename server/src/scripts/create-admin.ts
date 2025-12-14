@@ -15,30 +15,21 @@ async function createAdmin() {
     // Datos del admin (puedes cambiarlos o pasarlos como variables de entorno)
     const username = process.env.ADMIN_USERNAME || 'admin'
     const email = process.env.ADMIN_EMAIL || 'admin@yourturn.com'
-    const password = process.env.ADMIN_PASSWORD || 'admin123'
-    const roles = ['APP_ADMIN']
+    const password = process.env.ADMIN_PASSWORD || 'Turn12345@'
+    const admin = true // Usuario admin
+    const roles: string[] = [] // Los admins no necesitan roles específicos
 
-    // Verificar si el usuario ya existe
+    // Verificar si el usuario ya existe y eliminarlo
     const existingUser = await UserModel.findOne({
       $or: [{ username }, { email }]
     })
 
     if (existingUser) {
-      console.log('Admin user already exists:')
+      console.log('Admin user already exists, deleting...')
       console.log(`  Username: ${existingUser.username}`)
       console.log(`  Email: ${existingUser.email}`)
-      console.log(`  Roles: ${existingUser.roles.join(', ')}`)
-      
-      // Actualizar roles si no tiene APP_ADMIN
-      if (!existingUser.roles.includes('APP_ADMIN')) {
-        existingUser.roles.push('APP_ADMIN')
-        await existingUser.save()
-        console.log('  ✓ Added APP_ADMIN role to existing user')
-      } else {
-        console.log('  ✓ User already has APP_ADMIN role')
-      }
-      
-      process.exit(0)
+      await UserModel.findByIdAndDelete(existingUser._id)
+      console.log('  ✓ Existing user deleted')
     }
 
     // Crear el usuario admin
@@ -48,13 +39,15 @@ async function createAdmin() {
       email,
       password: hashedPassword,
       roles,
+      admin: true,
+      // No asignar enterprise para usuarios admin
       active: true,
     })
 
     console.log('✓ Admin user created successfully:')
     console.log(`  Username: ${adminUser.username}`)
     console.log(`  Email: ${adminUser.email}`)
-    console.log(`  Roles: ${adminUser.roles.join(', ')}`)
+    console.log(`  Admin: ${adminUser.admin}`)
     console.log(`  ID: ${adminUser._id}`)
     console.log('\n⚠️  Remember to change the default password!')
 

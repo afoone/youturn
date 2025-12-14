@@ -1,0 +1,38 @@
+.register-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 2rem;
+}
+
+.register-card {
+  width: 100%;
+  max-width: 500px;
+}
+
+.register-header {
+  text-align: center;
+  padding: 1rem;
+}
+
+.register-header h2 {
+  margin: 0;
+  color: #333;
+}
+
+.p-field {
+  margin-bottom: 1.5rem;
+}
+
+.p-field label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.text-center {
+  text-align: center;
+}
+

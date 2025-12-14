@@ -14,39 +14,76 @@ import { ScreenCreateComponent } from './components/screen/screen-create/screen-
 import { ScreensComponent } from './components/screen/screens/screens.component';
 import { ScreenViewComponent } from './components/screen/screen-view/screen-view.component';
 import { TicketPointComponent } from './pages/ticket-point/ticket-point.component';
+import { LoginComponent } from './pages/auth/login/login.component';
+import { RegisterComponent } from './pages/auth/register/register.component';
+import { UsersComponent } from './pages/users/users.component';
+import { UserCreateComponent } from './pages/users/user-create/user-create.component';
+import { UserDetailComponent } from './pages/users/user-detail/user-detail.component';
+import { authGuard } from './guards/auth.guard';
+import { roleGuard } from './guards/role.guard';
+import { adminGuard } from './guards/admin.guard';
 
 export const routes: Routes = [
-  { path: 'enterprises', component: EnterprisesComponent },
+  // ========== RUTAS PÚBLICAS (sin autenticación, sin menú) ==========
+  // Auth routes
+  { path: 'login', component: LoginComponent },
+  { path: 'register', component: RegisterComponent },
+
+  // Public screens and ticket point
+  { path: 'screens/:id/view', component: ScreenViewComponent },
+  { path: 'ticket-point/:id', component: TicketPointComponent },
+
+  // ========== RUTAS DE ADMINISTRACIÓN (requieren autenticación, con menú) ==========
+  // Enterprises
+  { path: 'enterprises', component: EnterprisesComponent, canActivate: [authGuard] },
   {
     path: 'enterprises/new',
     component: EnterpriseCreateComponent,
     pathMatch: 'full',
+    canActivate: [authGuard],
   },
-  { path: 'enterprises/:id', component: EnterpriseDetailComponent },
+  { path: 'enterprises/:id', component: EnterpriseDetailComponent, canActivate: [authGuard] },
 
-  { path: 'services', component: ServiceComponent },
+  // Services
+  { path: 'services', component: ServiceComponent, canActivate: [authGuard] },
   {
     path: 'services/new',
     component: ServiceCreateComponent,
     pathMatch: 'full',
+    canActivate: [authGuard],
   },
-  { path: 'services/:id', component: ServiceDetailComponent },
-  { path: 'queue', component: QueueComponent },
-  { path: 'operator-dashboard/:id', component: OperatorBoardComponent },
+  { path: 'services/:id', component: ServiceDetailComponent, canActivate: [authGuard] },
 
+  // Queue
+  { path: 'queue', component: QueueComponent, canActivate: [authGuard] },
+
+  // Operator Dashboard
+  { path: 'operator-dashboard/:id', component: OperatorBoardComponent, canActivate: [authGuard] },
+
+  // Operators
   {
     path: 'operators/new',
     component: OperatorCreateComponent,
     pathMatch: 'full',
+    canActivate: [authGuard],
   },
-  { path: 'operators/:id', component: OperatorDetailComponent },
-  { path: 'operators', component: OperatorsComponent },
+  { path: 'operators/:id', component: OperatorDetailComponent, canActivate: [authGuard] },
+  { path: 'operators', component: OperatorsComponent, canActivate: [authGuard] },
 
-  { path: 'screens/new', component: ScreenCreateComponent, pathMatch: 'full' },
-  { path: 'screens', component: ScreensComponent },
-  { path: 'screens/:id/view', component: ScreenViewComponent },
+  // Screens (admin only - creación y lista)
+  { path: 'screens/new', component: ScreenCreateComponent, pathMatch: 'full', canActivate: [authGuard] },
+  { path: 'screens', component: ScreensComponent, canActivate: [authGuard] },
 
-  { path: 'ticket-point/:id', component: TicketPointComponent },
+  // Users CRUD (solo admin)
+  { path: 'users', component: UsersComponent, canActivate: [authGuard, adminGuard] },
+  {
+    path: 'users/new',
+    component: UserCreateComponent,
+    pathMatch: 'full',
+    canActivate: [authGuard, adminGuard]
+  },
+  { path: 'users/:id', component: UserDetailComponent, canActivate: [authGuard, adminGuard] },
 
+  // Default redirect
   { path: '', redirectTo: '/queue', pathMatch: 'full' },
 ];

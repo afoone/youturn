@@ -1,2 +1,18 @@
-<p-menubar [model]="items" [styleClass]="'navbar-menubar'"></p-menubar>
+<p-menubar [model]="items" [styleClass]="'navbar-menubar'">
+  <ng-template pTemplate="end">
+    <div class="user-menu" *ngIf="currentUser">
+      <span class="username">{{ currentUser.username }}</span>
+      <span class="user-roles" *ngIf="currentUser.roles?.length">
+        ({{ currentUser.roles.join(', ') }})
+      </span>
+      <button
+        pButton
+        label="Logout"
+        icon="pi pi-sign-out"
+        (click)="logout()"
+        class="p-button-text p-button-sm"
+      ></button>
+    </div>
+  </ng-template>
+</p-menubar>
 

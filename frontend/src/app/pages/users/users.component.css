@@ -1,0 +1,31 @@
+.role-badge {
+  display: inline-block;
+  background-color: #007bff;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  margin-right: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.no-roles {
+  color: #6c757d;
+  font-style: italic;
+}
+
+.status-active {
+  color: #28a745;
+  font-weight: 500;
+}
+
+.status-inactive {
+  color: #dc3545;
+  font-weight: 500;
+}
+
+.no-enterprise {
+  color: #6c757d;
+  font-style: italic;
+}
+
