@@ -1,7 +1,12 @@
 <p-menubar [model]="items" [styleClass]="'navbar-menubar'">
+  <ng-template pTemplate="start">
+    <div class="navbar-logo">
+      <img src="/assets/img/logo.png" alt="Logo" class="logo-image" />
+    </div>
+  </ng-template>
   <ng-template pTemplate="end">
     <div class="user-menu" *ngIf="currentUser">
-      <span class="username">{{ currentUser.username }}</span>
+      <span class="username">{{ currentUser.email }}</span>
       <span class="user-roles" *ngIf="currentUser.roles?.length">
         ({{ currentUser.roles.join(', ') }})
       </span>

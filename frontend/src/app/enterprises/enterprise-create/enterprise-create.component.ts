@@ -6,13 +6,12 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { CommonModule } from '@angular/common';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
-import { MessagesModule } from 'primeng/messages';
 import { MessageModule } from 'primeng/message';
 
 @Component({
   selector: 'afoone-enterprise-create',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, InputTextModule, ButtonModule, MessagesModule, MessageModule],
+  imports: [CommonModule, ReactiveFormsModule, InputTextModule, ButtonModule, MessageModule],
   templateUrl: './enterprise-create.component.html',
   styleUrls: ['./enterprise-create.component.css']
 })

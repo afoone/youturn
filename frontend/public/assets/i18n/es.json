@@ -1,0 +1,15 @@
+{
+  "login": {
+    "title": "Bienvenido de nuevo",
+    "username": "Usuario",
+    "usernameRequired": "El usuario es requerido",
+    "password": "Contraseña",
+    "passwordRequired": "La contraseña es requerida",
+    "submit": "Iniciar Sesión",
+    "error": "Error al iniciar sesión",
+    "noAccount": "¿No tienes una cuenta?",
+    "signUp": "Regístrate",
+    "forgotPassword": "¿Olvidaste tu contraseña?"
+  }
+}
+

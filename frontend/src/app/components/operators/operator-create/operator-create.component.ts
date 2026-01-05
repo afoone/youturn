@@ -10,7 +10,6 @@ import {
 import { CommonModule } from '@angular/common';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
-import { MessagesModule } from 'primeng/messages';
 import { MessageModule } from 'primeng/message';
 import { OperatorService } from '../../../services/operator.service';
 import { Operator } from '../../../models/operator.type';
@@ -26,7 +25,6 @@ import { MultiSelect } from 'primeng/multiselect';
     ReactiveFormsModule,
     InputTextModule,
     ButtonModule,
-    MessagesModule,
     MessageModule,
     MultiSelect,
   ],

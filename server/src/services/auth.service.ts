@@ -5,13 +5,8 @@ import { hashPassword, verifyPassword } from '../utils/crypto.util'
 import { generateToken, JwtPayload } from '../utils/jwt.util'
 
 class AuthService {
-  async register(username: string, email: string, password: string, roles: string[] = [], enterpriseId?: string, admin: boolean = false): Promise<{ user: User; token: string }> {
+  async register(email: string, password: string, roles: string[] = [], enterpriseId?: string, admin: boolean = false, nombre?: string, apellidos?: string, comentario?: string): Promise<{ user: User; token: string }> {
     // Verificar si el usuario ya existe
-    const existingUser = await userProvider.getUserByUsername(username)
-    if (existingUser) {
-      throw new Error('Username already exists')
-    }
-
     const existingEmail = await userProvider.getUserByEmail(email)
     if (existingEmail) {
       throw new Error('Email already exists')
@@ -27,10 +22,12 @@ class AuthService {
 
     // Crear usuario
     const user = await userProvider.createUser({
-      username,
       email,
       password: hashedPassword,
-      roles: roles.length > 0 ? roles : ['user'],
+      nombre,
+      apellidos,
+      comentario,
+      roles: roles.length > 0 ? roles : [],
       admin,
       enterprise: enterpriseId ? new Types.ObjectId(enterpriseId) : undefined,
       active: true,
@@ -40,7 +37,7 @@ class AuthService {
     const userId = String((user as any)._id)
     const payload: JwtPayload = {
       userId,
-      username: user.username,
+      email: user.email,
       roles: user.roles,
       admin: user.admin,
       enterpriseId: user.enterprise ? String((user.enterprise as any)._id || user.enterprise) : undefined,
@@ -54,9 +51,9 @@ class AuthService {
     return { user: userWithoutPassword as User, token }
   }
 
-  async login(username: string, password: string): Promise<{ user: User; token: string }> {
-    // Buscar usuario
-    const user = await userProvider.getUserByUsername(username)
+  async login(email: string, password: string): Promise<{ user: User; token: string }> {
+    // Buscar usuario por email
+    const user = await userProvider.getUserByEmail(email)
     if (!user) {
       throw new Error('Invalid credentials')
     }
@@ -76,7 +73,7 @@ class AuthService {
     const userId = String(user._id)
     const payload: JwtPayload = {
       userId,
-      username: user.username,
+      email: user.email,
       roles: user.roles,
       admin: user.admin,
       enterpriseId: user.enterprise ? String((user.enterprise as any)._id || user.enterprise) : undefined,

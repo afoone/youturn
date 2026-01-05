@@ -19,7 +19,7 @@ const mongoUri = `mongodb://${mongoUser}:${mongoPassword}@${mongoHost}:${mongoPo
 export const connectDB = async (): Promise<void> => {
   try {
     await mongoose.connect(mongoUri);
-    console.log("MongoDB connected successfully");
+    console.log("MongoDB connected successfully", mongoUri);
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);
     process.exit(1); // Salir si no puede conectar

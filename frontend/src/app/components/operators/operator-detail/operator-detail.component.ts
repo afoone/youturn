@@ -6,11 +6,14 @@ import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MultiSelect } from 'primeng/multiselect';
 import { OperatorService } from '../../../services/operator.service';
+import { ServiceService } from '../../../services/service.service';
 import { Operator } from '../../../models/operator.type';
+import { Service } from '../../../models/service.model';
 
 @Component({
-  selector: 'afoone-enterprise-detail',
+  selector: 'afoone-operator-detail',
   standalone: true,
   imports: [
     CommonModule,
@@ -18,6 +21,7 @@ import { Operator } from '../../../models/operator.type';
     ReactiveFormsModule,
     ButtonModule,
     InputTextModule,
+    MultiSelect,
   ],
   templateUrl: './operator-detail.component.html',
   styleUrls: ['./operator-detail.component.css'],
@@ -25,16 +29,27 @@ import { Operator } from '../../../models/operator.type';
 export class OperatorDetailComponent implements OnInit {
   operatorForm!: FormGroup;
   operatorId!: string;
+  operatorIdFromRoute!: string;
+  availableServices: Service[] = [];
 
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
-    private router: Router,
-    private operatorService: OperatorService
+    public router: Router,
+    private operatorService: OperatorService,
+    private serviceService: ServiceService
   ) {}
 
   ngOnInit(): void {
-    this.operatorId = this.route.snapshot.paramMap.get('id') || '';
+    this.operatorIdFromRoute = this.route.snapshot.paramMap.get('id') || '';
+
+    // Cargar servicios disponibles
+    this.serviceService.getServices().subscribe({
+      next: (services) => {
+        this.availableServices = services;
+      },
+      error: (err) => console.error('Error loading services:', err),
+    });
 
     this.operatorForm = this.fb.group({
       positionName: ['', Validators.required],
@@ -43,9 +58,21 @@ export class OperatorDetailComponent implements OnInit {
       pathDescription: [''],
     });
 
-    if (this.operatorId !== 'new') {
-      this.operatorService.getOperatorById(this.operatorId).subscribe({
-        next: (data) => this.operatorForm.patchValue(data),
+    if (this.operatorIdFromRoute && this.operatorIdFromRoute !== 'new') {
+      this.operatorService.getOperatorById(this.operatorIdFromRoute).subscribe({
+        next: (data) => {
+          // Guardar el _id del operador
+          this.operatorId = data._id || this.operatorIdFromRoute;
+          
+          // Asegurar que services sea un array de IDs
+          const servicesIds = data.services?.map((s: any) => 
+            typeof s === 'string' ? s : s._id || s.id
+          ) || [];
+          this.operatorForm.patchValue({
+            ...data,
+            services: servicesIds
+          });
+        },
         error: (err) => console.error('Error fetching operator:', err),
       });
     }
@@ -54,8 +81,16 @@ export class OperatorDetailComponent implements OnInit {
   onSubmit() {
     if (this.operatorForm.invalid) return;
 
+    // Usar el _id del operador que se cargó, o el ID de la ruta como fallback
+    const operatorIdToUse = this.operatorId || this.operatorIdFromRoute;
+    
+    if (!operatorIdToUse || operatorIdToUse === 'new') {
+      console.error('Invalid operator ID');
+      return;
+    }
+
     const updatedOperator: Operator = {
-      id: this.operatorId,
+      _id: operatorIdToUse,
       ...this.operatorForm.value,
     };
 

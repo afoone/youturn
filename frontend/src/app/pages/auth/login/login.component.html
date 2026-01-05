@@ -9,19 +9,21 @@
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
       <div class="p-fluid">
         <div class="p-field">
-          <label for="username">Usuario</label>
+          <label for="email">Email</label>
           <input
-            id="username"
-            type="text"
+            id="email"
+            type="email"
             pInputText
-            formControlName="username"
-            [class.ng-invalid]="loginForm.get('username')?.invalid && loginForm.get('username')?.touched"
+            formControlName="email"
+            placeholder="Ingresa tu email"
+            autocomplete="email"
+            [class.ng-invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
           />
           <small
             class="p-error"
-            *ngIf="loginForm.get('username')?.invalid && loginForm.get('username')?.touched"
+            *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
           >
-            El usuario es requerido
+            Email válido requerido
           </small>
         </div>
 

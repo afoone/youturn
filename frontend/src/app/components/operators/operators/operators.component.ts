@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { TableModule } from 'primeng/table'; // Importar el módulo de tabla de PrimeNG
+import { CommonModule } from '@angular/common';
+import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
+import { TooltipModule } from 'primeng/tooltip';
 import { Operator } from '../../../models/operator.type';
 import { OperatorService } from '../../../services/operator.service';
 
@@ -9,7 +11,7 @@ import { OperatorService } from '../../../services/operator.service';
   selector: 'afoone-operators',
   templateUrl: './operators.component.html',
   styleUrls: ['./operators.component.css'],
-  imports: [TableModule, ButtonModule],
+  imports: [CommonModule, TableModule, ButtonModule, TooltipModule],
 })
 export class OperatorsComponent implements OnInit {
   operators: Operator[] = []; // Almacenará la lista de clientes

@@ -13,20 +13,16 @@ async function createAdmin() {
     console.log('Connected to database')
 
     // Datos del admin (puedes cambiarlos o pasarlos como variables de entorno)
-    const username = process.env.ADMIN_USERNAME || 'admin'
     const email = process.env.ADMIN_EMAIL || 'admin@yourturn.com'
     const password = process.env.ADMIN_PASSWORD || 'Turn12345@'
     const admin = true // Usuario admin
     const roles: string[] = [] // Los admins no necesitan roles específicos
 
     // Verificar si el usuario ya existe y eliminarlo
-    const existingUser = await UserModel.findOne({
-      $or: [{ username }, { email }]
-    })
+    const existingUser = await UserModel.findOne({ email })
 
     if (existingUser) {
       console.log('Admin user already exists, deleting...')
-      console.log(`  Username: ${existingUser.username}`)
       console.log(`  Email: ${existingUser.email}`)
       await UserModel.findByIdAndDelete(existingUser._id)
       console.log('  ✓ Existing user deleted')
@@ -35,7 +31,6 @@ async function createAdmin() {
     // Crear el usuario admin
     const hashedPassword = hashPassword(password)
     const adminUser = await UserModel.create({
-      username,
       email,
       password: hashedPassword,
       roles,
@@ -45,7 +40,6 @@ async function createAdmin() {
     })
 
     console.log('✓ Admin user created successfully:')
-    console.log(`  Username: ${adminUser.username}`)
     console.log(`  Email: ${adminUser.email}`)
     console.log(`  Admin: ${adminUser.admin}`)
     console.log(`  ID: ${adminUser._id}`)

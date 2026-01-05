@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { ServiceService } from '../../services/service.service';
-import { Dropdown, DropdownModule } from 'primeng/dropdown';
+import { Select } from 'primeng/select';
 import { FormsModule } from '@angular/forms';
 import { QueueService } from '../../services/queue.service';
 
 @Component({
   selector: 'afoone-queue',
-  imports: [DropdownModule, FormsModule],
+  imports: [Select, FormsModule],
   templateUrl: './queue.component.html',
   styleUrl: './queue.component.css',
 })

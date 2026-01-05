@@ -1,0 +1,15 @@
+{
+  "login": {
+    "title": "Willkommen zurück",
+    "username": "Benutzername",
+    "usernameRequired": "Benutzername ist erforderlich",
+    "password": "Passwort",
+    "passwordRequired": "Passwort ist erforderlich",
+    "submit": "Anmelden",
+    "error": "Fehler beim Anmelden",
+    "noAccount": "Hast du kein Konto?",
+    "signUp": "Registrieren",
+    "forgotPassword": "Passwort vergessen?"
+  }
+}
+

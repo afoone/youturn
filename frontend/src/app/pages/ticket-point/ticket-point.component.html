@@ -1,5 +1,8 @@
 <div class="ticket-point-container">
   <div class="header-section" *ngIf="!createdCustomer">
+    <div class="logo-container">
+      <img src="/assets/img/logo.png" alt="Logo" class="header-logo" />
+    </div>
     <h1 class="main-title">Selecciona un Servicio</h1>
     <p class="subtitle">Toca el servicio para obtener tu número de ticket</p>
   </div>
@@ -14,7 +17,9 @@
 
   <div class="ticket-result" *ngIf="createdCustomer">
     <div class="ticket-card">
-      <div class="ticket-icon">🎫</div>
+      <div class="ticket-logo-container">
+        <img src="/assets/img/logo.png" alt="Logo" class="ticket-logo" />
+      </div>
       <h2 class="ticket-title">¡Ticket Generado!</h2>
       <div class="service-name" *ngIf="selectedServiceData">
         <p class="service-label">Servicio:</p>

@@ -5,14 +5,14 @@
 </p>
 
 <div class="queue-container">
-  <p-dropdown
+  <p-select
     [options]="serviceOptions"
     [(ngModel)]="selectedService"
     placeholder="Select a Service"
     optionLabel="label"
     optionValue="value"
   >
-  </p-dropdown>
+  </p-select>
   <p>Selected Service: {{ selectedService }}</p>
   <button pButton type="button" label="Add to queue" (click)="addToQueue()">
     Add to queue of {{ selectedService }}

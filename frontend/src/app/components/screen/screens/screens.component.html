@@ -1,42 +1,71 @@
-<div class="p-d-flex p-jc-between p-ai-center">
-  <h2>Operators</h2>
-  <button
-    pButton
-    label="Add New Screen"
-    icon="pi pi-plus"
-    (click)="addScreen()"
-  ></button>
+<div class="list-container">
+  <div class="list-header">
+    <div class="list-title-section">
+      <h1 class="list-title">Lista de Pantallas</h1>
+      <p class="list-subtitle">Gestiona las pantallas del sistema</p>
+    </div>
+    <button 
+      pButton 
+      label="Crear Pantalla" 
+      icon="pi pi-plus" 
+      (click)="addScreen()"
+      class="create-button"
+    ></button>
+  </div>
+
+  <div class="list-content">
+    <p-table 
+      [value]="screens" 
+      [loading]="loading" 
+      styleClass="p-datatable-striped p-datatable-sm modern-table"
+      [paginator]="true"
+      [rows]="10"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} pantallas"
+      [rowsPerPageOptions]="[10, 25, 50]"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Nombre</th>
+          <th>Descripción</th>
+          <th>Servicios</th>
+          <th>Acciones</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-screen>
+        <tr>
+          <td class="screen-name">{{ screen.name }}</td>
+          <td>{{ screen.description || '-' }}</td>
+          <td>
+            <div class="services-list">
+              <span *ngFor="let service of screen.services" class="service-tag">
+                {{ service }}
+              </span>
+              <span *ngIf="!screen.services || screen.services.length === 0" class="text-muted">-</span>
+            </div>
+          </td>
+          <td>
+            <div class="action-buttons">
+              <button
+                pButton
+                icon="pi pi-pencil"
+                (click)="editScreen(screen._id)"
+                pTooltip="Editar"
+                tooltipPosition="top"
+                class="p-button-sm p-button-text action-button"
+              ></button>
+              <button
+                pButton
+                icon="pi pi-eye"
+                (click)="viewScreen(screen._id)"
+                pTooltip="Ver"
+                tooltipPosition="top"
+                class="p-button-sm p-button-text action-button"
+              ></button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
 </div>
-
-<p-table [value]="screens" [loading]="loading" [responsive]="true">
-  <ng-template pTemplate="header">
-    <tr>
-      <th id="positionName">Screen Name</th>
-      <th id="description">Description</th>
-      <th id="services">Services</th>
-      <th id="actions">Actions</th>
-    </tr>
-  </ng-template>
-  <ng-template pTemplate="body" let-operator>
-    <tr>
-      <td>{{ operator.name }}</td>
-      <td>{{ operator.description }}</td>
-      <td>{{ operator.services.join(", ") }}</td>
-      <td>
-        <button
-          pButton
-          icon="pi pi-pencil"
-          (click)="editScreen(operator._id)"
-          label="Edit"
-        ></button>
-        <button
-          pButton
-          icon="pi pi-eye"
-          (click)="viewScreen(operator._id)"
-          label="View"
-        ></button>
-      </td>
-
-    </tr>
-  </ng-template>
-</p-table>

@@ -20,14 +20,15 @@ import { UsersComponent } from './pages/users/users.component';
 import { UserCreateComponent } from './pages/users/user-create/user-create.component';
 import { UserDetailComponent } from './pages/users/user-detail/user-detail.component';
 import { authGuard } from './guards/auth.guard';
-import { roleGuard } from './guards/role.guard';
 import { adminGuard } from './guards/admin.guard';
+import { guestGuard } from './guards/guest.guard';
+import { userManagementGuard } from './guards/user-management.guard';
 
 export const routes: Routes = [
   // ========== RUTAS PÚBLICAS (sin autenticación, sin menú) ==========
   // Auth routes
-  { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent },
+  { path: 'login', component: LoginComponent, canActivate: [guestGuard] },
+  { path: 'register', component: RegisterComponent, canActivate: [guestGuard] },
 
   // Public screens and ticket point
   { path: 'screens/:id/view', component: ScreenViewComponent },
@@ -74,15 +75,15 @@ export const routes: Routes = [
   { path: 'screens/new', component: ScreenCreateComponent, pathMatch: 'full', canActivate: [authGuard] },
   { path: 'screens', component: ScreensComponent, canActivate: [authGuard] },
 
-  // Users CRUD (solo admin)
-  { path: 'users', component: UsersComponent, canActivate: [authGuard, adminGuard] },
+  // Users CRUD (admin o ENTERPRISE_ADMIN)
+  { path: 'users', component: UsersComponent, canActivate: [authGuard, userManagementGuard] },
   {
     path: 'users/new',
     component: UserCreateComponent,
     pathMatch: 'full',
-    canActivate: [authGuard, adminGuard]
+    canActivate: [authGuard, userManagementGuard]
   },
-  { path: 'users/:id', component: UserDetailComponent, canActivate: [authGuard, adminGuard] },
+  { path: 'users/:id', component: UserDetailComponent, canActivate: [authGuard, userManagementGuard] },
 
   // Default redirect
   { path: '', redirectTo: '/queue', pathMatch: 'full' },

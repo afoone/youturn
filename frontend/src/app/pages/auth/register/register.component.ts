@@ -6,11 +6,11 @@ import { AuthService } from '../../../services/auth.service';
 import { EnterpriseService } from '../../../services/enterprise.service';
 import { Enterprise } from '../../../models/enterprise.model';
 import { InputTextModule } from 'primeng/inputtext';
+import { InputTextarea } from 'primeng/inputtextarea';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
-import { DropdownModule } from 'primeng/dropdown';
+import { Select } from 'primeng/select';
 import { MessageModule } from 'primeng/message';
-import { MessagesModule } from 'primeng/messages';
 
 @Component({
   selector: 'app-register',
@@ -19,11 +19,11 @@ import { MessagesModule } from 'primeng/messages';
       CommonModule,
       ReactiveFormsModule,
       InputTextModule,
+      InputTextarea,
       ButtonModule,
       CardModule,
-      DropdownModule,
+      Select,
       MessageModule,
-      MessagesModule,
       RouterModule
     ],
   templateUrl: './register.component.html',
@@ -42,9 +42,11 @@ export class RegisterComponent implements OnInit {
     private router: Router
   ) {
     this.registerForm = this.fb.group({
-      username: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
+      nombre: [''],
+      apellidos: [''],
+      comentario: [''],
       enterpriseId: ['', [Validators.required]],
       roles: [[]]
     });
@@ -87,9 +89,11 @@ export class RegisterComponent implements OnInit {
     const formValue = this.registerForm.value;
     // Solo enviar roles si hay alguno
     const data = {
-      username: formValue.username,
       email: formValue.email,
       password: formValue.password,
+      nombre: formValue.nombre || undefined,
+      apellidos: formValue.apellidos || undefined,
+      comentario: formValue.comentario || undefined,
       enterpriseId: formValue.enterpriseId,
       admin: false, // El registro público no puede crear admins
       ...(formValue.roles && formValue.roles.length > 0 ? { roles: formValue.roles } : {})

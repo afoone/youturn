@@ -1,13 +1,34 @@
-<div class="p-d-flex p-jc-between p-ai-center">
-  <h2>Usuarios</h2>
-  <button pButton label="Agregar Usuario" icon="pi pi-plus" (click)="addUser()"></button>
-</div>
+<div class="list-container">
+  <div class="list-header">
+    <div class="list-title-section">
+      <h1 class="list-title">Lista de Usuarios</h1>
+      <p class="list-subtitle">Gestiona los usuarios del sistema</p>
+    </div>
+    <button 
+      pButton 
+      label="Crear Usuario" 
+      icon="pi pi-plus" 
+      (click)="addUser()"
+      class="create-button"
+    ></button>
+  </div>
 
-<p-table [value]="users" [loading]="loading" [responsive]="true">
+  <div class="list-content">
+    <p-table 
+      [value]="users" 
+      [loading]="loading" 
+      styleClass="p-datatable-striped p-datatable-sm modern-table"
+      [paginator]="true"
+      [rows]="10"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} usuarios"
+      [rowsPerPageOptions]="[10, 25, 50]"
+    >
   <ng-template pTemplate="header">
     <tr>
-      <th>Usuario</th>
       <th>Email</th>
+      <th>Nombre</th>
+      <th>Apellidos</th>
       <th>Admin</th>
       <th>Enterprise</th>
       <th>Roles</th>
@@ -17,46 +38,57 @@
   </ng-template>
   <ng-template pTemplate="body" let-user>
     <tr>
-      <td>{{ user.username }}</td>
       <td>{{ user.email }}</td>
+      <td>{{ user.nombre || '-' }}</td>
+      <td>{{ user.apellidos || '-' }}</td>
       <td>
-        <span [class]="user.admin ? 'status-active' : 'status-inactive'">
-          {{ user.admin ? 'Sí' : 'No' }}
+        <span [class]="user.admin ? 'status-badge status-badge-primary' : 'status-badge status-badge-secondary'">
+          {{ user.admin ? 'Admin' : 'Usuario' }}
         </span>
       </td>
       <td>
-        <span *ngIf="user.enterprise">
+        <span *ngIf="user.enterprise" class="enterprise-name">
           {{ getEnterpriseName(user.enterprise) }}
         </span>
-        <span *ngIf="!user.enterprise" class="no-enterprise">-</span>
+        <span *ngIf="!user.enterprise" class="text-muted">-</span>
       </td>
       <td>
-        <span *ngFor="let role of user.roles" class="role-badge">{{ role }}</span>
-        <span *ngIf="!user.roles || user.roles.length === 0" class="no-roles">Sin roles</span>
+        <div class="roles-container">
+          <span *ngFor="let role of user.roles" [class]="'role-badge role-' + role.toLowerCase().replace('_', '-')">
+            {{ role }}
+          </span>
+          <span *ngIf="!user.roles || user.roles.length === 0" class="text-muted">Sin roles</span>
+        </div>
       </td>
       <td>
-        <span [class]="user.active ? 'status-active' : 'status-inactive'">
+        <span [class]="user.active ? 'status-badge status-badge-success' : 'status-badge status-badge-danger'">
           {{ user.active ? 'Activo' : 'Inactivo' }}
         </span>
       </td>
       <td>
-        <button 
-          pButton 
-          icon="pi pi-pencil" 
-          (click)="editUser(user._id)" 
-          label="Editar"
-          class="p-button-sm p-button-text p-mr-2"
-        ></button>
-        <button 
-          pButton 
-          icon="pi pi-trash" 
-          (click)="deleteUser(user._id)" 
-          label="Eliminar"
-          severity="danger"
-          class="p-button-sm p-button-text"
-        ></button>
+        <div class="action-buttons">
+          <button 
+            pButton 
+            icon="pi pi-pencil" 
+            (click)="editUser(user._id)" 
+            pTooltip="Editar"
+            tooltipPosition="top"
+            class="p-button-sm p-button-text action-button"
+          ></button>
+          <button 
+            pButton 
+            icon="pi pi-trash" 
+            (click)="deleteUser(user._id)" 
+            pTooltip="Eliminar"
+            tooltipPosition="top"
+            severity="danger"
+            class="p-button-sm p-button-text action-button"
+          ></button>
+        </div>
       </td>
     </tr>
   </ng-template>
 </p-table>
+  </div>
+</div>
 

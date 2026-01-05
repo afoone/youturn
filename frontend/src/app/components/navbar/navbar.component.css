@@ -11,6 +11,18 @@
   margin-bottom: 0;
 }
 
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  margin-right: 1rem;
+}
+
+.logo-image {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+}
+
 ::ng-deep .p-menubar .p-menubar-root-list > .p-menuitem > .p-menuitem-link {
   padding: 1rem 1.5rem;
   transition: all 0.3s ease;

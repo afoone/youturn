@@ -1,13 +1,17 @@
 import { Schema, model, Document, Types } from 'mongoose'
 import { Enterprise } from './enterprise.model'
+import { Service } from './service.model'
 
 export interface User extends Document {
-  username: string
   email: string
   password: string // SHA3 hash
+  nombre?: string
+  apellidos?: string
+  comentario?: string
   roles: string[]
   admin: boolean
   enterprise?: Types.ObjectId | Enterprise
+  services?: Types.ObjectId[] | Service[] // Servicios asociados (para usuarios OPERATOR)
   active: boolean
   createdAt: Date
   updatedAt: Date
@@ -15,12 +19,15 @@ export interface User extends Document {
 
 const userSchema = new Schema<User>(
   {
-    username: { type: String, required: true, unique: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
+    nombre: { type: String, required: false },
+    apellidos: { type: String, required: false },
+    comentario: { type: String, required: false },
     roles: { type: [String], default: [] },
     admin: { type: Boolean, default: false },
     enterprise: { type: Schema.Types.ObjectId, ref: 'Enterprise', required: false },
+    services: [{ type: Schema.Types.ObjectId, ref: 'Service', required: false }],
     active: { type: Boolean, default: true },
   },
   {
@@ -33,6 +40,21 @@ const userSchema = new Schema<User>(
 userSchema.pre('validate', function (next) {
   if (!this.admin && !this.enterprise) {
     next(new Error('Enterprise is required for non-admin users'))
+  } else {
+    next()
+  }
+})
+
+// Validación: usuarios OPERATOR deben tener enterprise y pueden tener servicios
+// usuarios ENTERPRISE_ADMIN deben tener enterprise pero no servicios
+userSchema.pre('validate', function (next) {
+  const isOperator = this.roles && this.roles.includes('OPERATOR')
+  const isEnterpriseAdmin = this.roles && this.roles.includes('ENTERPRISE_ADMIN')
+  
+  if (isOperator && !this.enterprise) {
+    next(new Error('Enterprise is required for OPERATOR users'))
+  } else if (isEnterpriseAdmin && !this.enterprise) {
+    next(new Error('Enterprise is required for ENTERPRISE_ADMIN users'))
   } else {
     next()
   }

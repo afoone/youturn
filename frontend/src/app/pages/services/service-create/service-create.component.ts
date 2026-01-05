@@ -9,7 +9,6 @@ import {
 import { CommonModule } from '@angular/common';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
-import { MessagesModule } from 'primeng/messages';
 import { MessageModule } from 'primeng/message';
 import { ServiceService } from '../../../services/service.service';
 import { Service } from '../../../models/service.model';
@@ -22,7 +21,6 @@ import { Service } from '../../../models/service.model';
     ReactiveFormsModule,
     InputTextModule,
     ButtonModule,
-    MessagesModule,
     MessageModule,
   ],
   templateUrl: './service-create.component.html',

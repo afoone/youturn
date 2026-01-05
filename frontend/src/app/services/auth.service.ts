@@ -52,7 +52,8 @@ export class AuthService {
   }
 
   isAuthenticated(): boolean {
-    return !!this.getToken();
+    // Verificar que existe el token y no está expirado
+    return this.isTokenValid();
   }
 
   isAdmin(): boolean {
@@ -80,24 +81,69 @@ export class AuthService {
   private loadUserFromStorage(): void {
     const token = localStorage.getItem('token');
     const userStr = localStorage.getItem('user');
-    
+
     if (token && userStr) {
       try {
         const user = JSON.parse(userStr);
         this.currentUserSubject.next(user);
-        // Verificar que el token sigue siendo válido
+
+        // Verificar primero si el token está expirado localmente antes de hacer la petición HTTP
+        if (!this.isTokenValid()) {
+          this.logout();
+          return;
+        }
+
+        // Solo verificar con el servidor si el token no está expirado localmente
+        // Si el servidor no está disponible, no hacemos logout para evitar perder la sesión
         this.getCurrentUser().subscribe({
           next: (currentUser) => {
             this.currentUserSubject.next(currentUser);
             localStorage.setItem('user', JSON.stringify(currentUser));
           },
-          error: () => {
-            this.logout();
+          error: (error) => {
+            // Solo hacer logout si el error es 401 (Unauthorized) o 403 (Forbidden)
+            // Esto indica que el token es inválido en el servidor
+            // Otros errores (500, network, etc.) no deberían invalidar el token
+            if (error?.status === 401 || error?.status === 403) {
+              this.logout();
+            }
+            // Error del servidor o red, pero el token puede ser válido
+            // No hacemos logout, el usuario puede seguir usando la app
           }
         });
       } catch (error) {
         this.logout();
       }
+    }
+  }
+
+  /**
+   * Verifica si el token existe y no está expirado
+   * Decodifica el JWT para verificar la expiración sin hacer una llamada HTTP
+   */
+  isTokenValid(): boolean {
+    const token = this.getToken();
+    if (!token) {
+      return false;
+    }
+
+    try {
+      // Decodificar el JWT (sin verificar la firma, solo para ver la expiración)
+      const parts = token.split('.');
+      const payload = JSON.parse(atob(parts[1]));
+      const currentTime = Math.floor(Date.now() / 1000);
+
+      // Verificar si el token ha expirado
+      if (payload.exp && payload.exp < currentTime) {
+        // Token expirado, limpiar
+        this.logout();
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      // Si hay error al decodificar, asumir que es inválido
+      return false;
     }
   }
 }

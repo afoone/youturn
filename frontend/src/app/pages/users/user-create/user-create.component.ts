@@ -4,14 +4,19 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { CommonModule } from '@angular/common';
 import { UserService } from '../../../services/user.service';
 import { EnterpriseService } from '../../../services/enterprise.service';
+import { ServiceService } from '../../../services/service.service';
+import { AuthService } from '../../../services/auth.service';
 import { Enterprise } from '../../../models/enterprise.model';
+import { Service } from '../../../models/service.model';
+import { VALID_ROLES } from '../../../models/user.model';
 import { InputTextModule } from 'primeng/inputtext';
+import { InputTextarea } from 'primeng/inputtextarea';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { CheckboxModule } from 'primeng/checkbox';
-import { DropdownModule } from 'primeng/dropdown';
+import { Select } from 'primeng/select';
+import { MultiSelect } from 'primeng/multiselect';
 import { MessageModule } from 'primeng/message';
-import { MessagesModule } from 'primeng/messages';
 
 @Component({
   selector: 'app-user-create',
@@ -20,12 +25,13 @@ import { MessagesModule } from 'primeng/messages';
       CommonModule,
       ReactiveFormsModule,
       InputTextModule,
+      InputTextarea,
       ButtonModule,
       CardModule,
       CheckboxModule,
-      DropdownModule,
-      MessageModule,
-      MessagesModule
+      Select,
+      MultiSelect,
+      MessageModule
     ],
   templateUrl: './user-create.component.html',
   styleUrls: ['./user-create.component.css']
@@ -35,36 +41,93 @@ export class UserCreateComponent implements OnInit {
   loading = false;
   errorMessage = '';
   enterprises: Enterprise[] = [];
+  availableServices: Service[] = [];
+  filteredServices: Service[] = [];
+  validRoles = VALID_ROLES.map(role => ({ label: role, value: role }));
+  
+  // Controles para checkboxes de roles
+  enterpriseAdminControl!: ReturnType<FormBuilder['control']>;
+  operatorControl!: ReturnType<FormBuilder['control']>;
+  
+  // Información del usuario actual
+  currentUser: any = null;
+  isEnterpriseAdmin: boolean = false;
+  canCreateAdmin: boolean = false;
 
   constructor(
     private fb: FormBuilder,
     private userService: UserService,
     private enterpriseService: EnterpriseService,
+    private serviceService: ServiceService,
+    private authService: AuthService,
     public router: Router
   ) {
+    // Inicializar controles de checkboxes
+    this.enterpriseAdminControl = this.fb.control(false);
+    this.operatorControl = this.fb.control(false);
     this.userForm = this.fb.group({
-      username: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
+      nombre: [''],
+      apellidos: [''],
+      comentario: [''],
       admin: [false],
       enterpriseId: [''],
       roles: [[]],
+      services: [[]],
       active: [true]
     });
   }
 
   ngOnInit(): void {
+    // Obtener información del usuario actual
+    this.authService.currentUser$.subscribe(user => {
+      this.currentUser = user;
+      this.isEnterpriseAdmin = (user?.roles?.includes('ENTERPRISE_ADMIN') ?? false) && !user?.admin;
+      this.canCreateAdmin = user?.admin === true;
+      
+      // Si es ENTERPRISE_ADMIN, asignar automáticamente su empresa
+      if (this.isEnterpriseAdmin && user?.enterprise) {
+        const enterpriseId = typeof user.enterprise === 'string' 
+          ? user.enterprise 
+          : (user.enterprise as any)._id || (user.enterprise as any).id;
+        this.userForm.patchValue({ enterpriseId }, { emitEvent: false });
+        this.filterServicesByEnterprise(enterpriseId);
+      }
+    });
+    
     this.loadEnterprises();
+    this.loadServices();
+    
     // Validación condicional: enterprise requerido si no es admin
     this.userForm.get('admin')?.valueChanges.subscribe(isAdmin => {
       const enterpriseControl = this.userForm.get('enterpriseId');
       if (isAdmin) {
         enterpriseControl?.clearValidators();
         enterpriseControl?.setValue('');
+        this.userForm.get('services')?.setValue([]);
       } else {
         enterpriseControl?.setValidators([Validators.required]);
       }
       enterpriseControl?.updateValueAndValidity();
+    });
+
+    // Filtrar servicios cuando cambia la enterprise
+    this.userForm.get('enterpriseId')?.valueChanges.subscribe(enterpriseId => {
+      this.filterServicesByEnterprise(enterpriseId);
+    });
+
+    // Sincronizar checkboxes con el array de roles
+    this.enterpriseAdminControl.valueChanges.subscribe(checked => {
+      this.updateRolesFromCheckboxes();
+    });
+    
+    this.operatorControl.valueChanges.subscribe(checked => {
+      this.updateRolesFromCheckboxes();
+      // Limpiar servicios si se desmarca OPERATOR
+      if (!checked) {
+        this.userForm.get('services')?.setValue([]);
+      }
     });
   }
 
@@ -79,15 +142,51 @@ export class UserCreateComponent implements OnInit {
     });
   }
 
-  getRolesAsString(): string {
-    const roles = this.userForm.get('roles')?.value || [];
-    return Array.isArray(roles) ? roles.join(', ') : '';
+  loadServices(): void {
+    this.serviceService.getServices().subscribe({
+      next: (services) => {
+        this.availableServices = services;
+        this.filterServicesByEnterprise(this.userForm.get('enterpriseId')?.value);
+      },
+      error: (error) => {
+        console.error('Error loading services:', error);
+      }
+    });
   }
 
-  updateRolesFromString(event: any): void {
-    const value = event.target.value || '';
-    const roles = value.split(',').map((r: string) => r.trim()).filter((r: string) => r.length > 0);
-    this.userForm.patchValue({ roles });
+  filterServicesByEnterprise(enterpriseId: string | null): void {
+    if (!enterpriseId) {
+      this.filteredServices = [];
+      return;
+    }
+
+    // Filtrar servicios que pertenecen a la enterprise seleccionada
+    // Nota: Asumiendo que los servicios tienen un campo enterprise
+    // Si no existe, necesitaremos agregarlo al modelo de Service
+    this.filteredServices = this.availableServices.filter(service => {
+      const serviceEnterpriseId = (service as any).enterprise;
+      if (typeof serviceEnterpriseId === 'string') {
+        return serviceEnterpriseId === enterpriseId;
+      } else if (serviceEnterpriseId && typeof serviceEnterpriseId === 'object') {
+        return serviceEnterpriseId._id === enterpriseId || serviceEnterpriseId.id === enterpriseId;
+      }
+      return false;
+    });
+  }
+
+  updateRolesFromCheckboxes(): void {
+    const roles: string[] = [];
+    if (this.enterpriseAdminControl.value) {
+      roles.push('ENTERPRISE_ADMIN');
+    }
+    if (this.operatorControl.value) {
+      roles.push('OPERATOR');
+    }
+    this.userForm.patchValue({ roles }, { emitEvent: false });
+  }
+
+  isOperator(): boolean {
+    return this.operatorControl.value === true;
   }
 
   onSubmit(): void {
@@ -100,17 +199,31 @@ export class UserCreateComponent implements OnInit {
 
     const formValue = this.userForm.value;
     const userData: any = {
-      username: formValue.username,
       email: formValue.email,
       password: formValue.password,
-      admin: formValue.admin || false,
+      nombre: formValue.nombre || undefined,
+      apellidos: formValue.apellidos || undefined,
+      comentario: formValue.comentario || undefined,
+      admin: this.canCreateAdmin ? (formValue.admin || false) : false, // Solo admins pueden crear admins
       roles: formValue.roles || [],
       active: formValue.active
     };
 
-    // Solo incluir enterpriseId si no es admin
-    if (!userData.admin && formValue.enterpriseId) {
-      userData.enterpriseId = formValue.enterpriseId;
+    // Si es ENTERPRISE_ADMIN, usar su empresa automáticamente
+    if (this.isEnterpriseAdmin && this.currentUser?.enterprise) {
+      const enterpriseId = typeof this.currentUser.enterprise === 'string' 
+        ? this.currentUser.enterprise 
+        : (this.currentUser.enterprise as any)._id || (this.currentUser.enterprise as any).id;
+      userData.enterprise = enterpriseId;
+    } else if (!userData.admin && formValue.enterpriseId) {
+      // Solo incluir enterprise si no es admin
+      // El servidor espera 'enterprise' no 'enterpriseId'
+      userData.enterprise = formValue.enterpriseId;
+    }
+
+    // Incluir servicios si el usuario es OPERATOR
+    if (this.isOperator() && formValue.services && formValue.services.length > 0) {
+      userData.services = formValue.services;
     }
 
     this.userService.createUser(userData).subscribe({

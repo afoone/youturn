@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import { userService } from '../services/user.service'
+import { AuthRequest } from '../middleware/auth.middleware'
 
 class UserController {
   async getUsers(req: Request, res: Response): Promise<void> {
@@ -27,9 +28,10 @@ class UserController {
     }
   }
 
-  async createUser(req: Request, res: Response): Promise<void> {
+  async createUser(req: AuthRequest, res: Response): Promise<void> {
     try {
-      const user = await userService.createUser(req.body)
+      const requestingUser: { userId: string; email: string; roles: string[]; admin: boolean; enterpriseId?: string } | undefined = req.user || undefined
+      const user = await userService.createUser(req.body, requestingUser)
       res.status(201).json(user)
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Error creating user'
@@ -37,10 +39,11 @@ class UserController {
     }
   }
 
-  async updateUser(req: Request, res: Response): Promise<void> {
+  async updateUser(req: AuthRequest, res: Response): Promise<void> {
     try {
       const { id } = req.params
-      const updatedUser = await userService.updateUser(id, req.body)
+      const requestingUser: { userId: string; email: string; roles: string[]; admin: boolean; enterpriseId?: string } | undefined = req.user || undefined
+      const updatedUser = await userService.updateUser(id, req.body, requestingUser)
       if (!updatedUser) {
         res.status(404).json({ message: 'User not found' })
         return

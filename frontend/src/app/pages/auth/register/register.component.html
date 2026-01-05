@@ -9,24 +9,7 @@
     <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
       <div class="p-fluid">
         <div class="p-field">
-          <label for="username">Usuario</label>
-          <input
-            id="username"
-            type="text"
-            pInputText
-            formControlName="username"
-            [class.ng-invalid]="registerForm.get('username')?.invalid && registerForm.get('username')?.touched"
-          />
-          <small
-            class="p-error"
-            *ngIf="registerForm.get('username')?.invalid && registerForm.get('username')?.touched"
-          >
-            El usuario es requerido (mínimo 3 caracteres)
-          </small>
-        </div>
-
-        <div class="p-field">
-          <label for="email">Email</label>
+          <label for="email">Email *</label>
           <input
             id="email"
             type="email"
@@ -40,6 +23,36 @@
           >
             Email válido requerido
           </small>
+        </div>
+
+        <div class="p-field">
+          <label for="nombre">Nombre</label>
+          <input
+            id="nombre"
+            type="text"
+            pInputText
+            formControlName="nombre"
+          />
+        </div>
+
+        <div class="p-field">
+          <label for="apellidos">Apellidos</label>
+          <input
+            id="apellidos"
+            type="text"
+            pInputText
+            formControlName="apellidos"
+          />
+        </div>
+
+        <div class="p-field">
+          <label for="comentario">Comentario</label>
+          <textarea
+            id="comentario"
+            pInputTextarea
+            formControlName="comentario"
+            rows="3"
+          ></textarea>
         </div>
 
         <div class="p-field">
@@ -61,7 +74,7 @@
 
         <div class="p-field">
           <label for="enterpriseId">Enterprise *</label>
-          <p-dropdown
+          <p-select
             id="enterpriseId"
             formControlName="enterpriseId"
             [options]="enterprises"
@@ -69,7 +82,7 @@
             optionValue="_id"
             placeholder="Selecciona una enterprise"
             [class.ng-invalid]="registerForm.get('enterpriseId')?.invalid && registerForm.get('enterpriseId')?.touched"
-          ></p-dropdown>
+          ></p-select>
           <small
             class="p-error"
             *ngIf="registerForm.get('enterpriseId')?.invalid && registerForm.get('enterpriseId')?.touched"

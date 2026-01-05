@@ -1,4 +1,5 @@
 import mongoose, { Document, Schema } from 'mongoose'
+import { Enterprise } from './enterprise.model'
 
 import { v4 as uuidv4 } from 'uuid'
 export interface Service extends Document {
@@ -27,6 +28,7 @@ export interface Service extends Document {
   tempReasonUnavailable?: string
   childrenOfService?: mongoose.Types.ObjectId[]
   parentService?: mongoose.Types.ObjectId
+  enterprise?: mongoose.Types.ObjectId | Enterprise // Enterprise a la que pertenece el servicio
 }
 
 const serviceSchema = new Schema({
@@ -55,6 +57,7 @@ const serviceSchema = new Schema({
   tempReasonUnavailable: { type: String },
   childrenOfService: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Service' }],
   parentService: { type: mongoose.Schema.Types.ObjectId, ref: 'Service' },
+  enterprise: { type: mongoose.Schema.Types.ObjectId, ref: 'Enterprise', required: false },
 })
 
 export const ServiceModel = mongoose.model<Service>('Service', serviceSchema)

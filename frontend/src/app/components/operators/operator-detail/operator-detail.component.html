@@ -1,29 +1,77 @@
-<form [formGroup]="operatorForm" (ngSubmit)="onSubmit()">
-  <div class="p-fluid">
-    <label for="name">Name</label>
-    <input pInputText id="name" formControlName="name" />
-    <small *ngIf="operatorForm.get('name')?.invalid && operatorForm.get('name')?.touched" class="p-error">
-      Name is required
-    </small>
+<div class="p-grid p-justify-center">
+  <div class="p-col-12 p-md-6">
+    <form [formGroup]="operatorForm" (ngSubmit)="onSubmit()">
+      <div class="p-field">
+        <label for="positionName">Position Name *</label>
+        <input
+          id="positionName"
+          pInputText
+          formControlName="positionName"
+          class="p-inputtext"
+        />
+        <small
+          class="p-error"
+          *ngIf="
+            operatorForm.get('positionName')?.invalid &&
+            operatorForm.get('positionName')?.touched
+          "
+        >
+          Position Name is required
+        </small>
+      </div>
 
-    <label for="email">Email</label>
-    <input pInputText id="email" formControlName="email" />
-    <small *ngIf="operatorForm.get('email')?.invalid && operatorForm.get('email')?.touched" class="p-error">
-      Enter a valid email
-    </small>
+      <div class="p-field">
+        <label for="description">Description</label>
+        <input
+          id="description"
+          pInputText
+          formControlName="description"
+          class="p-inputtext"
+        />
+      </div>
 
-    <label for="phone">Phone</label>
-    <input pInputText id="phone" formControlName="phone" />
-    <small *ngIf="operatorForm.get('phone')?.invalid && operatorForm.get('phone')?.touched" class="p-error">
-      Phone is required
-    </small>
+      <div class="p-field">
+        <label for="services">Services</label>
+        <p-multiSelect
+          id="services"
+          formControlName="services"
+          [options]="availableServices"
+          optionLabel="name"
+          optionValue="_id"
+          placeholder="Select Services"
+          [filter]="true"
+          [showClear]="true"
+        ></p-multiSelect>
+      </div>
 
-    <label for="address">Address</label>
-    <input pInputText id="address" formControlName="address" />
-    <small *ngIf="operatorForm.get('address')?.invalid && operatorForm.get('address')?.touched" class="p-error">
-      Address is required
-    </small>
+      <div class="p-field">
+        <label for="pathDescription">Path Description</label>
+        <input
+          id="pathDescription"
+          pInputText
+          formControlName="pathDescription"
+          class="p-inputtext"
+        />
+      </div>
 
-    <button pButton type="submit" label="Save" class="p-mt-3" [disabled]="operatorForm.invalid"></button>
+      <div class="p-field">
+        <button
+          pButton
+          type="submit"
+          label="Save"
+          icon="pi pi-check"
+          class="p-button-success"
+          [disabled]="operatorForm.invalid"
+        ></button>
+        <button
+          pButton
+          type="button"
+          label="Cancel"
+          icon="pi pi-times"
+          class="p-button-secondary p-ml-2"
+          (click)="router.navigate(['/operators'])"
+        ></button>
+      </div>
+    </form>
   </div>
-</form>
+</div>

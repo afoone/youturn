@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { TableModule } from 'primeng/table'; // Importar el módulo de tabla de PrimeNG
+import { CommonModule } from '@angular/common';
+import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
+import { TooltipModule } from 'primeng/tooltip';
 
 import { ScreenService } from '../../../services/screen.service';
 import { Screen } from '../../../models/screen.type';
@@ -10,7 +12,7 @@ import { Screen } from '../../../models/screen.type';
   selector: 'afoone-screens',
   templateUrl: './screens.component.html',
   styleUrls: ['./screens.component.css'],
-  imports: [TableModule, ButtonModule],
+  imports: [CommonModule, TableModule, ButtonModule, TooltipModule],
 })
 export class ScreensComponent implements OnInit {
   screens: Screen[] = []; // Almacenará la lista de pantallas

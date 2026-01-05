@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
+import { TooltipModule } from 'primeng/tooltip';
 import { UserService } from '../../services/user.service';
 import { User } from '../../models/user.model';
 import { CommonModule } from '@angular/common';
@@ -9,7 +10,7 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-users',
   standalone: true,
-  imports: [TableModule, ButtonModule, CommonModule],
+  imports: [TableModule, ButtonModule, CommonModule, TooltipModule],
   templateUrl: './users.component.html',
   styleUrls: ['./users.component.css']
 })

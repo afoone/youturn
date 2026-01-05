@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ServiceService } from '../../services/service.service';
-import { DropdownModule } from 'primeng/dropdown';
 import { FormsModule } from '@angular/forms';
 import { QueueService } from '../../services/queue.service';
 import { ActivatedRoute } from '@angular/router';
@@ -11,7 +10,7 @@ import jsPDF from 'jspdf';
 
 @Component({
   selector: 'afoone-ticket-point',
-  imports: [DropdownModule, FormsModule, ServiceCardComponent, CommonModule],
+  imports: [FormsModule, ServiceCardComponent, CommonModule],
   templateUrl: './ticket-point.component.html',
   styleUrls: ['./ticket-point.component.css'],
 })

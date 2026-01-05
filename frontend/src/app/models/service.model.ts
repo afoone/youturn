@@ -1,3 +1,5 @@
+import { Enterprise } from './enterprise.model';
+
 export type Service = {
   _id: string;
   uuid: string;
@@ -25,4 +27,5 @@ export type Service = {
   tempReasonUnavailable?: string;
   childrenOfService?: string[];
   parentService?: string;
+  enterprise?: Enterprise | string; // Enterprise a la que pertenece el servicio
 };

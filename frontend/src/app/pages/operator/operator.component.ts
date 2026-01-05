@@ -8,7 +8,7 @@ import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { BadgeModule } from 'primeng/badge';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { DropdownModule } from 'primeng/dropdown';
+import { Select } from 'primeng/select';
 import { Customer } from '../../models/customer.type';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -26,7 +26,7 @@ interface WaitingService {
     CardModule,
     BadgeModule,
     ProgressSpinnerModule,
-    DropdownModule,
+    Select,
     CommonModule,
     FormsModule
   ],

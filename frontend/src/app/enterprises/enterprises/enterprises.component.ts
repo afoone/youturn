@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { TableModule } from 'primeng/table'; // Importar el módulo de tabla de PrimeNG
+import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
+import { TooltipModule } from 'primeng/tooltip';
 import { EnterpriseService } from '../../services/enterprise.service';
 import { Enterprise } from '../../models/enterprise.model';
 
@@ -10,7 +11,7 @@ import { Enterprise } from '../../models/enterprise.model';
   standalone: true,
   templateUrl: './enterprises.component.html',
   styleUrls: ['./enterprises.component.css'],
-  imports: [TableModule, ButtonModule],
+  imports: [TableModule, ButtonModule, TooltipModule],
 })
 export class EnterprisesComponent implements OnInit {
   enterprises: Enterprise[] = []; // Almacenará la lista de clientes

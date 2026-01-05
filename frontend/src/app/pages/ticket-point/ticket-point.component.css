@@ -14,6 +14,20 @@
   margin-bottom: 1rem;
 }
 
+.logo-container {
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.header-logo {
+  height: 80px;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
 .main-title {
   font-size: 2.5rem;
   font-weight: 700;
@@ -51,9 +65,18 @@
   animation: pulse 2s infinite;
 }
 
-.ticket-icon {
-  font-size: 4rem;
+.ticket-logo-container {
   margin-bottom: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ticket-logo {
+  height: 60px;
+  width: auto;
+  object-fit: contain;
+  margin-bottom: 0.5rem;
 }
 
 .ticket-title {

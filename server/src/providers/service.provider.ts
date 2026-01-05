@@ -8,15 +8,23 @@ class ServiceProvider {
   }
 
   async getAllServices() {
-    return await ServiceModel.find().populate('childrenOfService').exec()
+    return await ServiceModel.find()
+      .populate('childrenOfService')
+      .populate('enterprise')
+      .exec()
   }
 
   async getServiceById(id: string | ObjectId) {
-    return await ServiceModel.findById(id).populate('childrenOfService').exec()
+    return await ServiceModel.findById(id)
+      .populate('childrenOfService')
+      .populate('enterprise')
+      .exec()
   }
 
   async getServicesByIds(ids: string[]) {
-    return await ServiceModel.find({ _id: { $in: ids } }).exec()
+    return await ServiceModel.find({ _id: { $in: ids } })
+      .populate('enterprise')
+      .exec()
   }
 
   async updateService(id: string, updateData: Partial<Service>) {

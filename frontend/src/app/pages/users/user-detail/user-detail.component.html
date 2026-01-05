@@ -9,24 +9,7 @@
     <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
       <div class="p-fluid">
         <div class="p-field">
-          <label for="username">Usuario</label>
-          <input
-            id="username"
-            type="text"
-            pInputText
-            formControlName="username"
-            [class.ng-invalid]="userForm.get('username')?.invalid && userForm.get('username')?.touched"
-          />
-          <small
-            class="p-error"
-            *ngIf="userForm.get('username')?.invalid && userForm.get('username')?.touched"
-          >
-            El usuario es requerido (mínimo 3 caracteres)
-          </small>
-        </div>
-
-        <div class="p-field">
-          <label for="email">Email</label>
+          <label for="email">Email *</label>
           <input
             id="email"
             type="email"
@@ -43,6 +26,36 @@
         </div>
 
         <div class="p-field">
+          <label for="nombre">Nombre</label>
+          <input
+            id="nombre"
+            type="text"
+            pInputText
+            formControlName="nombre"
+          />
+        </div>
+
+        <div class="p-field">
+          <label for="apellidos">Apellidos</label>
+          <input
+            id="apellidos"
+            type="text"
+            pInputText
+            formControlName="apellidos"
+          />
+        </div>
+
+        <div class="p-field">
+          <label for="comentario">Comentario</label>
+          <textarea
+            id="comentario"
+            pInputTextarea
+            formControlName="comentario"
+            rows="3"
+          ></textarea>
+        </div>
+
+        <div class="p-field" *ngIf="canEditAdmin">
           <p-checkbox
             formControlName="admin"
             label="Usuario administrador"
@@ -55,7 +68,8 @@
 
         <div class="p-field" *ngIf="!userForm.get('admin')?.value">
           <label for="enterpriseId">Enterprise *</label>
-          <p-dropdown
+          <p-select
+            *ngIf="!isEnterpriseAdmin"
             id="enterpriseId"
             formControlName="enterpriseId"
             [options]="enterprises"
@@ -63,10 +77,16 @@
             optionValue="_id"
             placeholder="Selecciona una enterprise"
             [class.ng-invalid]="userForm.get('enterpriseId')?.invalid && userForm.get('enterpriseId')?.touched"
-          ></p-dropdown>
+          ></p-select>
+          <div *ngIf="isEnterpriseAdmin" class="enterprise-display">
+            <p class="enterprise-name">{{ currentUser?.enterprise?.name || 'Tu empresa' }}</p>
+            <small class="p-help-text">
+              Solo puedes editar usuarios de tu empresa
+            </small>
+          </div>
           <small
             class="p-error"
-            *ngIf="userForm.get('enterpriseId')?.invalid && userForm.get('enterpriseId')?.touched"
+            *ngIf="userForm.get('enterpriseId')?.invalid && userForm.get('enterpriseId')?.touched && !isEnterpriseAdmin"
           >
             Enterprise es requerida para usuarios no administradores
           </small>
@@ -87,17 +107,36 @@
         </div>
 
         <div class="p-field">
-          <label for="roles">Roles (separados por coma)</label>
-          <input
-            id="roles"
-            type="text"
-            pInputText
-            [value]="getRolesAsString()"
-            (input)="updateRolesFromString($event)"
-            placeholder="Ej: user, operator"
-          />
+          <label>Roles *</label>
+          <div class="roles-checkboxes">
+            <p-checkbox
+              [binary]="true"
+              [formControl]="enterpriseAdminControl"
+              label="ENTERPRISE_ADMIN"
+            ></p-checkbox>
+            <p-checkbox
+              [binary]="true"
+              [formControl]="operatorControl"
+              label="OPERATOR"
+            ></p-checkbox>
+          </div>
           <small class="p-help-text">
-            Ingresa los roles separados por comas
+            Selecciona uno o más roles
+          </small>
+        </div>
+
+        <div class="p-field" *ngIf="isOperator() && !userForm.get('admin')?.value && userForm.get('enterpriseId')?.value">
+          <label for="services">Servicios (solo de la enterprise seleccionada)</label>
+          <p-multiSelect
+            id="services"
+            formControlName="services"
+            [options]="filteredServices"
+            optionLabel="name"
+            optionValue="_id"
+            placeholder="Selecciona los servicios"
+          ></p-multiSelect>
+          <small class="p-help-text">
+            Solo puedes seleccionar servicios de la enterprise seleccionada
           </small>
         </div>
 

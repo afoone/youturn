@@ -105,15 +105,15 @@
           </div>
 
           <div class="customer-actions">
-            <p-button
-              *ngIf="selectedCustomer.status === 'CALLING'"
+      <p-button
+        *ngIf="selectedCustomer.status === 'CALLING'"
               label="Atender Cliente"
               icon="pi pi-check"
-              (onClick)="attendCustomer()"
+        (onClick)="attendCustomer()"
               [loading]="loadingCustomer"
               severity="success"
               class="action-button"
-            ></p-button>
+      ></p-button>
             <p-button
               *ngIf="selectedCustomer.status === 'CALLING'"
               label="Rellamar"
@@ -124,14 +124,14 @@
               class="action-button"
             ></p-button>
             <div *ngIf="selectedCustomer.status === 'IN_SERVICE'" class="change-service-section">
-              <p-dropdown
+              <p-select
                 [options]="services"
                 [(ngModel)]="selectedNewService"
                 optionLabel="name"
                 placeholder="Cambiar a otro servicio"
                 [showClear]="true"
                 class="service-dropdown"
-              ></p-dropdown>
+              ></p-select>
               <p-button
                 label="Cambiar Servicio"
                 icon="pi pi-exchange"
@@ -142,11 +142,11 @@
                 class="action-button"
               ></p-button>
             </div>
-            <p-button
-              *ngIf="selectedCustomer.status === 'IN_SERVICE'"
+      <p-button
+        *ngIf="selectedCustomer.status === 'IN_SERVICE'"
               label="Completar Servicio"
               icon="pi pi-check-circle"
-              (onClick)="completeService()"
+        (onClick)="completeService()"
               [loading]="loadingCustomer"
               severity="info"
               class="action-button"
@@ -159,7 +159,7 @@
               [loading]="loadingCustomer"
               severity="secondary"
               class="action-button"
-            ></p-button>
+      ></p-button>
           </div>
         </div>
       </p-card>

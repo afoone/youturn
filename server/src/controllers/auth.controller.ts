@@ -4,10 +4,10 @@ import { authService } from '../services/auth.service'
 class AuthController {
   async register(req: Request, res: Response): Promise<void> {
     try {
-      const { username, email, password, roles, enterpriseId, admin } = req.body
+      const { email, password, roles, enterpriseId, admin, nombre, apellidos, comentario } = req.body
 
-      if (!username || !email || !password) {
-        res.status(400).json({ message: 'Username, email, and password are required' })
+      if (!email || !password) {
+        res.status(400).json({ message: 'Email and password are required' })
         return
       }
 
@@ -18,7 +18,7 @@ class AuthController {
         return
       }
 
-      const result = await authService.register(username, email, password, roles || [], enterpriseId, isAdmin)
+      const result = await authService.register(email, password, roles || [], enterpriseId, isAdmin, nombre, apellidos, comentario)
       res.status(201).json(result)
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Error registering user'
@@ -28,14 +28,14 @@ class AuthController {
 
   async login(req: Request, res: Response): Promise<void> {
     try {
-      const { username, password } = req.body
+      const { email, password } = req.body
 
-      if (!username || !password) {
-        res.status(400).json({ message: 'Username and password are required' })
+      if (!email || !password) {
+        res.status(400).json({ message: 'Email and password are required' })
         return
       }
 
-      const result = await authService.login(username, password)
+      const result = await authService.login(email, password)
       res.json(result)
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Invalid credentials'

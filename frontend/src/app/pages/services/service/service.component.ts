@@ -4,12 +4,13 @@ import { ServiceService } from '../../../services/service.service';
 import { Router } from '@angular/router';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
+import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
   selector: 'app-service',
   templateUrl: './service.component.html',
   styleUrls: ['./service.component.css'],
-  imports: [TableModule, ButtonModule],
+  imports: [TableModule, ButtonModule, TooltipModule],
 })
 export class ServiceComponent implements OnInit {
   services: Service[] = [];

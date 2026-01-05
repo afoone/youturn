@@ -4,7 +4,7 @@ import { verifyToken } from '../utils/jwt.util'
 export interface AuthRequest extends Request {
   user?: {
     userId: string
-    username: string
+    email: string
     roles: string[]
     admin: boolean
     enterpriseId?: string
@@ -28,7 +28,7 @@ export function authenticateToken(req: AuthRequest, res: Response, next: NextFun
 
   req.user = {
     userId: payload.userId,
-    username: payload.username,
+    email: payload.email,
     roles: payload.roles,
     admin: payload.admin,
     enterpriseId: payload.enterpriseId,
@@ -41,6 +41,12 @@ export function requireRole(...allowedRoles: string[]) {
   return (req: AuthRequest, res: Response, next: NextFunction): void => {
     if (!req.user) {
       res.status(401).json({ message: 'Authentication required' })
+      return
+    }
+
+    // Si es admin, tiene acceso a todo
+    if (req.user.admin) {
+      next()
       return
     }
 

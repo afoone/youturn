@@ -1,0 +1,15 @@
+{
+  "login": {
+    "title": "Welcome Back",
+    "username": "Username",
+    "usernameRequired": "Username is required",
+    "password": "Password",
+    "passwordRequired": "Password is required",
+    "submit": "Sign In",
+    "error": "Error signing in",
+    "noAccount": "Don't have an account?",
+    "signUp": "Sign up",
+    "forgotPassword": "Forgot Password?"
+  }
+}
+
