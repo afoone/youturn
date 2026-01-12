@@ -22,9 +22,6 @@ import { LayoutService } from '../service/layout.service';
 
         <div class="layout-topbar-actions">
             <div class="layout-config-menu">
-                <button type="button" class="layout-topbar-action" (click)="toggleDarkMode()">
-                    <i [ngClass]="{ 'pi ': true, 'pi-moon': layoutService.isDarkTheme(), 'pi-sun': !layoutService.isDarkTheme() }"></i>
-                </button>
                 <div class="relative">
                     <button
                         class="layout-topbar-action layout-topbar-action-highlight"
@@ -68,8 +65,4 @@ export class AppTopbar {
     items!: MenuItem[];
 
     constructor(public layoutService: LayoutService) {}
-
-    toggleDarkMode() {
-        this.layoutService.layoutConfig.update((state) => ({ ...state, darkTheme: !state.darkTheme }));
-    }
 }

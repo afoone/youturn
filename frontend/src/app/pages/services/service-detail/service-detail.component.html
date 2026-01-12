@@ -23,7 +23,7 @@
       Description is required
     </small>
 
-    <label for="prefix">Prefix</label>
+    <label for="prefix">Prefijo *</label>
     <input pInputText id="prefix" formControlName="prefix" />
     <small
       *ngIf="
@@ -32,13 +32,36 @@
       "
       class="p-error"
     >
-      Prefix is required
+      El prefijo es requerido
+    </small>
+
+    <label for="enterprise">Empresa *</label>
+    <p-select
+      id="enterprise"
+      formControlName="enterprise"
+      [options]="enterprises"
+      optionLabel="name"
+      optionValue="_id"
+      placeholder="Selecciona una empresa"
+      [disabled]="isEnterpriseAdmin"
+    ></p-select>
+    <small
+      *ngIf="
+        serviceForm.get('enterprise')?.invalid &&
+        serviceForm.get('enterprise')?.touched
+      "
+      class="p-error"
+    >
+      La empresa es requerida
+    </small>
+    <small *ngIf="isEnterpriseAdmin" class="p-text-secondary">
+      Su empresa ha sido asignada automáticamente
     </small>
 
     <button
       pButton
       type="submit"
-      label="Save"
+      label="Guardar"
       class="p-mt-3"
       [disabled]="serviceForm.invalid"
     ></button>

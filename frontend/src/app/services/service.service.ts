@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Service } from '../models/service.model';
 
@@ -11,8 +11,12 @@ export class ServiceService {
 
   constructor(private http: HttpClient) {}
 
-  getServices(): Observable<Service[]> {
-    return this.http.get<Service[]>(this.apiUrl);
+  getServices(ticketPointId?: string): Observable<Service[]> {
+    let params = new HttpParams();
+    if (ticketPointId) {
+      params = params.set('ticketPointId', ticketPointId);
+    }
+    return this.http.get<Service[]>(this.apiUrl, { params });
   }
 
   createService(service: Service): Observable<Service> {

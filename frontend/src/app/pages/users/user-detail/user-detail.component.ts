@@ -5,9 +5,11 @@ import { CommonModule } from '@angular/common';
 import { UserService } from '../../../services/user.service';
 import { EnterpriseService } from '../../../services/enterprise.service';
 import { ServiceService } from '../../../services/service.service';
+import { OperatorService } from '../../../services/operator.service';
 import { AuthService } from '../../../services/auth.service';
 import { Enterprise } from '../../../models/enterprise.model';
 import { Service } from '../../../models/service.model';
+import { Operator } from '../../../models/operator.type';
 import { VALID_ROLES } from '../../../models/user.model';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputTextarea } from 'primeng/inputtextarea';
@@ -44,6 +46,8 @@ export class UserDetailComponent implements OnInit {
   enterprises: Enterprise[] = [];
   availableServices: Service[] = [];
   filteredServices: Service[] = [];
+  availableOperators: Operator[] = [];
+  filteredOperators: Operator[] = [];
   validRoles = VALID_ROLES.map(role => ({ label: role, value: role }));
   
   // Controles para checkboxes de roles
@@ -63,6 +67,7 @@ export class UserDetailComponent implements OnInit {
     private userService: UserService,
     private enterpriseService: EnterpriseService,
     private serviceService: ServiceService,
+    private operatorService: OperatorService,
     private authService: AuthService
   ) {
     // Inicializar controles de checkboxes
@@ -78,6 +83,7 @@ export class UserDetailComponent implements OnInit {
       enterpriseId: [''],
       roles: [[]],
       services: [[]],
+      operatorId: [''],
       active: [true]
     });
   }
@@ -96,6 +102,7 @@ export class UserDetailComponent implements OnInit {
     this.userId = this.route.snapshot.paramMap.get('id') || '';
     this.loadEnterprises();
     this.loadServices();
+    this.loadOperators();
     if (this.userId) {
       this.loadUser();
     }
@@ -112,9 +119,10 @@ export class UserDetailComponent implements OnInit {
       enterpriseControl?.updateValueAndValidity();
     });
 
-    // Filtrar servicios cuando cambia la enterprise
+    // Filtrar servicios y operators cuando cambia la enterprise
     this.userForm.get('enterpriseId')?.valueChanges.subscribe(enterpriseId => {
       this.filterServicesByEnterprise(enterpriseId);
+      this.filterOperatorsByEnterprise(enterpriseId);
     });
 
     // Sincronizar checkboxes con el array de roles
@@ -124,9 +132,18 @@ export class UserDetailComponent implements OnInit {
     
     this.operatorControl.valueChanges.subscribe(checked => {
       this.updateRolesFromCheckboxes();
-      // Limpiar servicios si se desmarca OPERATOR
+      // Limpiar servicios y operator si se desmarca OPERATOR
       if (!checked) {
         this.userForm.get('services')?.setValue([]);
+        const operatorControl = this.userForm.get('operatorId');
+        operatorControl?.setValue('');
+        operatorControl?.clearValidators();
+        operatorControl?.updateValueAndValidity();
+      } else if (!this.userForm.get('admin')?.value) {
+        // Validar operator si es OPERATOR y no admin
+        const operatorControl = this.userForm.get('operatorId');
+        operatorControl?.setValidators([Validators.required]);
+        operatorControl?.updateValueAndValidity();
       }
     });
   }
@@ -152,6 +169,29 @@ export class UserDetailComponent implements OnInit {
         console.error('Error loading services:', error);
       }
     });
+  }
+
+  loadOperators(): void {
+    this.operatorService.getOperators().subscribe({
+      next: (operators) => {
+        this.availableOperators = operators;
+        this.filterOperatorsByEnterprise(this.userForm.get('enterpriseId')?.value);
+      },
+      error: (error) => {
+        console.error('Error loading operators:', error);
+      }
+    });
+  }
+
+  filterOperatorsByEnterprise(enterpriseId: string | null): void {
+    if (!enterpriseId) {
+      this.filteredOperators = [];
+      return;
+    }
+
+    // Filtrar operators - por ahora mostrar todos, ya que Operator no tiene campo enterprise
+    // Si en el futuro se agrega, aplicar el mismo filtro que con services
+    this.filteredOperators = this.availableOperators;
   }
 
   filterServicesByEnterprise(enterpriseId: string | null): void {
@@ -196,6 +236,16 @@ export class UserDetailComponent implements OnInit {
           });
         }
 
+        // Extraer ID de operator
+        let operatorId = '';
+        if (user.operator) {
+          if (typeof user.operator === 'string') {
+            operatorId = user.operator;
+          } else {
+            operatorId = (user.operator as any)._id || (user.operator as any).id || '';
+          }
+        }
+
         // Asegurar que roles sea un array válido, filtrando nulls y undefined
         const userRoles = (user.roles || []).filter(role => role != null && role !== '');
 
@@ -223,6 +273,7 @@ export class UserDetailComponent implements OnInit {
           enterpriseId: enterpriseId,
           roles: userRoles,
           services: serviceIds,
+          operatorId: operatorId,
           active: user.active
         });
 
@@ -292,11 +343,21 @@ export class UserDetailComponent implements OnInit {
       userData.enterprise = undefined;
     }
 
-    // Incluir servicios si el usuario es OPERATOR
-    if (this.isOperator() && formValue.services && formValue.services.length > 0) {
-      userData.services = formValue.services;
+    // Incluir servicios y operator si el usuario es OPERATOR
+    if (this.isOperator()) {
+      if (formValue.services && formValue.services.length > 0) {
+        userData.services = formValue.services;
+      } else {
+        userData.services = [];
+      }
+      if (formValue.operatorId) {
+        userData.operator = formValue.operatorId;
+      } else {
+        userData.operator = undefined;
+      }
     } else {
       userData.services = [];
+      userData.operator = undefined;
     }
 
     // Solo incluir password si se proporcionó uno nuevo

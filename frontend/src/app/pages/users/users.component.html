@@ -5,6 +5,7 @@
       <p class="list-subtitle">Gestiona los usuarios del sistema</p>
     </div>
     <button 
+      *ngIf="canCreate"
       pButton 
       label="Crear Usuario" 
       icon="pi pi-plus" 

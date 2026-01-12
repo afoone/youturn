@@ -1,0 +1,225 @@
+<div class="landing-page">
+  <!-- Header -->
+  <header class="landing-header">
+    <div class="container">
+      <div class="header-content">
+        <div class="header-logo">
+          <img src="/assets/img/logo.png" alt="Logo" class="logo-image" (click)="scrollToTop()" />
+        </div>
+        <nav class="header-nav">
+          <button pButton type="button" label="Iniciar sesión" class="p-button-text header-button" (click)="goToLogin()"></button>
+          <button pButton type="button" label="Registrarse" class="p-button-primary header-button" (click)="goToRegister()"></button>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container">
+      <div class="hero-content">
+        <div class="kickstarter-badge" *ngIf="showKickstarterOffer">
+          <span class="badge-text">🚀 OFERTA DE LANZAMIENTO</span>
+        </div>
+        <h1 class="hero-title">Gestión de Colas y Turnos</h1>
+        <p class="hero-subtitle">
+          Sistema completo para gestionar colas, turnos y atención al cliente. 
+          Optimiza tu negocio con nuestra plataforma todo-en-uno.
+        </p>
+        <div class="kickstarter-offer" *ngIf="showKickstarterOffer">
+          <div class="offer-box">
+            <div class="offer-badge">OFERTA ESPECIAL</div>
+            <div class="offer-price">
+              <span class="price-main">$30</span>
+              <span class="price-period">/año</span>
+            </div>
+            <p class="offer-description">Oferta exclusiva de lanzamiento • Ahorra hasta un 70%</p>
+            <p class="offer-note">Precio especial por tiempo limitado. Después: $99/año</p>
+          </div>
+        </div>
+        <div class="hero-actions">
+          <button pButton type="button" label="Aprovechar oferta" class="p-button-primary hero-button" (click)="goToRegister()"></button>
+          <button pButton type="button" label="Ver planes" class="p-button-outlined hero-button" (click)="scrollTo('pricing')"></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Kickstarter Story Section -->
+  <section class="kickstarter-section" *ngIf="showKickstarterOffer">
+    <div class="container">
+      <div class="kickstarter-content">
+        <h2 class="section-title">Únete a nuestro lanzamiento</h2>
+        <div class="story-grid">
+          <div class="story-block">
+            <h3 class="story-title">El problema que resolvemos</h3>
+            <p class="story-text">
+              Muchos negocios siguen usando sistemas obsoletos o métodos manuales para gestionar colas: 
+              papel, números físicos, o software caro y complicado. Esto genera esperas largas, 
+              clientes insatisfechos y pérdida de eficiencia.
+            </p>
+          </div>
+          <div class="story-block">
+            <h3 class="story-title">Nuestra solución</h3>
+            <p class="story-text">
+              Hemos creado una plataforma moderna, intuitiva y accesible que transforma cómo gestionas 
+              las colas. Desde pequeños comercios hasta grandes empresas, nuestro sistema se adapta a 
+              cualquier necesidad, mejorando la experiencia tanto para ti como para tus clientes.
+            </p>
+          </div>
+          <div class="story-block">
+            <h3 class="story-title">Por qué ahora</h3>
+            <p class="story-text">
+              Estamos en fase de lanzamiento y queremos que formes parte de nuestra comunidad desde el 
+              principio. Por eso, ofrecemos esta increíble oportunidad: <strong>$30/año</strong> durante 
+              el primer año. Es nuestra forma de agradecer tu confianza y ayudarnos a crecer juntos.
+            </p>
+          </div>
+          <div class="story-block">
+            <h3 class="story-title">Qué obtienes</h3>
+            <ul class="story-benefits">
+              <li>✅ Acceso completo a todas las funcionalidades</li>
+              <li>✅ Sin límites de uso durante el primer año</li>
+              <li>✅ Soporte prioritario durante el lanzamiento</li>
+              <li>✅ Actualizaciones y nuevas funciones incluidas</li>
+              <li>✅ Precio garantizado si renuevas a tiempo</li>
+            </ul>
+          </div>
+        </div>
+        <div class="kickstarter-cta">
+          <h3 class="cta-title-small">No dejes pasar esta oportunidad</h3>
+          <p class="cta-text">
+            Esta oferta especial solo está disponible durante nuestro período de lanzamiento. 
+            Una vez que termine, el precio volverá a ser el estándar de $99/año.
+          </p>
+          <button pButton type="button" label="Asegurar mi precio especial" class="p-button-primary kickstarter-button" (click)="goToRegister()"></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features-section" id="features">
+    <div class="container">
+      <h2 class="section-title">Todo lo que necesitas para gestionar tu negocio</h2>
+      
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🎫</div>
+          <h3 class="feature-title">Gestión de Tickets</h3>
+          <p class="feature-description">
+            Genera y gestiona tickets de forma automática. Los clientes pueden obtener 
+            su número de turno desde cualquier dispositivo.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">👥</div>
+          <h3 class="feature-title">Gestión de Colas</h3>
+          <p class="feature-description">
+            Organiza y prioriza las colas de manera inteligente. Sistema de prioridades 
+            para atención VIP y gestión eficiente del tiempo.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🖥️</div>
+          <h3 class="feature-title">Pantallas de Visualización</h3>
+          <p class="feature-description">
+            Muestra información en tiempo real en pantallas públicas. Los clientes 
+            siempre saben cuándo es su turno.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3 class="feature-title">Panel de Operadores</h3>
+          <p class="feature-description">
+            Dashboard intuitivo para que tus operadores gestionen clientes, llamen 
+            turnos y actualicen estados en tiempo real.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🏢</div>
+          <h3 class="feature-title">Multi-Empresa</h3>
+          <p class="feature-description">
+            Gestiona múltiples empresas desde una sola plataforma. Ideal para 
+            organizaciones con múltiples ubicaciones o negocios.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">⚙️</div>
+          <h3 class="feature-title">Personalizable</h3>
+          <p class="feature-description">
+            Configura servicios, puntos de atención y flujos de trabajo según 
+            las necesidades específicas de tu negocio.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing Section -->
+  <section class="pricing-section" id="pricing">
+    <div class="container">
+      <h2 class="section-title">Planes y Precios</h2>
+      <p class="section-subtitle">Elige el plan que mejor se adapte a tu negocio</p>
+
+      <div class="pricing-grid" *ngIf="!loading && plans.length > 0">
+        <div class="pricing-card" *ngFor="let plan of plans">
+          <div class="pricing-header">
+            <h3 class="plan-name">{{ plan.codigo }}</h3>
+            <p class="plan-description">{{ plan.descripcion }}</p>
+          </div>
+          <div class="pricing-body">
+            <div class="price">
+              <span class="price-amount">{{ formatPrice(plan.precio) }}</span>
+            </div>
+            <div class="plan-features">
+              <div class="feature-item">
+                <span class="feature-label">Puntos de ticket:</span>
+                <span class="feature-value">{{ plan.maxTicketPoints }}</span>
+              </div>
+              <div class="feature-item">
+                <span class="feature-label">Usuarios:</span>
+                <span class="feature-value">{{ plan.maxUsuarios }}</span>
+              </div>
+              <div class="feature-item">
+                <span class="feature-label">Servicios:</span>
+                <span class="feature-value">{{ plan.maxServicios }}</span>
+              </div>
+            </div>
+            <div class="plan-details" *ngIf="plan.detalles">
+              <p>{{ plan.detalles }}</p>
+            </div>
+            <button pButton type="button" label="Comenzar" class="p-button-primary plan-button" (click)="goToRegister()"></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="loading-state" *ngIf="loading">
+        <p>Cargando planes...</p>
+      </div>
+
+      <div class="no-plans" *ngIf="!loading && plans.length === 0">
+        <p>No hay planes disponibles en este momento.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-content">
+        <h2 class="cta-title">¿Listo para empezar?</h2>
+        <p class="cta-subtitle">
+          Únete hoy y comienza a optimizar la gestión de tu negocio
+        </p>
+        <button pButton type="button" label="Registrarse gratis" class="p-button-primary cta-button" (click)="goToRegister()"></button>
+      </div>
+    </div>
+  </section>
+</div>
+

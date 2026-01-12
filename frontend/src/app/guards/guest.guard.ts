@@ -12,7 +12,7 @@ export const guestGuard: CanActivateFn = (route, state) => {
   // Verificar si hay token válido
   if (authService.isAuthenticated()) {
     // Si ya está autenticado, redirigir a la página principal
-    router.navigate(['/queue']);
+    router.navigate(['/ticket-points']);
     return false;
   }
 

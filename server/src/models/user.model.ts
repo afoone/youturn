@@ -1,6 +1,7 @@
 import { Schema, model, Document, Types } from 'mongoose'
 import { Enterprise } from './enterprise.model'
 import { Service } from './service.model'
+import { Operator } from './operator.model'
 
 export interface User extends Document {
   email: string
@@ -12,6 +13,7 @@ export interface User extends Document {
   admin: boolean
   enterprise?: Types.ObjectId | Enterprise
   services?: Types.ObjectId[] | Service[] // Servicios asociados (para usuarios OPERATOR)
+  operator?: Types.ObjectId | Operator // Puesto/Operator asociado (para usuarios OPERATOR)
   active: boolean
   createdAt: Date
   updatedAt: Date
@@ -28,6 +30,7 @@ const userSchema = new Schema<User>(
     admin: { type: Boolean, default: false },
     enterprise: { type: Schema.Types.ObjectId, ref: 'Enterprise', required: false },
     services: [{ type: Schema.Types.ObjectId, ref: 'Service', required: false }],
+    operator: { type: Schema.Types.ObjectId, ref: 'Operator', required: false },
     active: { type: Boolean, default: true },
   },
   {
@@ -45,8 +48,8 @@ userSchema.pre('validate', function (next) {
   }
 })
 
-// Validación: usuarios OPERATOR deben tener enterprise y pueden tener servicios
-// usuarios ENTERPRISE_ADMIN deben tener enterprise pero no servicios
+// Validación: usuarios OPERATOR deben tener enterprise y pueden tener servicios y operator
+// usuarios ENTERPRISE_ADMIN deben tener enterprise pero no servicios ni operator
 userSchema.pre('validate', function (next) {
   const isOperator = this.roles && this.roles.includes('OPERATOR')
   const isEnterpriseAdmin = this.roles && this.roles.includes('ENTERPRISE_ADMIN')

@@ -4,6 +4,7 @@ import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { UserService } from '../../services/user.service';
+import { AuthService } from '../../services/auth.service';
 import { User } from '../../models/user.model';
 import { CommonModule } from '@angular/common';
 
@@ -17,13 +18,40 @@ import { CommonModule } from '@angular/common';
 export class UsersComponent implements OnInit {
   users: User[] = [];
   loading: boolean = true;
+  canCreate: boolean = false;
 
   constructor(
     private userService: UserService,
+    private authService: AuthService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
+    // #region agent log
+    console.log('[DEBUG] UsersComponent.ngOnInit called');
+    // #endregion
+    
+    // Subscribe to currentUser$ to update permissions
+    this.authService.currentUser$.subscribe(user => {
+      // #region agent log
+      console.log('[DEBUG] currentUser$ emitted:', { user: user?.email, admin: user?.admin, roles: user?.roles });
+      // #endregion
+      
+      // Update canCreate based on user permissions
+      // If user can access this page (via userManagementGuard), they can create users
+      // The guard already ensures only admin or ENTERPRISE_ADMIN can access this page
+      this.canCreate = user?.admin === true || (user?.roles?.includes('ENTERPRISE_ADMIN') ?? false);
+      
+      // #region agent log
+      console.log('[DEBUG] Permissions check:', { isAdmin: user?.admin, isEnterpriseAdmin: user?.roles?.includes('ENTERPRISE_ADMIN'), canCreate: this.canCreate });
+      try {
+        fetch('http://127.0.0.1:7244/ingest/978b0113-0d0e-4cef-9216-986136378b2d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'users.component.ts:38',message:'UsersComponent - check permissions',data:{isAdmin:user?.admin,isEnterpriseAdmin:user?.roles?.includes('ENTERPRISE_ADMIN'),canCreate:this.canCreate,userRoles:user?.roles||[],userEmail:user?.email},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(err => console.error('[DEBUG] Log fetch error:', err));
+      } catch (e) {
+        console.error('[DEBUG] Log send error:', e);
+      }
+      // #endregion
+    });
+    
     this.getUsers();
   }
 
@@ -45,6 +73,9 @@ export class UsersComponent implements OnInit {
   }
 
   addUser(): void {
+    // #region agent log
+    fetch('http://127.0.0.1:7244/ingest/978b0113-0d0e-4cef-9216-986136378b2d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'users.component.ts:58',message:'addUser called',data:{canCreate:this.canCreate},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+    // #endregion
     this.router.navigate(['/users/new']);
   }
 

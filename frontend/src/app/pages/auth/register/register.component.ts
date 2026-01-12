@@ -102,7 +102,7 @@ export class RegisterComponent implements OnInit {
     this.authService.register(data).subscribe({
       next: () => {
         this.loading = false;
-        this.router.navigate(['/']);
+        this.router.navigate(['/ticket-points']);
       },
       error: (error) => {
         this.loading = false;

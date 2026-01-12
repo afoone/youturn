@@ -1,5 +1,6 @@
 import { Enterprise } from './enterprise.model';
 import { Service } from './service.model';
+import { Operator } from './operator.type';
 
 export interface User {
   _id: string;
@@ -11,6 +12,7 @@ export interface User {
   admin: boolean;
   enterprise?: Enterprise | string;
   services?: Service[] | string[]; // Servicios asociados (para usuarios OPERATOR)
+  operator?: Operator | string; // Puesto/Operator asociado (para usuarios OPERATOR)
   active: boolean;
   createdAt?: string;
   updatedAt?: string;

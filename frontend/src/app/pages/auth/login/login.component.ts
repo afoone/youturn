@@ -42,7 +42,7 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     // Si ya está autenticado, redirigir
     if (this.authService.isAuthenticated()) {
-      const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/queue';
+      const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/ticket-points';
       this.router.navigate([returnUrl]);
     }
   }
@@ -58,7 +58,7 @@ export class LoginComponent implements OnInit {
     this.authService.login(this.loginForm.value).subscribe({
       next: () => {
         this.loading = false;
-        const returnUrl = this.router.parseUrl(this.router.url).queryParams['returnUrl'] || '/';
+        const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/ticket-points';
         this.router.navigate([returnUrl]);
       },
       error: (error) => {

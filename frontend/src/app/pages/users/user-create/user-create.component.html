@@ -73,11 +73,14 @@
         </div>
 
         <div class="p-field" *ngIf="canCreateAdmin">
-          <p-checkbox
-            formControlName="admin"
-            label="Usuario administrador"
-            [binary]="true"
-          ></p-checkbox>
+          <div class="checkbox-item">
+            <p-checkbox
+              formControlName="admin"
+              inputId="user-admin"
+              [binary]="true"
+            ></p-checkbox>
+            <label for="user-admin" class="checkbox-label">Usuario administrador</label>
+          </div>
           <small class="p-help-text">
             Los usuarios administradores no requieren enterprise
           </small>
@@ -112,19 +115,47 @@
         <div class="p-field">
           <label>Roles *</label>
           <div class="roles-checkboxes">
-            <p-checkbox
-              [binary]="true"
-              [formControl]="enterpriseAdminControl"
-              label="ENTERPRISE_ADMIN"
-            ></p-checkbox>
-            <p-checkbox
-              [binary]="true"
-              [formControl]="operatorControl"
-              label="OPERATOR"
-            ></p-checkbox>
+            <div class="checkbox-item">
+              <p-checkbox
+                [binary]="true"
+                [formControl]="enterpriseAdminControl"
+                inputId="role-enterprise-admin"
+              ></p-checkbox>
+              <label for="role-enterprise-admin" class="checkbox-label">ENTERPRISE_ADMIN</label>
+            </div>
+            <div class="checkbox-item">
+              <p-checkbox
+                [binary]="true"
+                [formControl]="operatorControl"
+                inputId="role-operator"
+              ></p-checkbox>
+              <label for="role-operator" class="checkbox-label">OPERATOR</label>
+            </div>
           </div>
           <small class="p-help-text">
             Selecciona uno o más roles
+          </small>
+        </div>
+
+        <div class="p-field" *ngIf="isOperator() && !userForm.get('admin')?.value && userForm.get('enterpriseId')?.value">
+          <label for="operatorId">Puesto/Operator *</label>
+          <p-select
+            id="operatorId"
+            formControlName="operatorId"
+            [options]="filteredOperators"
+            optionLabel="positionName"
+            optionValue="_id"
+            placeholder="Selecciona un puesto/operator"
+            [class.ng-invalid]="userForm.get('operatorId')?.invalid && userForm.get('operatorId')?.touched"
+          ></p-select>
+          <small class="p-help-text">
+            Selecciona el puesto de trabajo asociado a este usuario operator
+          </small>
+          <small
+            class="p-error"
+            *ngIf="userForm.get('operatorId')?.invalid && userForm.get('operatorId')?.touched"
+          >
+            El puesto/operator es requerido para usuarios OPERATOR
           </small>
         </div>
 
@@ -144,11 +175,14 @@
         </div>
 
         <div class="p-field">
-          <p-checkbox
-            formControlName="active"
-            label="Usuario activo"
-            [binary]="true"
-          ></p-checkbox>
+          <div class="checkbox-item">
+            <p-checkbox
+              formControlName="active"
+              inputId="user-active"
+              [binary]="true"
+            ></p-checkbox>
+            <label for="user-active" class="checkbox-label">Usuario activo</label>
+          </div>
         </div>
 
         <p-message

@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { EnterpriseService } from '../../services/enterprise.service';
+import { AuthService } from '../../services/auth.service';
 import { Enterprise } from '../../models/enterprise.model';
 
 @Component({
@@ -11,19 +13,25 @@ import { Enterprise } from '../../models/enterprise.model';
   standalone: true,
   templateUrl: './enterprises.component.html',
   styleUrls: ['./enterprises.component.css'],
-  imports: [TableModule, ButtonModule, TooltipModule],
+  imports: [CommonModule, TableModule, ButtonModule, TooltipModule],
 })
 export class EnterprisesComponent implements OnInit {
   enterprises: Enterprise[] = []; // Almacenará la lista de clientes
   loading: boolean = true; // Indicador para mostrar el loading
+  isAdmin: boolean = false;
 
   constructor(
     private enterpriseService: EnterpriseService,
+    private authService: AuthService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
     this.getEnterprises();
+    // Verificar si el usuario es admin
+    this.authService.currentUser$.subscribe(user => {
+      this.isAdmin = user?.admin === true;
+    });
   }
 
   // Obtener la lista de clientes

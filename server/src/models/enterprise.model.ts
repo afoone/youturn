@@ -1,10 +1,12 @@
-import mongoose, { Schema, Document } from 'mongoose'
+import mongoose, { Schema, Document, Types } from 'mongoose'
+import { Plan } from './plan.model'
 
 export interface Enterprise extends Document {
   name: string
   email: string
   address: string
   phone: string
+  plan?: Types.ObjectId | Plan
 }
 
 const EnterpriseSchema = new Schema<Enterprise>(
@@ -13,6 +15,7 @@ const EnterpriseSchema = new Schema<Enterprise>(
     email: { type: String, required: true, unique: true },
     address: { type: String, required: true },
     phone: { type: String, required: true },
+    plan: { type: Schema.Types.ObjectId, ref: 'Plan', required: false },
   },
   {
     timestamps: true,

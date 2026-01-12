@@ -1,2 +1,42 @@
 /* You can add global styles to this file, and also import other style files */
 @import 'primeicons/primeicons.css';
+
+/* Forzar modo claro - deshabilitar modo oscuro del sistema */
+:root {
+  color-scheme: light only !important;
+}
+
+html {
+  color-scheme: light only !important;
+  background-color: #ffffff !important;
+}
+
+body {
+  color-scheme: light only !important;
+  background-color: #ffffff !important;
+  color: #1a202c !important;
+}
+
+/* Forzar modo claro en todos los elementos PrimeNG */
+::ng-deep {
+  color-scheme: light only !important;
+}
+
+::ng-deep * {
+  color-scheme: light only !important;
+}
+
+/* Sobrescribir media queries de modo oscuro */
+@media (prefers-color-scheme: dark) {
+  :root,
+  html,
+  body {
+    color-scheme: light only !important;
+    background-color: #ffffff !important;
+    color: #1a202c !important;
+  }
+  
+  ::ng-deep * {
+    color-scheme: light only !important;
+  }
+}

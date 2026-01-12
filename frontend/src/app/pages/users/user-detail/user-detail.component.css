@@ -48,6 +48,20 @@
   margin-top: 0.5rem;
 }
 
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.checkbox-label {
+  margin: 0;
+  font-weight: 400;
+  color: #374151;
+  cursor: pointer;
+  user-select: none;
+}
+
 .enterprise-display {
   padding: 0.75rem;
   background-color: #f8f9fa;

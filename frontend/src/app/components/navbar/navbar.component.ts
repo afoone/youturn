@@ -80,14 +80,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
         items: []
       },
       {
-        label: 'Old Queue',
-        route: '/queue',
-        command: () => this.router.navigate(['/queue'])
-      },
-      {
-        label: 'Ticket Point',
-        route: '/ticket-point',
-        command: () => this.router.navigate(['/ticket-point/default'])
+        label: 'Ticket Points',
+        route: '/ticket-points',
+        command: () => this.router.navigate(['/ticket-points'])
       },
       {
         label: 'Services',
@@ -103,21 +98,28 @@ export class NavbarComponent implements OnInit, OnDestroy {
         label: 'Screens',
         route: '/screens',
         command: () => this.router.navigate(['/screens'])
-      },
-      {
-        label: 'Enterprises',
-        route: '/enterprises',
-        command: () => this.router.navigate(['/enterprises'])
       }
     ];
 
-    // Agregar item de usuarios si es admin
+    // Solo agregar Enterprises, Plans y Users si es admin
     if (this.currentUser && this.authService.isAdmin()) {
-      this.items.push({
-        label: 'Users',
-        route: '/users',
-        command: () => this.router.navigate(['/users'])
-      });
+      this.items.push(
+        {
+          label: 'Enterprises',
+          route: '/enterprises',
+          command: () => this.router.navigate(['/enterprises'])
+        },
+        {
+          label: 'Plans',
+          route: '/plans',
+          command: () => this.router.navigate(['/plans'])
+        },
+        {
+          label: 'Users',
+          route: '/users',
+          command: () => this.router.navigate(['/users'])
+        }
+      );
     }
   }
 

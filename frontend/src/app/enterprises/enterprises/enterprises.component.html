@@ -5,6 +5,7 @@
       <p class="list-subtitle">Gestiona las empresas del sistema</p>
     </div>
     <button 
+      *ngIf="isAdmin"
       pButton 
       label="Crear Empresa" 
       icon="pi pi-plus" 
@@ -40,7 +41,7 @@
           <td>{{ enterprise.phone || '-' }}</td>
           <td>{{ enterprise.address || '-' }}</td>
           <td>
-            <div class="action-buttons">
+            <div class="action-buttons" *ngIf="isAdmin">
               <button 
                 pButton 
                 icon="pi pi-pencil" 
@@ -59,6 +60,7 @@
                 class="p-button-sm p-button-text action-button"
               ></button>
             </div>
+            <span *ngIf="!isAdmin" class="text-muted">-</span>
           </td>
         </tr>
       </ng-template>

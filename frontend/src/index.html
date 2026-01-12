@@ -5,7 +5,27 @@
   <title>YourturnManager</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light only">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <script>
+    // Forzar modo claro - eliminar clase app-dark antes de que Angular se inicialice
+    (function() {
+      if (document.documentElement) {
+        document.documentElement.classList.remove('app-dark');
+        document.documentElement.style.colorScheme = 'light only';
+      }
+      // También ejecutar cuando el DOM esté listo
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+          document.documentElement.classList.remove('app-dark');
+          document.documentElement.style.colorScheme = 'light only';
+        });
+      } else {
+        document.documentElement.classList.remove('app-dark');
+        document.documentElement.style.colorScheme = 'light only';
+      }
+    })();
+  </script>
 </head>
 <body>
   <app-root></app-root>

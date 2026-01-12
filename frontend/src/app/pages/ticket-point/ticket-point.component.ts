@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { ServiceService } from '../../services/service.service';
+import { TicketPointService } from '../../services/ticket-point.service';
 import { FormsModule } from '@angular/forms';
 import { QueueService } from '../../services/queue.service';
 import { ActivatedRoute } from '@angular/router';
 import { ServiceCardComponent } from '../../components/ticket/service-card/service-card.component';
 import { Service } from '../../models/service.model';
+import { TicketPoint } from '../../models/ticket-point.model';
 import { CommonModule } from '@angular/common';
 import jsPDF from 'jspdf';
 
@@ -17,34 +19,100 @@ import jsPDF from 'jspdf';
 export class TicketPointComponent implements OnInit {
   serviceOptions: { label: string; value: string }[] = [];
   services: Service[] = [];
-  selectedService: string = ''; // No undefined, usa string vacío
+  selectedService: string = '';
+  ticketPoint: TicketPoint | null = null;
+  ticketPointId: string | null = null;
+  servicePriorityMap: Map<string, boolean> = new Map();
 
   createdCustomer: any = null;
   selectedServiceData: Service | null = null;
 
   constructor(
     private _serviceService: ServiceService,
+    private _ticketPointService: TicketPointService,
     private _queueService: QueueService,
     private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
-    // get id from route params if needed
-    const id = this.route.snapshot.paramMap.get('id');
-    // You can use the id for any specific logic if required
-    this.loadServices();
+    const ticketPointId = this.route.snapshot.paramMap.get('id');
+    this.ticketPointId = ticketPointId;
+    // Bloquear acceso a "default"
+    if (ticketPointId === 'default') {
+      console.error('Invalid ticket point ID: default');
+      return;
+    }
+    if (ticketPointId) {
+      this.loadTicketPoint(ticketPointId);
+    } else {
+      // Fallback: cargar todos los servicios si no hay ticket point
+      this.loadServices();
+    }
+  }
+
+  loadTicketPoint(id: string): void {
+    this.ticketPointId = id;
+    
+    // Primero cargar el ticket point para crear el mapa de prioridades
+    this._ticketPointService.getTicketPointById(id).subscribe({
+      next: (ticketPoint) => {
+        this.ticketPoint = ticketPoint;
+        
+        // Crear mapa de prioridades
+        this.servicePriorityMap.clear();
+        if (ticketPoint.services && ticketPoint.services.length > 0) {
+          const firstService = ticketPoint.services[0];
+          
+          // Verificar si es la nueva estructura (con prioridad)
+          if (typeof firstService === 'object' && 'service' in firstService && 'priority' in firstService) {
+            // Nueva estructura con prioridad
+            ticketPoint.services.forEach((s: any) => {
+              const serviceId = typeof s.service === 'string' 
+                ? s.service 
+                : (s.service?._id?.toString() || s.service?.toString());
+              if (serviceId) {
+                this.servicePriorityMap.set(serviceId, s.priority || false);
+              }
+            });
+          }
+        }
+        
+        // Cargar servicios filtrados por ticket point desde el backend
+        this._serviceService.getServices(id).subscribe({
+          next: (services) => {
+            this.services = services;
+            this.serviceOptions = this.services.map((service) => ({
+              label: service.name,
+              value: service._id,
+            }));
+          },
+          error: (err) => {
+            console.error('Error loading services:', err);
+          },
+        });
+      },
+      error: (err) => {
+        console.error('Error loading ticket point:', err);
+        // Fallback: cargar todos los servicios
+        this.loadServices();
+      },
+    });
   }
 
   addToQueue(service: Service): void {
     if (service) {
       this.selectedServiceData = service;
       this._queueService
-        .addToQueue(service._id)
+        .addToQueue(service._id, this.ticketPointId || undefined)
         .subscribe((response) => {
           console.log('Customer added to queue:', response);
           this.createdCustomer = response;
         });
     }
+  }
+
+  isServicePriority(service: Service): boolean {
+    return this.servicePriorityMap.get(service._id) || false;
   }
 
   loadServices(): void {

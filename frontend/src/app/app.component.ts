@@ -14,9 +14,6 @@ import { filter } from 'rxjs';
 export class AppComponent implements OnInit {
   showNavbar = true;
 
-  // Rutas públicas (sin navbar)
-  private publicRoutes = ['/login', '/register', '/screens/', '/ticket-point/'];
-
   constructor(private router: Router) {}
 
   ngOnInit(): void {
@@ -32,7 +29,15 @@ export class AppComponent implements OnInit {
   }
 
   private updateNavbarVisibility(url: string): void {
-    // Verificar si la ruta actual es pública
-    this.showNavbar = !this.publicRoutes.some(route => url.startsWith(route));
+    // Rutas públicas (sin navbar)
+    const isPublicRoute = 
+      url === '/' ||  // Landing page exacta
+      url === '/login' ||  // Login exacto
+      url === '/register' ||  // Register exacto
+      /^\/screens\/[^\/]+\/view$/.test(url) ||  // /screens/:id/view (pantalla pública)
+      /^\/ticket-point\/[^\/]+$/.test(url);  // /ticket-point/:id (punto de ticket público, sin 's')
+
+    // El navbar se muestra si NO es una ruta pública
+    this.showNavbar = !isPublicRoute;
   }
 }

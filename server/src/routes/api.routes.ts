@@ -4,6 +4,8 @@ import serviceRouter from './service.routes'
 import queueRouter from './queue.routes'
 import operatorRouter from './operator.routes'
 import screenRouter from './screen.routes'
+import ticketPointRouter from './ticket-point.routes'
+import planRouter from './plan.routes'
 import { authRouter } from './auth.routes'
 import { userRouter } from './user.routes'
 
@@ -16,5 +18,7 @@ router.use('/services', serviceRouter)
 router.use('/queue', queueRouter)
 router.use('/operators', operatorRouter)
 router.use('/screens', screenRouter)
+router.use('/ticket-points', ticketPointRouter)
+router.use('/plans', planRouter)
 
 export default router

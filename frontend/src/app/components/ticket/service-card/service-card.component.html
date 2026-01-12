@@ -1,5 +1,11 @@
-<div class="service-card" (click)="onSelectService()">
-  <h3>{{ service?.name }}</h3>
+<div class="service-card" [class.priority-service]="isPriority" (click)="onSelectService()">
+  <div class="service-header">
+    <h3>{{ service?.name }}</h3>
+    <span class="priority-badge" *ngIf="isPriority">
+      <i class="pi pi-star-fill"></i>
+      <span>VIP</span>
+    </span>
+  </div>
   <p>{{ service?.description }}</p>
 </div>
 

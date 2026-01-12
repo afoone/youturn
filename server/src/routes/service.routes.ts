@@ -1,7 +1,11 @@
 import { Router } from 'express';
 import { serviceController } from '../controllers/service.controller';
+import { authenticateToken } from '../middleware/auth.middleware';
 
 const serviceRouter = Router();
+
+// Todas las rutas requieren autenticación
+serviceRouter.use(authenticateToken);
 
 // Rutas para los servicios
 serviceRouter.get('/', serviceController.getAllServices); // Obtener todos los servicios

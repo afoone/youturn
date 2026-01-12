@@ -57,7 +57,7 @@ const serviceSchema = new Schema({
   tempReasonUnavailable: { type: String },
   childrenOfService: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Service' }],
   parentService: { type: mongoose.Schema.Types.ObjectId, ref: 'Service' },
-  enterprise: { type: mongoose.Schema.Types.ObjectId, ref: 'Enterprise', required: false },
+  enterprise: { type: mongoose.Schema.Types.ObjectId, ref: 'Enterprise', required: true },
 })
 
 export const ServiceModel = mongoose.model<Service>('Service', serviceSchema)

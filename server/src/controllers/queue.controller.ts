@@ -6,8 +6,9 @@ class QueueController {
 
   enqueueCustomer = async (req: Request, res: Response) => {
     const { serviceId } = req.params
+    const { ticketPointId } = req.body
     try {
-      const customer = await queueService.addNewCustomerToQueue(serviceId)
+      const customer = await queueService.addNewCustomerToQueue(serviceId, ticketPointId)
       res.status(200).json(customer)
     } catch (error) {
       res.status(500).json({ message: 'Error enqueuing customer', error })

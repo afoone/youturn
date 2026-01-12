@@ -3,6 +3,7 @@ import { Status } from '../models/operator.model'
 import { ServiceQueue, ServiceQueueModel } from '../models/service-queue.model'
 import { serviceQueueProvider } from '../providers/service-queue.provider'
 import { serviceProvider } from '../providers/service.provider'
+import { ticketPointProvider } from '../providers/ticket-point.provider'
 
 export class QueueService {
   // Añadir un cliente a la cola de un servicio
@@ -55,19 +56,47 @@ export class QueueService {
   //   }
   // }
 
-  async addNewCustomerToQueue(serviceId: string): Promise<Customer | null> {
+  async addNewCustomerToQueue(serviceId: string, ticketPointId?: string): Promise<Customer | null> {
     try {
       // Obtener el servicio por ID
       const service = await serviceProvider.getServiceById(serviceId)
       if (!service) {
         throw new Error('Service not found')
       }
+
+      // Determinar prioridad basada en ticketPointId si se proporciona
+      let priority = false
+      if (ticketPointId) {
+        const ticketPoint = await ticketPointProvider.getTicketPointById(ticketPointId)
+        if (ticketPoint && ticketPoint.services && ticketPoint.services.length > 0) {
+          // Verificar si es la nueva estructura (con prioridad) o la antigua
+          const firstService = ticketPoint.services[0]
+          if (typeof firstService === 'object' && 'service' in firstService && 'priority' in firstService) {
+            // Nueva estructura con prioridad
+            const servicePriority = ticketPoint.services.find((s: any) => {
+              let serviceIdStr: string
+              if (typeof s.service === 'object' && s.service?._id) {
+                serviceIdStr = s.service._id.toString()
+              } else if (typeof s.service === 'string') {
+                serviceIdStr = s.service
+              } else {
+                serviceIdStr = s.service?.toString() || ''
+              }
+              return serviceIdStr === serviceId
+            })
+            priority = servicePriority?.priority === true
+          }
+          // Si es estructura antigua, priority permanece false
+        }
+      }
+
       // Crear un nuevo cliente con el estado inicial
       const newCustomer: Customer = {
         queuedTime: Date.now(),
         status: 'QUEUED',
         serviceId,
         service,
+        priority,
       }
 
       const serviceQueue = await serviceQueueProvider.getServiceQueueByServiceIdOrCreate(serviceId)

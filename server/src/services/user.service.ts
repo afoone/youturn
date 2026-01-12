@@ -64,9 +64,18 @@ class UserService {
       await this.validateServicesForEnterprise(data.services as Types.ObjectId[], data.enterprise as Types.ObjectId)
     }
 
-    // ENTERPRISE_ADMIN no debe tener servicios
+    // Transformar operator si viene como string (operatorId)
+    if (data.operator && typeof data.operator === 'string') {
+      data.operator = new Types.ObjectId(data.operator)
+    }
+
+    // ENTERPRISE_ADMIN no debe tener servicios ni operator
     if (isEnterpriseAdmin && data.services && data.services.length > 0) {
       throw new Error('ENTERPRISE_ADMIN users cannot have associated services')
+    }
+
+    if (isEnterpriseAdmin && data.operator) {
+      throw new Error('ENTERPRISE_ADMIN users cannot have associated operator')
     }
 
     // Hash de la contraseña si se proporciona
@@ -74,10 +83,11 @@ class UserService {
       data.password = hashPassword(data.password)
     }
 
-    // Si es admin, no debe tener enterprise ni servicios
+    // Si es admin, no debe tener enterprise, servicios ni operator
     if (data.admin) {
       data.enterprise = undefined
       data.services = undefined
+      data.operator = undefined
     }
 
     const user = await userProvider.createUser(data)
@@ -145,6 +155,7 @@ class UserService {
     const finalRoles = data.roles || currentUser.roles || []
     const finalEnterprise = data.enterprise || currentUser.enterprise
     const finalServices = data.services !== undefined ? data.services : currentUser.services
+    const finalOperator = data.operator !== undefined ? data.operator : currentUser.operator
 
     const isOperator = finalRoles.includes('OPERATOR')
     const isEnterpriseAdmin = finalRoles.includes('ENTERPRISE_ADMIN')
@@ -171,15 +182,20 @@ class UserService {
       )
     }
 
-    // ENTERPRISE_ADMIN no debe tener servicios
+    // ENTERPRISE_ADMIN no debe tener servicios ni operator
     if (isEnterpriseAdmin && finalServices && finalServices.length > 0) {
       throw new Error('ENTERPRISE_ADMIN users cannot have associated services')
     }
 
-    // Si se convierte en admin, remover enterprise y servicios
+    if (isEnterpriseAdmin && finalOperator) {
+      throw new Error('ENTERPRISE_ADMIN users cannot have associated operator')
+    }
+
+    // Si se convierte en admin, remover enterprise, servicios y operator
     if (willBeAdmin) {
       data.enterprise = undefined
       data.services = undefined
+      data.operator = undefined
     }
 
     // Hash de la contraseña si se proporciona

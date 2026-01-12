@@ -25,13 +25,7 @@
 
       <!-- Right Content (80%) - Table -->
       <main class="right-content">
-        <div *ngIf="customers.length === 0" class="empty-state">
-          <div class="empty-icon">🔇</div>
-          <p class="empty-message">No hay clientes siendo llamados en este momento</p>
-          <p class="empty-submessage">Por favor, espere su turno</p>
-        </div>
-
-        <div *ngIf="customers.length > 0" class="table-container">
+        <div class="table-container">
           <table class="customers-table">
             <thead>
               <tr>
@@ -42,24 +36,25 @@
             </thead>
             <tbody>
               <tr
-                *ngFor="let customer of customers; trackBy: trackByCustomerId"
+                *ngFor="let customer of getDisplayCustomers(); trackBy: trackByCustomerId; let i = index"
                 class="customer-row"
-                [class.blinking]="isBlinking(customer._id)"
+                [class.blinking]="isBlinking(customer?._id)"
+                [class.empty-row]="!customer"
                 [@fadeIn]
               >
                 <td class="cell-ticket">
                   <div class="ticket-display">
-                    <span class="ticket-number">{{ customer.ticketNumber || 'N/A' }}</span>
+                    <span class="ticket-number">{{ customer?.ticketNumber || '' }}</span>
                   </div>
                 </td>
                 <td class="cell-operator">
                   <div class="operator-display">
-                    <span class="operator-name">{{ customer.operator?.positionName || 'Operador' }}</span>
+                    <span class="operator-name">{{ customer?.operator?.positionName || '' }}</span>
                   </div>
                 </td>
                 <td class="cell-location" *ngIf="hasLocationInfo()">
                   <div class="location-display">
-                    <span class="location-text">{{ customer.operator?.pathDescription || '-' }}</span>
+                    <span class="location-text">{{ customer?.operator?.pathDescription || '' }}</span>
                   </div>
                 </td>
               </tr>

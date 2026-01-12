@@ -1,0 +1,131 @@
+<div class="p-grid p-justify-center">
+  <div class="p-col-12 p-md-8">
+    <div class="form-container">
+      <h2 class="form-title">Crear Punto de Ticket</h2>
+      <form [formGroup]="ticketPointForm" (ngSubmit)="onSubmit()">
+        <div class="p-field">
+          <label for="name">Nombre *</label>
+          <input
+            id="name"
+            pInputText
+            formControlName="name"
+            class="p-inputtext"
+            placeholder="Ingrese el nombre del punto de ticket"
+          />
+          <small
+            class="p-error"
+            *ngIf="ticketPointForm.get('name')?.invalid && ticketPointForm.get('name')?.touched"
+          >
+            El nombre es requerido
+          </small>
+        </div>
+
+        <div class="p-field">
+          <label for="location">Ubicación</label>
+          <input
+            id="location"
+            pInputText
+            formControlName="location"
+            class="p-inputtext"
+            placeholder="Ingrese la ubicación (opcional)"
+          />
+        </div>
+
+        <div class="p-field">
+          <label for="enterprise">Empresa *</label>
+          <p-select
+            id="enterprise"
+            formControlName="enterprise"
+            [options]="availableEnterprises"
+            optionLabel="name"
+            optionValue="_id"
+            placeholder="Seleccione una empresa"
+            [disabled]="isEnterpriseAdmin"
+          ></p-select>
+          <small
+            class="p-error"
+            *ngIf="ticketPointForm.get('enterprise')?.invalid && ticketPointForm.get('enterprise')?.touched"
+          >
+            La empresa es requerida
+          </small>
+          <small *ngIf="isEnterpriseAdmin" class="p-text-secondary">
+            Su empresa ha sido asignada automáticamente
+          </small>
+        </div>
+
+        <div class="p-field">
+          <label for="services">Servicios *</label>
+          <p-multiSelect
+            id="services"
+            formControlName="services"
+            [options]="filteredServices"
+            optionLabel="name"
+            optionValue="_id"
+            placeholder="Seleccione los servicios"
+            [disabled]="!ticketPointForm.get('enterprise')?.value"
+          ></p-multiSelect>
+          <small
+            class="p-error"
+            *ngIf="ticketPointForm.get('services')?.invalid && ticketPointForm.get('services')?.touched"
+          >
+            Al menos un servicio debe ser seleccionado
+          </small>
+          <small *ngIf="!ticketPointForm.get('enterprise')?.value" class="p-text-secondary">
+            Primero seleccione una empresa
+          </small>
+        </div>
+
+        <div class="p-field" *ngIf="selectedServicesWithPriority.length > 0">
+          <label>Configurar Prioridad de Servicios</label>
+          <p-table
+            [value]="selectedServicesWithPriority"
+            styleClass="p-datatable-sm priority-table"
+            [responsive]="true"
+          >
+            <ng-template pTemplate="header">
+              <tr>
+                <th>Servicio</th>
+                <th style="width: 150px;">Prioritario</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item>
+              <tr>
+                <td>{{ typeof item.service === 'string' ? item.service : item.service.name }}</td>
+                <td>
+                  <p-checkbox
+                    [binary]="true"
+                    [(ngModel)]="item.priority"
+                    [ngModelOptions]="{standalone: true}"
+                  ></p-checkbox>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+          <small class="p-text-secondary">
+            Marque los servicios que deben tener prioridad en la cola. Los clientes que seleccionen servicios prioritarios serán atendidos primero.
+          </small>
+        </div>
+
+        <div class="form-actions">
+          <button
+            pButton
+            type="button"
+            label="Cancelar"
+            icon="pi pi-times"
+            class="p-button-secondary"
+            (click)="onCancel()"
+          ></button>
+          <button
+            pButton
+            type="submit"
+            label="Crear Punto de Ticket"
+            icon="pi pi-check"
+            class="p-button-success"
+            [disabled]="ticketPointForm.invalid"
+          ></button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+

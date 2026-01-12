@@ -10,7 +10,8 @@ export class QueueService {
 
   constructor(private _http: HttpClient) {}
 
-  addToQueue(serviceId: string): Observable<any> {
-    return this._http.post(`${this.apiUrl}/${serviceId}/enqueue`, {});
+  addToQueue(serviceId: string, ticketPointId?: string): Observable<any> {
+    const body = ticketPointId ? { ticketPointId } : {};
+    return this._http.post(`${this.apiUrl}/${serviceId}/enqueue`, body);
   }
 }

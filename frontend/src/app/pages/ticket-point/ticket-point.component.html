@@ -11,6 +11,7 @@
     <afoone-service-card
       *ngFor="let service of services"
       [service]="service"
+      [isPriority]="isServicePriority(service)"
       (selectService)="addToQueue($event)"
     ></afoone-service-card>
   </div>

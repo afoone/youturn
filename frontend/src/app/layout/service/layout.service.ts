@@ -79,6 +79,9 @@ export class LayoutService {
     private initialized = false;
 
     constructor() {
+        // Forzar modo claro inmediatamente al inicializar
+        this.forceLightMode();
+
         effect(() => {
             const config = this.layoutConfig();
             if (config) {
@@ -91,11 +94,29 @@ export class LayoutService {
 
             if (!this.initialized || !config) {
                 this.initialized = true;
+                // Asegurar que dark mode esté desactivado
+                this.layoutConfig.update((state) => ({ ...state, darkTheme: false }));
+                this.forceLightMode();
                 return;
             }
 
-            this.handleDarkModeTransition(config);
+            // Siempre forzar dark mode a false
+            if (config.darkTheme) {
+                this.layoutConfig.update((state) => ({ ...state, darkTheme: false }));
+            }
+            this.forceLightMode();
         });
+    }
+
+    private forceLightMode(): void {
+        // Eliminar clase dark del documento inmediatamente
+        if (typeof document !== 'undefined') {
+            document.documentElement.classList.remove('app-dark');
+            // Asegurar que no se agregue de nuevo
+            setTimeout(() => {
+                document.documentElement.classList.remove('app-dark');
+            }, 0);
+        }
     }
 
     private handleDarkModeTransition(config: layoutConfig): void {
@@ -120,12 +141,8 @@ export class LayoutService {
     }
 
     toggleDarkMode(config?: layoutConfig): void {
-        const _config = config || this.layoutConfig();
-        if (_config.darkTheme) {
-            document.documentElement.classList.add('app-dark');
-        } else {
-            document.documentElement.classList.remove('app-dark');
-        }
+        // Dark mode desactivado - siempre forzar modo claro
+        this.forceLightMode();
     }
 
     private onTransitionEnd() {

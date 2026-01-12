@@ -50,6 +50,22 @@ export class ScreenViewComponent implements OnInit, OnDestroy {
     // Inicializar el sonido de campana
     this.initBellSound();
 
+    // Activar el contexto de audio con un clic en la página (requerido por políticas de autoplay)
+    const activateAudio = () => {
+      if (this.audioContext && this.audioContext.state === 'suspended') {
+        this.audioContext.resume().then(() => {
+          console.log('Audio context activated');
+        }).catch(err => {
+          console.warn('Error activating audio context:', err);
+        });
+      }
+      document.removeEventListener('click', activateAudio);
+      document.removeEventListener('touchstart', activateAudio);
+    };
+    
+    document.addEventListener('click', activateAudio, { once: true });
+    document.addEventListener('touchstart', activateAudio, { once: true });
+
     // Actualizar hora cada segundo
     interval(1000)
       .pipe(takeUntil(this.destroy$))
@@ -356,60 +372,74 @@ export class ScreenViewComponent implements OnInit, OnDestroy {
   }
 
   private playBellSound(): void {
-    // Método simplificado: usar Web Audio API con contexto reutilizable
+    console.log('Intentando reproducir sonido de campana...');
+    
     try {
-      // Si no hay contexto, intentar crearlo
-      if (!this.audioContext) {
-        this.initAudioContext();
-      }
-
-      if (!this.audioContext) {
-        console.warn('No hay contexto de audio disponible');
+      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioContextClass) {
+        console.warn('Web Audio API no está disponible');
         return;
       }
 
-      // Asegurarse de que el contexto esté activo
-      const resumePromise = this.audioContext.state === 'suspended'
-        ? this.audioContext.resume()
-        : Promise.resolve();
+      const audioContext = new AudioContextClass();
+      console.log('Contexto de audio creado, estado:', audioContext.state);
 
-      resumePromise.then(() => {
-        const oscillator = this.audioContext!.createOscillator();
-        const gainNode = this.audioContext!.createGain();
+      // Función para crear el sonido
+      const createSound = () => {
+        const now = audioContext.currentTime;
+        const duration = 1.0;
 
-        oscillator.type = 'sine';
-        oscillator.frequency.setValueAtTime(800, this.audioContext!.currentTime);
-        oscillator.frequency.exponentialRampToValueAtTime(400, this.audioContext!.currentTime + 0.3);
+        // Crear múltiples osciladores para un sonido de campana rico
+        const frequencies = [
+          { freq: 523.25, gain: 0.8 },   // Do
+          { freq: 659.25, gain: 0.6 },   // Mi
+          { freq: 783.99, gain: 0.5 },   // Sol
+          { freq: 1046.5, gain: 0.4 },   // Do octava
+        ];
 
-        gainNode.gain.setValueAtTime(0.3, this.audioContext!.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext!.currentTime + 0.6);
+        frequencies.forEach(({ freq, gain: freqGain }) => {
+          const oscillator = audioContext.createOscillator();
+          const gainNode = audioContext.createGain();
 
-        oscillator.connect(gainNode);
-        gainNode.connect(this.audioContext!.destination);
+          oscillator.type = 'sine';
+          oscillator.frequency.setValueAtTime(freq, now);
 
-        oscillator.start();
-        oscillator.stop(this.audioContext!.currentTime + 0.6);
-      }).catch(error => {
-        console.warn('Error activando contexto de audio:', error);
+          // Envolvente tipo campana
+          gainNode.gain.setValueAtTime(0, now);
+          gainNode.gain.linearRampToValueAtTime(freqGain * 0.7, now + 0.01);
+          gainNode.gain.exponentialRampToValueAtTime(freqGain * 0.1, now + 0.2);
+          gainNode.gain.exponentialRampToValueAtTime(0.001, now + duration);
 
-        // Fallback: intentar con el audio pre-generado si existe
-        if (this.bellAudio?.src) {
-          this.bellAudio.currentTime = 0;
-          this.bellAudio.play().catch(err => {
-            console.warn('No se pudo reproducir el audio de campana:', err);
-          });
-        }
-      });
-    } catch (error) {
-      console.warn('Error reproduciendo sonido de campana:', error);
+          oscillator.connect(gainNode);
+          gainNode.connect(audioContext.destination);
 
-      // Fallback: intentar con el audio pre-generado si existe
-      if (this.bellAudio?.src) {
-        this.bellAudio.currentTime = 0;
-        this.bellAudio.play().catch(err => {
-          console.warn('No se pudo reproducir el audio de campana:', err);
+          oscillator.start(now);
+          oscillator.stop(now + duration);
         });
+
+        console.log('Sonido de campana iniciado');
+      };
+
+      // Activar el contexto si está suspendido
+      if (audioContext.state === 'suspended') {
+        console.log('Contexto suspendido, intentando activar...');
+        audioContext.resume().then(() => {
+          console.log('Contexto activado');
+          createSound();
+        }).catch((error) => {
+          console.warn('Error activando contexto:', error);
+          createSound(); // Intentar de todos modos
+        });
+      } else {
+        createSound();
       }
+
+      // Cerrar el contexto después de que termine el sonido
+      setTimeout(() => {
+        audioContext.close().catch(() => {});
+      }, 1200);
+    } catch (error) {
+      console.error('Error reproduciendo sonido de campana:', error);
     }
   }
 
@@ -430,11 +460,24 @@ export class ScreenViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  trackByCustomerId(index: number, customer: Customer): string | undefined {
-    return customer._id;
+  trackByCustomerId(index: number, customer: Customer | null): string | undefined {
+    return customer?._id;
   }
 
   hasLocationInfo(): boolean {
     return this.customers.some(customer => customer.operator?.pathDescription);
+  }
+
+  getDisplayCustomers(): (Customer | null)[] {
+    const MAX_ROWS = 10;
+    const displayCustomers: (Customer | null)[] = [...this.customers];
+    
+    // Rellenar hasta 10 filas con null si es necesario
+    while (displayCustomers.length < MAX_ROWS) {
+      displayCustomers.push(null);
+    }
+    
+    // Limitar a máximo 10 filas
+    return displayCustomers.slice(0, MAX_ROWS);
   }
 }

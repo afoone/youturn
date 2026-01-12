@@ -1,4 +1,4 @@
-import { Component, Renderer2, ViewChild } from '@angular/core';
+import { Component, Renderer2, ViewChild, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { filter, Subscription } from 'rxjs';
@@ -23,7 +23,7 @@ import { LayoutService } from '../service/layout.service';
         <div class="layout-mask animate-fadein"></div>
     </div> `
 })
-export class AppLayout {
+export class AppLayout implements OnInit {
     overlayMenuOpenSubscription: Subscription;
 
     menuOutsideClickListener: any;
@@ -54,6 +54,17 @@ export class AppLayout {
         this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
             this.hideMenu();
         });
+    }
+
+    ngOnInit(): void {
+        // Forzar modo claro al inicializar el componente
+        if (typeof document !== 'undefined') {
+            document.documentElement.classList.remove('app-dark');
+            // Asegurar que se mantenga en modo claro
+            setTimeout(() => {
+                document.documentElement.classList.remove('app-dark');
+            }, 0);
+        }
     }
 
     isOutsideClicked(event: MouseEvent) {

@@ -29,6 +29,7 @@
           <th>Nombre</th>
           <th>Descripción</th>
           <th>Prefijo</th>
+          <th>Empresa</th>
           <th>Acciones</th>
         </tr>
       </ng-template>
@@ -38,6 +39,12 @@
           <td>{{ service.description || '-' }}</td>
           <td>
             <span class="prefix-badge">{{ service.prefix }}</span>
+          </td>
+          <td>
+            <span *ngIf="service.enterprise" class="enterprise-name">
+              {{ getEnterpriseName(service.enterprise) }}
+            </span>
+            <span *ngIf="!service.enterprise" class="text-muted">-</span>
           </td>
           <td>
             <div class="action-buttons">

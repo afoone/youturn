@@ -5,9 +5,11 @@ import { CommonModule } from '@angular/common';
 import { UserService } from '../../../services/user.service';
 import { EnterpriseService } from '../../../services/enterprise.service';
 import { ServiceService } from '../../../services/service.service';
+import { OperatorService } from '../../../services/operator.service';
 import { AuthService } from '../../../services/auth.service';
 import { Enterprise } from '../../../models/enterprise.model';
 import { Service } from '../../../models/service.model';
+import { Operator } from '../../../models/operator.type';
 import { VALID_ROLES } from '../../../models/user.model';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputTextarea } from 'primeng/inputtextarea';
@@ -43,6 +45,8 @@ export class UserCreateComponent implements OnInit {
   enterprises: Enterprise[] = [];
   availableServices: Service[] = [];
   filteredServices: Service[] = [];
+  availableOperators: Operator[] = [];
+  filteredOperators: Operator[] = [];
   validRoles = VALID_ROLES.map(role => ({ label: role, value: role }));
   
   // Controles para checkboxes de roles
@@ -59,6 +63,7 @@ export class UserCreateComponent implements OnInit {
     private userService: UserService,
     private enterpriseService: EnterpriseService,
     private serviceService: ServiceService,
+    private operatorService: OperatorService,
     private authService: AuthService,
     public router: Router
   ) {
@@ -75,6 +80,7 @@ export class UserCreateComponent implements OnInit {
       enterpriseId: [''],
       roles: [[]],
       services: [[]],
+      operatorId: [''],
       active: [true]
     });
   }
@@ -98,6 +104,7 @@ export class UserCreateComponent implements OnInit {
     
     this.loadEnterprises();
     this.loadServices();
+    this.loadOperators();
     
     // Validación condicional: enterprise requerido si no es admin
     this.userForm.get('admin')?.valueChanges.subscribe(isAdmin => {
@@ -106,15 +113,21 @@ export class UserCreateComponent implements OnInit {
         enterpriseControl?.clearValidators();
         enterpriseControl?.setValue('');
         this.userForm.get('services')?.setValue([]);
+        this.userForm.get('operatorId')?.setValue('');
       } else {
         enterpriseControl?.setValidators([Validators.required]);
       }
       enterpriseControl?.updateValueAndValidity();
+      // Actualizar validación de operator cuando cambia admin
+      this.updateOperatorValidation();
     });
 
-    // Filtrar servicios cuando cambia la enterprise
+    // Filtrar servicios y operators cuando cambia la enterprise
     this.userForm.get('enterpriseId')?.valueChanges.subscribe(enterpriseId => {
       this.filterServicesByEnterprise(enterpriseId);
+      this.filterOperatorsByEnterprise(enterpriseId);
+      // Actualizar validación de operator cuando cambia la enterprise
+      this.updateOperatorValidation();
     });
 
     // Sincronizar checkboxes con el array de roles
@@ -122,10 +135,14 @@ export class UserCreateComponent implements OnInit {
       this.updateRolesFromCheckboxes();
     });
     
+    // Validación condicional: operator requerido si es OPERATOR
     this.operatorControl.valueChanges.subscribe(checked => {
       this.updateRolesFromCheckboxes();
-      // Limpiar servicios si se desmarca OPERATOR
+      this.updateOperatorValidation();
       if (!checked) {
+        // Si se desmarca OPERATOR, limpiar
+        const operatorControl = this.userForm.get('operatorId');
+        operatorControl?.setValue('');
         this.userForm.get('services')?.setValue([]);
       }
     });
@@ -152,6 +169,29 @@ export class UserCreateComponent implements OnInit {
         console.error('Error loading services:', error);
       }
     });
+  }
+
+  loadOperators(): void {
+    this.operatorService.getOperators().subscribe({
+      next: (operators) => {
+        this.availableOperators = operators;
+        this.filterOperatorsByEnterprise(this.userForm.get('enterpriseId')?.value);
+      },
+      error: (error) => {
+        console.error('Error loading operators:', error);
+      }
+    });
+  }
+
+  filterOperatorsByEnterprise(enterpriseId: string | null): void {
+    if (!enterpriseId) {
+      this.filteredOperators = [];
+      return;
+    }
+
+    // Filtrar operators - por ahora mostrar todos, ya que Operator no tiene campo enterprise
+    // Si en el futuro se agrega, aplicar el mismo filtro que con services
+    this.filteredOperators = this.availableOperators;
   }
 
   filterServicesByEnterprise(enterpriseId: string | null): void {
@@ -189,6 +229,21 @@ export class UserCreateComponent implements OnInit {
     return this.operatorControl.value === true;
   }
 
+  private updateOperatorValidation(): void {
+    const operatorControl = this.userForm.get('operatorId');
+    const isOperator = this.isOperator();
+    const isAdmin = this.userForm.get('admin')?.value;
+    const hasEnterprise = !!this.userForm.get('enterpriseId')?.value;
+    
+    // Solo requerir operator si: es OPERATOR, no es admin, y tiene enterprise seleccionada
+    if (isOperator && !isAdmin && hasEnterprise) {
+      operatorControl?.setValidators([Validators.required]);
+    } else {
+      operatorControl?.clearValidators();
+    }
+    operatorControl?.updateValueAndValidity();
+  }
+
   onSubmit(): void {
     if (this.userForm.invalid) {
       return;
@@ -221,9 +276,14 @@ export class UserCreateComponent implements OnInit {
       userData.enterprise = formValue.enterpriseId;
     }
 
-    // Incluir servicios si el usuario es OPERATOR
-    if (this.isOperator() && formValue.services && formValue.services.length > 0) {
-      userData.services = formValue.services;
+    // Incluir servicios y operator si el usuario es OPERATOR
+    if (this.isOperator()) {
+      if (formValue.services && formValue.services.length > 0) {
+        userData.services = formValue.services;
+      }
+      if (formValue.operatorId) {
+        userData.operator = formValue.operatorId;
+      }
     }
 
     this.userService.createUser(userData).subscribe({

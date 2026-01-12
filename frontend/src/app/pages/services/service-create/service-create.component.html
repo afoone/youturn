@@ -31,7 +31,7 @@
       </div>
 
       <div class="p-field">
-        <label for="prefix">prefix</label>
+        <label for="prefix">Prefijo *</label>
         <input
           id="prefix"
           type="prefix"
@@ -39,12 +39,44 @@
           formControlName="prefix"
           class="p-inputtext"
         />
+        <small
+          class="p-error"
+          *ngIf="
+            serviceForm.get('prefix')?.invalid && serviceForm.get('prefix')?.touched
+          "
+        >
+          El prefijo es requerido
+        </small>
+      </div>
+
+      <div class="p-field">
+        <label for="enterprise">Empresa *</label>
+        <p-select
+          id="enterprise"
+          formControlName="enterprise"
+          [options]="enterprises"
+          optionLabel="name"
+          optionValue="_id"
+          placeholder="Selecciona una empresa"
+          [disabled]="isEnterpriseAdmin"
+        ></p-select>
+        <small
+          class="p-error"
+          *ngIf="
+            serviceForm.get('enterprise')?.invalid && serviceForm.get('enterprise')?.touched
+          "
+        >
+          La empresa es requerida
+        </small>
+        <small *ngIf="isEnterpriseAdmin" class="p-text-secondary">
+          Su empresa ha sido asignada automáticamente
+        </small>
       </div>
 
       <button
         pButton
         type="submit"
-        label="Create Service"
+        label="Crear Servicio"
         icon="pi pi-check"
         class="p-button-success"
         [disabled]="serviceForm.invalid"

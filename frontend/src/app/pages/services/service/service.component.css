@@ -2,8 +2,7 @@
 .list-container {
   padding: 2rem;
   background-color: #f9fafb;
-  min-height: calc(100vh - 4rem);
-  margin-top: 4rem;
+  min-height: calc(100vh - 6rem);
 }
 
 .list-header {
@@ -93,6 +92,16 @@
 .service-name {
   color: #374151;
   font-weight: 500;
+}
+
+.enterprise-name {
+  color: #374151;
+  font-weight: 500;
+}
+
+.text-muted {
+  color: #9ca3af;
+  font-style: italic;
 }
 
 .prefix-badge {
