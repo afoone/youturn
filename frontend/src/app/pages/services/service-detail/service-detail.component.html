@@ -1,69 +1,47 @@
-<form [formGroup]="serviceForm" (ngSubmit)="onSubmit()">
-  <div class="p-fluid">
-    <label for="name">Name</label>
-    <input pInputText id="name" formControlName="name" />
-    <small
-      *ngIf="
-        serviceForm.get('name')?.invalid && serviceForm.get('name')?.touched
-      "
-      class="p-error"
-    >
-      Name is required
-    </small>
-
-    <label for="description">Description</label>
-    <input pInputText id="description" formControlName="description" />
-    <small
-      *ngIf="
-        serviceForm.get('description')?.invalid &&
-        serviceForm.get('description')?.touched
-      "
-      class="p-error"
-    >
-      Description is required
-    </small>
-
-    <label for="prefix">Prefijo *</label>
-    <input pInputText id="prefix" formControlName="prefix" />
-    <small
-      *ngIf="
-        serviceForm.get('prefix')?.invalid &&
-        serviceForm.get('prefix')?.touched
-      "
-      class="p-error"
-    >
-      El prefijo es requerido
-    </small>
-
-    <label for="enterprise">Empresa *</label>
-    <p-select
-      id="enterprise"
-      formControlName="enterprise"
-      [options]="enterprises"
-      optionLabel="name"
-      optionValue="_id"
-      placeholder="Selecciona una empresa"
-      [disabled]="isEnterpriseAdmin"
-    ></p-select>
-    <small
-      *ngIf="
-        serviceForm.get('enterprise')?.invalid &&
-        serviceForm.get('enterprise')?.touched
-      "
-      class="p-error"
-    >
-      La empresa es requerida
-    </small>
-    <small *ngIf="isEnterpriseAdmin" class="p-text-secondary">
-      Su empresa ha sido asignada automáticamente
-    </small>
-
-    <button
-      pButton
-      type="submit"
-      label="Guardar"
-      class="p-mt-3"
-      [disabled]="serviceForm.invalid"
-    ></button>
+<div class="app-form-layout">
+  <div class="app-form-card">
+    <h2 class="form-title">Editar Servicio</h2>
+    <form [formGroup]="serviceForm" (ngSubmit)="onSubmit()">
+      <div class="p-field">
+        <label for="name">Nombre *</label>
+        <input id="name" pInputText formControlName="name" class="p-inputtext" />
+        <small class="p-error" *ngIf="serviceForm.get('name')?.invalid && serviceForm.get('name')?.touched">
+          El nombre es requerido
+        </small>
+      </div>
+      <div class="p-field">
+        <label for="description">Descripción</label>
+        <input id="description" pInputText formControlName="description" class="p-inputtext" />
+      </div>
+      <div class="p-field">
+        <label for="prefix">Prefijo *</label>
+        <input id="prefix" pInputText formControlName="prefix" class="p-inputtext" />
+        <small class="p-error" *ngIf="serviceForm.get('prefix')?.invalid && serviceForm.get('prefix')?.touched">
+          El prefijo es requerido
+        </small>
+      </div>
+      <div class="p-field">
+        <label for="enterprise">Empresa *</label>
+        <p-select
+          id="enterprise"
+          formControlName="enterprise"
+          [options]="enterprises"
+          optionLabel="name"
+          optionValue="_id"
+          placeholder="Selecciona una empresa"
+          [disabled]="isEnterpriseAdmin"
+        ></p-select>
+        <small class="p-error" *ngIf="serviceForm.get('enterprise')?.invalid && serviceForm.get('enterprise')?.touched">
+          La empresa es requerida
+        </small>
+        <small *ngIf="isEnterpriseAdmin" class="p-text-secondary">
+          Su empresa ha sido asignada automáticamente
+        </small>
+      </div>
+      <div class="form-actions">
+        <button pButton type="button" label="Cancelar" icon="pi pi-times" class="p-button-secondary" (click)="onCancel()"></button>
+        <button pButton type="submit" label="Guardar" icon="pi pi-check" class="p-button-success" [disabled]="serviceForm.invalid"></button>
+      </div>
+    </form>
   </div>
-</form>
+</div>

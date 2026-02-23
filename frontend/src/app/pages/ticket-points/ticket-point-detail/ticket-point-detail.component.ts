@@ -7,8 +7,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import { MultiSelect } from 'primeng/multiselect';
-import { AgGridAngular } from 'ag-grid-angular';
-import { ColDef, Theme, themeQuartz } from 'ag-grid-community';
+import { TableModule } from 'primeng/table';
 import { CheckboxModule } from 'primeng/checkbox';
 import { TicketPointService } from '../../../services/ticket-point.service';
 import { ServiceService } from '../../../services/service.service';
@@ -29,7 +28,7 @@ import { Enterprise } from '../../../models/enterprise.model';
     InputTextModule,
     SelectModule,
     MultiSelect,
-    AgGridAngular,
+    TableModule,
     CheckboxModule,
   ],
   templateUrl: './ticket-point-detail.component.html',
@@ -44,14 +43,6 @@ export class TicketPointDetailComponent implements OnInit {
   currentUser: any = null;
   isEnterpriseAdmin: boolean = false;
   selectedServicesWithPriority: Array<{ service: Service; priority: boolean }> = [];
-
-  // AG Grid config
-  columnDefs: ColDef[] = [];
-  defaultColDef: ColDef = {
-    flex: 1,
-    minWidth: 100,
-  };
-  myTheme: Theme | "legacy" = themeQuartz;
 
   constructor(
     private fb: FormBuilder,
@@ -81,7 +72,6 @@ export class TicketPointDetailComponent implements OnInit {
 
     this.loadEnterprises();
     this.loadServices();
-    this.setupColumns();
 
     // Filtrar servicios cuando cambie la empresa
     this.ticketPointForm.get('enterprise')?.valueChanges.subscribe(enterpriseId => {
@@ -249,36 +239,8 @@ export class TicketPointDetailComponent implements OnInit {
     this.selectedServicesWithPriority = [...this.selectedServicesWithPriority];
   }
 
-  setupColumns() {
-    this.columnDefs = [
-      {
-        field: 'service',
-        headerName: 'Servicio',
-        valueGetter: params => {
-          return typeof params.data.service === 'string'
-            ? params.data.service
-            : params.data.service.name;
-        }
-      },
-      {
-        field: 'priority',
-        headerName: 'Prioritario',
-        width: 150,
-        flex: 0,
-        cellRenderer: (params: any) => {
-          const input = document.createElement('input');
-          input.type = 'checkbox';
-          input.checked = params.data.priority;
-          input.style.width = '18px';
-          input.style.height = '18px';
-          input.style.cursor = 'pointer';
-          input.onchange = () => {
-            params.data.priority = input.checked;
-          };
-          return input;
-        }
-      }
-    ];
+  getServiceName(item: { service: Service; priority: boolean }): string {
+    return typeof item.service === 'string' ? item.service : (item.service?.name ?? '');
   }
 
   togglePriority(serviceId: string): void {

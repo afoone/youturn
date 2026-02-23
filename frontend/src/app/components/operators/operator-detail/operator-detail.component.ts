@@ -99,4 +99,8 @@ export class OperatorDetailComponent implements OnInit {
       error: (err) => console.error('Error updating operator:', err),
     });
   }
+
+  onCancel() {
+    this.router.navigate(['/operators']);
+  }
 }

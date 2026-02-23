@@ -33,14 +33,14 @@ export class EnterpriseCreateComponent {
 
   onSubmit() {
     if (this.enterpriseForm.invalid) return;
-
-    const enterpriseData: Omit<Enterprise, '_id'> = {
-      ...this.enterpriseForm.value
-    };
-
+    const enterpriseData: Omit<Enterprise, '_id'> = { ...this.enterpriseForm.value };
     this.enterpriseService.createEnterprise(enterpriseData).subscribe({
       next: () => this.router.navigate(['/enterprises']),
       error: (error) => console.error('Error creating enterprise:', error)
     });
+  }
+
+  onCancel() {
+    this.router.navigate(['/enterprises']);
   }
 }

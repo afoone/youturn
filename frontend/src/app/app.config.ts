@@ -14,6 +14,9 @@ export const appConfig: ApplicationConfig = {
     providePrimeNG({
       theme: {
         preset: Aura,
+        options: {
+          darkModeSelector: false, // desactivar dark mode: solo Aura en modo claro
+        },
       },
     }),
     provideZoneChangeDetection({ eventCoalescing: true }),

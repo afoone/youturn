@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { OperatorService } from '../../services/operator.service';
 import { ServiceService } from '../../services/service.service';
@@ -21,6 +21,8 @@ interface WaitingService {
 
 @Component({
   selector: 'afoone-operator-board',
+  encapsulation: ViewEncapsulation.None,
+  host: { class: 'operator-dashboard-host' },
   imports: [
     ButtonModule,
     CardModule,
@@ -184,7 +186,8 @@ export class OperatorBoardComponent implements OnInit, OnDestroy {
         next: (response) => {
           this.selectedCustomer = response;
           this.loadingCustomer = false;
-          this.getWaitingRoom();
+          // Refresh waiting count after removing customer from queue (allow backend to commit)
+          setTimeout(() => this.getWaitingRoom(), 100);
         },
         error: (error) => {
           console.error('Error attending customer:', error);

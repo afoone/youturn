@@ -1,5 +1,6 @@
-<div class="p-grid p-justify-center">
-  <div class="p-col-12 p-md-6">
+<div class="app-form-layout">
+  <div class="app-form-card">
+    <h2 class="form-title">Editar Operador</h2>
     <form [formGroup]="operatorForm" (ngSubmit)="onSubmit()">
       <div class="p-field">
         <label for="positionName">Position Name *</label>
@@ -54,23 +55,9 @@
         />
       </div>
 
-      <div class="p-field">
-        <button
-          pButton
-          type="submit"
-          label="Save"
-          icon="pi pi-check"
-          class="p-button-success"
-          [disabled]="operatorForm.invalid"
-        ></button>
-        <button
-          pButton
-          type="button"
-          label="Cancel"
-          icon="pi pi-times"
-          class="p-button-secondary p-ml-2"
-          (click)="router.navigate(['/operators'])"
-        ></button>
+      <div class="form-actions">
+        <button pButton type="button" label="Cancelar" icon="pi pi-times" class="p-button-secondary" (click)="onCancel()"></button>
+        <button pButton type="submit" label="Guardar" icon="pi pi-check" class="p-button-success" [disabled]="operatorForm.invalid"></button>
       </div>
     </form>
   </div>

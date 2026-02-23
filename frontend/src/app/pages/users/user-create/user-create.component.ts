@@ -297,5 +297,9 @@ export class UserCreateComponent implements OnInit {
       }
     });
   }
+
+  onCancel() {
+    this.router.navigate(['/users']);
+  }
 }
 

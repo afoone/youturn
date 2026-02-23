@@ -120,4 +120,8 @@ export class ServiceDetailComponent implements OnInit {
       error: (err: any) => console.error('Error updating service:', err),
     });
   }
+
+  onCancel() {
+    this.router.navigate(['/services']);
+  }
 }

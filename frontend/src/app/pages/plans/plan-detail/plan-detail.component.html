@@ -1,8 +1,7 @@
-<div class="p-grid p-justify-center">
-  <div class="p-col-12 p-md-8">
-    <div class="form-container">
-      <h2 class="form-title">Editar Plan</h2>
-      <form [formGroup]="planForm" (ngSubmit)="onSubmit()">
+<div class="app-form-layout">
+  <div class="app-form-card">
+    <h2 class="form-title">Editar Plan</h2>
+    <form [formGroup]="planForm" (ngSubmit)="onSubmit()">
         <div class="p-field">
           <label for="codigo">Código *</label>
           <input
@@ -143,8 +142,6 @@
             [disabled]="planForm.invalid"
           ></button>
         </div>
-      </form>
-    </div>
+    </form>
   </div>
 </div>
-

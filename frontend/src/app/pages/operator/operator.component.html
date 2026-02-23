@@ -5,164 +5,116 @@
     <p>Cargando operador...</p>
   </div>
 
-  <!-- Main Content -->
-  <div *ngIf="!loading && selectedOperator" class="dashboard-content">
-    <!-- Operator Header -->
-    <div class="operator-header">
-      <div class="header-info">
-        <h1 class="operator-name">{{ selectedOperator.positionName }}</h1>
-        <p *ngIf="selectedOperator.description" class="operator-description">
-          {{ selectedOperator.description }}
-        </p>
-        <p *ngIf="selectedOperator.pathDescription" class="operator-path">
-          📍 {{ selectedOperator.pathDescription }}
-        </p>
+  <!-- Contenido principal (sin sidebar: el menú va aparte) -->
+  <main *ngIf="!loading && selectedOperator" class="main-container">
+    <!-- Encabezado -->
+    <header class="header">
+      <div class="station-info">
+        <h1>{{ selectedOperator.positionName }}</h1>
+        <span>{{ selectedOperator.description || selectedOperator.pathDescription || 'Operador' }}</span>
       </div>
-      <div class="header-stats">
-        <div class="stat-card">
-          <div class="stat-value">{{ totalWaiting }}</div>
-          <div class="stat-label">En Cola</div>
-        </div>
+      <div class="station-info station-info-right">
+        <h2>{{ totalWaiting }} EN COLA</h2>
+        <span>Total en sistema</span>
       </div>
-    </div>
+    </header>
 
-    <!-- Main Grid -->
+    <!-- Grid: cola estrecha | atención ancha -->
     <div class="dashboard-grid">
-      <!-- Waiting Room Card -->
-      <p-card class="waiting-room-card" header="Sala de Espera">
-        <div class="waiting-room-content">
-          <div *ngIf="waitingServices.length === 0" class="empty-state">
-            <p>No hay clientes en espera</p>
-          </div>
-          <div *ngIf="waitingServices.length > 0" class="services-list">
-            <div
-              *ngFor="let service of waitingServices"
-              class="service-item"
-              [class.has-waiting]="service.count > 0"
-            >
-              <div class="service-info">
-                <span class="service-name">{{ service.label }}</span>
-                <p-badge
-                  [value]="service.count || 0"
-                  [severity]="service.count > 0 ? 'warn' : 'success'"
-                ></p-badge>
-              </div>
-              <div class="service-count">
-                {{ service.count || 0 }} cliente{{ (service.count || 0) !== 1 ? 's' : '' }}
-              </div>
-            </div>
-          </div>
-        </div>
-      </p-card>
+      <!-- Columna izquierda: Salas de espera -->
+      <section class="queues-section">
+        <h3 class="section-title">Salas de Espera</h3>
 
-      <!-- Current Customer Card -->
-      <p-card
-        class="customer-card"
-        [header]="selectedCustomer ? 'Cliente Actual' : 'Sin Cliente'"
-      >
-        <div *ngIf="!selectedCustomer" class="empty-state">
-          <div class="empty-icon">👤</div>
-          <p>No hay cliente en servicio</p>
+        <div *ngIf="waitingServices.length === 0" class="empty-queues">
+          No hay clientes en espera
+        </div>
+        <div *ngFor="let service of waitingServices" class="queue-card" [class.queue-danger]="(service.count || 0) > 5" [class.queue-accent]="(service.count || 0) > 0 && (service.count || 0) <= 5">
+          <div class="queue-name">{{ service.label }}</div>
+          <div class="queue-count">{{ service.count || 0 }} cliente{{ (service.count || 0) !== 1 ? 's' : '' }}</div>
+        </div>
+      </section>
+
+      <!-- Columna derecha: Atención -->
+      <section class="attention-section">
+        <!-- Tarjeta del cliente actual -->
+        <div class="current-client-card">
+          <ng-container *ngIf="!selectedCustomer">
+            <span class="client-label">SIN CLIENTE</span>
+            <p class="client-empty">No hay cliente en servicio</p>
+            <p-button
+              label="Llamar Siguiente Cliente"
+              icon="pi pi-phone"
+              (onClick)="nextCustomer()"
+              [loading]="loadingCustomer"
+              class="btn btn-primary btn-call-next"
+            ></p-button>
+          </ng-container>
+
+          <ng-container *ngIf="selectedCustomer">
+            <span class="client-label">CLIENTE ACTUAL</span>
+            <div class="ticket-number">{{ selectedCustomer.ticketNumber || 'N/A' }}</div>
+            <div class="client-data" *ngIf="selectedCustomer.inputData">{{ selectedCustomer.inputData }}</div>
+            <div class="wait-time">Tiempo de espera: {{ getWaitingTime(selectedCustomer.queuedTime) }}</div>
+          </ng-container>
+        </div>
+
+        <!-- Cambiar servicio (solo cuando está en servicio) -->
+        <div *ngIf="selectedCustomer?.status === 'IN_SERVICE'" class="control-panel change-service-panel">
+          <p-select
+            [options]="services"
+            [(ngModel)]="selectedNewService"
+            optionLabel="name"
+            placeholder="Cambiar a otro servicio"
+            [showClear]="true"
+            class="service-dropdown"
+          ></p-select>
           <p-button
-            label="Llamar Siguiente Cliente"
-            icon="pi pi-phone"
-            (onClick)="nextCustomer()"
+            label="Cambiar Servicio"
+            icon="pi pi-exchange"
+            (onClick)="changeCustomerService()"
             [loading]="loadingCustomer"
-            class="next-customer-btn"
+            [disabled]="!selectedNewService || selectedCustomer?.serviceId === selectedNewService._id"
+            class="btn btn-secondary"
           ></p-button>
         </div>
 
-        <div *ngIf="selectedCustomer" class="customer-content">
-          <div class="customer-header">
-            <div class="ticket-display">
-              <span class="ticket-label">Ticket</span>
-              <span class="ticket-number">{{ selectedCustomer.ticketNumber || 'N/A' }}</span>
-            </div>
-            <p-badge
-              [value]="getStatusLabel(selectedCustomer.status)"
-              [severity]="
-                selectedCustomer.status === 'CALLING'
-                  ? 'warn'
-                  : selectedCustomer.status === 'IN_SERVICE'
-                  ? 'info'
-                  : 'success'
-              "
-              [class]="getStatusBadgeClass(selectedCustomer.status)"
-            ></p-badge>
-          </div>
-
-          <div class="customer-details">
-            <div class="detail-item">
-              <span class="detail-label">⏱️ Tiempo de espera:</span>
-              <span class="detail-value">{{
-                getWaitingTime(selectedCustomer.queuedTime)
-              }}</span>
-            </div>
-            <div class="detail-item" *ngIf="selectedCustomer.inputData">
-              <span class="detail-label">📝 Datos:</span>
-              <span class="detail-value">{{ selectedCustomer.inputData }}</span>
-            </div>
-          </div>
-
-          <div class="customer-actions">
-      <p-button
-        *ngIf="selectedCustomer.status === 'CALLING'"
+        <!-- Botonera de acciones (solo con cliente) -->
+        <div *ngIf="selectedCustomer" class="control-panel">
+          <div class="btn-group">
+            <p-button
+              *ngIf="selectedCustomer?.status === 'CALLING'"
               label="Atender Cliente"
               icon="pi pi-check"
-        (onClick)="attendCustomer()"
+              (onClick)="attendCustomer()"
               [loading]="loadingCustomer"
-              severity="success"
-              class="action-button"
-      ></p-button>
+              class="btn btn-primary"
+            ></p-button>
             <p-button
-              *ngIf="selectedCustomer.status === 'CALLING'"
+              *ngIf="selectedCustomer?.status === 'CALLING'"
               label="Rellamar"
               icon="pi pi-bell"
               (onClick)="recallCustomer()"
               [loading]="loadingCustomer"
-              severity="warn"
-              class="action-button"
-            ></p-button>
-            <div *ngIf="selectedCustomer.status === 'IN_SERVICE'" class="change-service-section">
-              <p-select
-                [options]="services"
-                [(ngModel)]="selectedNewService"
-                optionLabel="name"
-                placeholder="Cambiar a otro servicio"
-                [showClear]="true"
-                class="service-dropdown"
-              ></p-select>
-              <p-button
-                label="Cambiar Servicio"
-                icon="pi pi-exchange"
-                (onClick)="changeCustomerService()"
-                [loading]="loadingCustomer"
-                [disabled]="!selectedNewService || selectedCustomer.serviceId === selectedNewService._id"
-                severity="warn"
-                class="action-button"
-              ></p-button>
-            </div>
-      <p-button
-        *ngIf="selectedCustomer.status === 'IN_SERVICE'"
-              label="Completar Servicio"
-              icon="pi pi-check-circle"
-        (onClick)="completeService()"
-              [loading]="loadingCustomer"
-              severity="info"
-              class="action-button"
+              class="btn btn-secondary"
             ></p-button>
             <p-button
-              *ngIf="selectedCustomer.status !== 'IN_SERVICE'"
+              *ngIf="selectedCustomer?.status === 'IN_SERVICE'"
+              label="Completar Servicio"
+              icon="pi pi-check-circle"
+              (onClick)="completeService()"
+              [loading]="loadingCustomer"
+              class="btn btn-primary"
+            ></p-button>
+            <p-button
               label="Siguiente Cliente"
               icon="pi pi-arrow-right"
               (onClick)="nextCustomer()"
               [loading]="loadingCustomer"
-              severity="secondary"
-              class="action-button"
-      ></p-button>
+              class="btn btn-danger"
+            ></p-button>
           </div>
         </div>
-      </p-card>
+      </section>
     </div>
-  </div>
+  </main>
 </div>

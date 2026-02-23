@@ -1,11 +1,6 @@
-<div class="user-form-container">
-  <p-card>
-    <ng-template pTemplate="header">
-      <div class="form-header">
-        <h2>Editar Usuario</h2>
-      </div>
-    </ng-template>
-
+<div class="app-form-layout">
+  <div class="app-form-card">
+    <h2 class="form-title">Editar Usuario</h2>
     <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
       <div class="p-fluid">
         <div class="p-field">
@@ -190,24 +185,11 @@
         ></p-message>
 
         <div class="form-actions">
-          <p-button
-            type="submit"
-            label="Guardar Cambios"
-            icon="pi pi-check"
-            [loading]="loading"
-            [disabled]="userForm.invalid"
-            styleClass="p-button-success"
-          ></p-button>
-          <p-button
-            type="button"
-            label="Cancelar"
-            icon="pi pi-times"
-            (click)="router.navigate(['/users'])"
-            styleClass="p-button-secondary"
-          ></p-button>
+          <button pButton type="button" label="Cancelar" icon="pi pi-times" class="p-button-secondary" (click)="onCancel()"></button>
+          <button pButton type="submit" label="Guardar Cambios" icon="pi pi-check" class="p-button-success" [loading]="loading" [disabled]="userForm.invalid"></button>
         </div>
       </div>
     </form>
-  </p-card>
+  </div>
 </div>
 

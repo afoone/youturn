@@ -1,8 +1,7 @@
-<div class="p-grid p-justify-center">
-  <div class="p-col-12 p-md-8">
-    <div class="form-container">
-      <h2 class="form-title">Crear Punto de Ticket</h2>
-      <form [formGroup]="ticketPointForm" (ngSubmit)="onSubmit()">
+<div class="app-form-layout">
+  <div class="app-form-card">
+    <h2 class="form-title">Crear Punto de Ticket</h2>
+    <form [formGroup]="ticketPointForm" (ngSubmit)="onSubmit()">
         <div class="p-field">
           <label for="name">Nombre *</label>
           <input id="name" pInputText formControlName="name" class="p-inputtext"
@@ -47,9 +46,22 @@
 
         <div class="p-field" *ngIf="selectedServicesWithPriority.length > 0">
           <label>Configurar Prioridad de Servicios</label>
-          <ag-grid-angular style="width: 100%; height: 250px;" [class]="myTheme"
-            [rowData]="selectedServicesWithPriority" [columnDefs]="columnDefs" [defaultColDef]="defaultColDef">
-          </ag-grid-angular>
+          <p-table [value]="selectedServicesWithPriority" styleClass="p-datatable-sm" [tableStyle]="{ 'min-width': '20rem' }">
+            <ng-template pTemplate="header">
+              <tr>
+                <th>Servicio</th>
+                <th style="width: 120px;">Prioritario</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item>
+              <tr>
+                <td>{{ getServiceName(item) }}</td>
+                <td>
+                  <p-checkbox [binary]="true" [(ngModel)]="item.priority" [ngModelOptions]="{standalone: true}"></p-checkbox>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
           <small class="p-text-secondary">
             Marque los servicios que deben tener prioridad en la cola. Los clientes que seleccionen servicios
             prioritarios serán atendidos primero.
@@ -62,7 +74,6 @@
           <button pButton type="submit" label="Crear Punto de Ticket" icon="pi pi-check" class="p-button-success"
             [disabled]="ticketPointForm.invalid"></button>
         </div>
-      </form>
-    </div>
+    </form>
   </div>
 </div>

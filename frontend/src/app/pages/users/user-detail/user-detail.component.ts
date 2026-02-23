@@ -376,5 +376,9 @@ export class UserDetailComponent implements OnInit {
       }
     });
   }
+
+  onCancel() {
+    this.router.navigate(['/users']);
+  }
 }
 

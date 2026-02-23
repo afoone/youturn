@@ -93,4 +93,8 @@ export class ServiceCreateComponent implements OnInit {
       error: (error) => console.error('Error creating service:', error),
     });
   }
+
+  onCancel() {
+    this.router.navigate(['/services']);
+  }
 }

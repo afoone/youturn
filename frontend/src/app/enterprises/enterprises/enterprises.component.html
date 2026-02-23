@@ -9,9 +9,39 @@
   </div>
 
   <div class="list-content">
-    <ag-grid-angular style="width: 100%; height: 500px;" [class]="myTheme" [rowData]="enterprises"
-      [columnDefs]="columnDefs" [defaultColDef]="defaultColDef" [pagination]="true" [paginationPageSize]="10"
-      [paginationPageSizeSelector]="[10, 25, 50]">
-    </ag-grid-angular>
+    <p-table [value]="enterprises" [loading]="loading" [paginator]="true" [rows]="10"
+      [rowsPerPageOptions]="[10, 25, 50]" [showCurrentPageReport]="true" currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords}"
+      styleClass="p-datatable-sm p-datatable-striped" [tableStyle]="{ 'min-width': '50rem' }">
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="name">Nombre <p-sortIcon field="name"></p-sortIcon></th>
+          <th pSortableColumn="email">Email <p-sortIcon field="email"></p-sortIcon></th>
+          <th>Teléfono</th>
+          <th>Dirección</th>
+          <th style="width: 120px;">Acciones</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-row>
+        <tr>
+          <td>{{ row.name }}</td>
+          <td>{{ row.email }}</td>
+          <td>{{ row.phone || '-' }}</td>
+          <td>{{ row.address || '-' }}</td>
+          <td>
+            <span *ngIf="!isAdmin">-</span>
+            <span *ngIf="isAdmin" class="action-buttons">
+              <button pButton icon="pi pi-pencil" class="p-button-text p-button-sm" pTooltip="Editar" (click)="editEnterprise(row._id)"></button>
+              <button pButton icon="pi pi-trash" class="p-button-text p-button-sm p-button-danger" pTooltip="Eliminar" (click)="deleteEnterprise(row._id)"></button>
+            </span>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr><td [attr.colspan]="5">Sin datos</td></tr>
+      </ng-template>
+      <ng-template pTemplate="loadingbody">
+        <tr><td [attr.colspan]="5">Cargando...</td></tr>
+      </ng-template>
+    </p-table>
   </div>
 </div>

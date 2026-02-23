@@ -9,14 +9,42 @@
   </div>
 
   <div class="list-content">
-    <ag-grid-angular style="width: 100%; height: 500px;" [class]="myTheme" [rowData]="ticketPoints"
-      [columnDefs]="columnDefs" [defaultColDef]="defaultColDef" [pagination]="true" [paginationPageSize]="10"
-      [paginationPageSizeSelector]="[10, 25, 50]">
-    </ag-grid-angular>
+    <p-table [value]="ticketPoints" [loading]="loading" [paginator]="true" [rows]="10"
+      [rowsPerPageOptions]="[10, 25, 50]" [showCurrentPageReport]="true" currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords}"
+      styleClass="p-datatable-sm p-datatable-striped" [tableStyle]="{ 'min-width': '50rem' }">
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="name">Nombre <p-sortIcon field="name"></p-sortIcon></th>
+          <th>Ubicación</th>
+          <th>Empresa</th>
+          <th>Servicios</th>
+          <th style="width: 160px;">Acciones</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-row>
+        <tr>
+          <td>{{ row.name }}</td>
+          <td>{{ row.location || '-' }}</td>
+          <td>{{ getEnterpriseName(row.enterprise) }}</td>
+          <td>{{ getServicesCount(row.services) }} servicio(s)</td>
+          <td class="action-buttons">
+            <button pButton icon="pi pi-eye" class="p-button-text p-button-sm" pTooltip="Ver" (click)="viewTicketPoint(row._id)"></button>
+            <button pButton icon="pi pi-qrcode" class="p-button-text p-button-sm" pTooltip="QR" (click)="showQR(row)"></button>
+            <button *ngIf="canCreate" pButton icon="pi pi-pencil" class="p-button-text p-button-sm" pTooltip="Editar" (click)="editTicketPoint(row._id)"></button>
+            <button *ngIf="canCreate" pButton icon="pi pi-trash" class="p-button-text p-button-sm p-button-danger" pTooltip="Eliminar" (click)="deleteTicketPoint(row._id)"></button>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr><td [attr.colspan]="5">Sin datos</td></tr>
+      </ng-template>
+      <ng-template pTemplate="loadingbody">
+        <tr><td [attr.colspan]="5">Cargando...</td></tr>
+      </ng-template>
+    </p-table>
   </div>
 </div>
 
-<!-- Dialog para mostrar el QR -->
 <p-dialog [(visible)]="showQrDialog" [modal]="true" [style]="{width: '400px'}" header="Código QR del Punto de Ticket"
   [closable]="true" (onHide)="closeQrDialog()">
   <div class="qr-dialog-content" *ngIf="selectedTicketPoint">

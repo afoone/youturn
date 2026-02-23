@@ -66,8 +66,12 @@ export class OperatorCreateComponent implements OnInit {
     };
 
     this.operatorService.createOperator(operatorData).subscribe({
-      next: () => this.router.navigate(['/enterprises']),
+      next: () => this.router.navigate(['/operators']),
       error: (error) => console.error('Error creating operator:', error),
     });
+  }
+
+  onCancel() {
+    this.router.navigate(['/operators']);
   }
 }

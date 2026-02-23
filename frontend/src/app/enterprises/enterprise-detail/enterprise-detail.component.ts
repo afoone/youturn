@@ -52,15 +52,14 @@ export class EnterpriseDetailComponent implements OnInit {
 
   onSubmit() {
     if (this.enterpriseForm.invalid) return;
-
-    const updatedEnterprise: Enterprise = {
-      _id: this.enterpriseId,
-      ...this.enterpriseForm.value
-    };
-
+    const updatedEnterprise: Enterprise = { _id: this.enterpriseId, ...this.enterpriseForm.value };
     this.enterpriseService.updateEnterprise(updatedEnterprise).subscribe({
       next: () => this.router.navigate(['/enterprises']),
       error: (err) => console.error('Error updating enterprise:', err)
     });
+  }
+
+  onCancel() {
+    this.router.navigate(['/enterprises']);
   }
 }

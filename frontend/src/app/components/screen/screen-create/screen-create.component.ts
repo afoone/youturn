@@ -65,8 +65,12 @@ export class ScreenCreateComponent implements OnInit {
     };
 
     this.screenService.createScreen(screenData).subscribe({
-      next: () => this.router.navigate(['/enterprises']),
+      next: () => this.router.navigate(['/screens']),
       error: (error) => console.error('Error creating screen:', error),
     });
+  }
+
+  onCancel() {
+    this.router.navigate(['/screens']);
   }
 }

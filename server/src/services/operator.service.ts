@@ -1,3 +1,4 @@
+import { Types } from 'mongoose'
 import { CustomerDocument, CustomerModel } from '../models/customer.model'
 import { Operator } from '../models/operator.model'
 import { ServiceQueue, ServiceQueueDocument, ServiceQueueModel } from '../models/service-queue.model'
@@ -127,12 +128,13 @@ class OperatorService {
 
     customer.status = 'IN_SERVICE'
 
-    // Remove customer from any queue it might be in
+    // Remove customer from any queue (use ObjectId so $pull matches correctly)
+    const customerObjectId = typeof customerId === 'string' ? new Types.ObjectId(customerId) : customer._id
     await ServiceQueueModel.updateMany(
-      { 'queue.customer': customer._id },
+      { 'queue.customer': customerObjectId },
       {
         $pull: {
-          queue: { customer: customer._id },
+          queue: { customer: customerObjectId },
         },
       }
     )
