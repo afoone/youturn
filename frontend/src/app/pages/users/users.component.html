@@ -4,92 +4,14 @@
       <h1 class="list-title">Lista de Usuarios</h1>
       <p class="list-subtitle">Gestiona los usuarios del sistema</p>
     </div>
-    <button 
-      *ngIf="canCreate"
-      pButton 
-      label="Crear Usuario" 
-      icon="pi pi-plus" 
-      (click)="addUser()"
-      class="create-button"
-    ></button>
+    <button *ngIf="canCreate" pButton label="Crear Usuario" icon="pi pi-plus" (click)="addUser()"
+      class="create-button"></button>
   </div>
 
   <div class="list-content">
-    <p-table 
-      [value]="users" 
-      [loading]="loading" 
-      styleClass="p-datatable-striped p-datatable-sm modern-table"
-      [paginator]="true"
-      [rows]="10"
-      [showCurrentPageReport]="true"
-      currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} usuarios"
-      [rowsPerPageOptions]="[10, 25, 50]"
-    >
-  <ng-template pTemplate="header">
-    <tr>
-      <th>Email</th>
-      <th>Nombre</th>
-      <th>Apellidos</th>
-      <th>Admin</th>
-      <th>Enterprise</th>
-      <th>Roles</th>
-      <th>Activo</th>
-      <th>Acciones</th>
-    </tr>
-  </ng-template>
-  <ng-template pTemplate="body" let-user>
-    <tr>
-      <td>{{ user.email }}</td>
-      <td>{{ user.nombre || '-' }}</td>
-      <td>{{ user.apellidos || '-' }}</td>
-      <td>
-        <span [class]="user.admin ? 'status-badge status-badge-primary' : 'status-badge status-badge-secondary'">
-          {{ user.admin ? 'Admin' : 'Usuario' }}
-        </span>
-      </td>
-      <td>
-        <span *ngIf="user.enterprise" class="enterprise-name">
-          {{ getEnterpriseName(user.enterprise) }}
-        </span>
-        <span *ngIf="!user.enterprise" class="text-muted">-</span>
-      </td>
-      <td>
-        <div class="roles-container">
-          <span *ngFor="let role of user.roles" [class]="'role-badge role-' + role.toLowerCase().replace('_', '-')">
-            {{ role }}
-          </span>
-          <span *ngIf="!user.roles || user.roles.length === 0" class="text-muted">Sin roles</span>
-        </div>
-      </td>
-      <td>
-        <span [class]="user.active ? 'status-badge status-badge-success' : 'status-badge status-badge-danger'">
-          {{ user.active ? 'Activo' : 'Inactivo' }}
-        </span>
-      </td>
-      <td>
-        <div class="action-buttons">
-          <button 
-            pButton 
-            icon="pi pi-pencil" 
-            (click)="editUser(user._id)" 
-            pTooltip="Editar"
-            tooltipPosition="top"
-            class="p-button-sm p-button-text action-button"
-          ></button>
-          <button 
-            pButton 
-            icon="pi pi-trash" 
-            (click)="deleteUser(user._id)" 
-            pTooltip="Eliminar"
-            tooltipPosition="top"
-            severity="danger"
-            class="p-button-sm p-button-text action-button"
-          ></button>
-        </div>
-      </td>
-    </tr>
-  </ng-template>
-</p-table>
+    <ag-grid-angular style="width: 100%; height: 500px;" [class]="myTheme" [rowData]="users" [columnDefs]="columnDefs"
+      [defaultColDef]="defaultColDef" [pagination]="true" [paginationPageSize]="10"
+      [paginationPageSizeSelector]="[10, 25, 50]">
+    </ag-grid-angular>
   </div>
 </div>
-

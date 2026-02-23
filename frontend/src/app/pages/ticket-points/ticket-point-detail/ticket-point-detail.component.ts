@@ -7,7 +7,8 @@ import { InputTextModule } from 'primeng/inputtext';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import { MultiSelect } from 'primeng/multiselect';
-import { TableModule } from 'primeng/table';
+import { AgGridAngular } from 'ag-grid-angular';
+import { ColDef, Theme, themeQuartz } from 'ag-grid-community';
 import { CheckboxModule } from 'primeng/checkbox';
 import { TicketPointService } from '../../../services/ticket-point.service';
 import { ServiceService } from '../../../services/service.service';
@@ -28,7 +29,7 @@ import { Enterprise } from '../../../models/enterprise.model';
     InputTextModule,
     SelectModule,
     MultiSelect,
-    TableModule,
+    AgGridAngular,
     CheckboxModule,
   ],
   templateUrl: './ticket-point-detail.component.html',
@@ -44,6 +45,14 @@ export class TicketPointDetailComponent implements OnInit {
   isEnterpriseAdmin: boolean = false;
   selectedServicesWithPriority: Array<{ service: Service; priority: boolean }> = [];
 
+  // AG Grid config
+  columnDefs: ColDef[] = [];
+  defaultColDef: ColDef = {
+    flex: 1,
+    minWidth: 100,
+  };
+  myTheme: Theme | "legacy" = themeQuartz;
+
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
@@ -52,7 +61,7 @@ export class TicketPointDetailComponent implements OnInit {
     private serviceService: ServiceService,
     private enterpriseService: EnterpriseService,
     private authService: AuthService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.ticketPointId = this.route.snapshot.paramMap.get('id') || '';
@@ -72,6 +81,7 @@ export class TicketPointDetailComponent implements OnInit {
 
     this.loadEnterprises();
     this.loadServices();
+    this.setupColumns();
 
     // Filtrar servicios cuando cambie la empresa
     this.ticketPointForm.get('enterprise')?.valueChanges.subscribe(enterpriseId => {
@@ -91,10 +101,10 @@ export class TicketPointDetailComponent implements OnInit {
   loadTicketPoint(): void {
     this.ticketPointService.getTicketPointById(this.ticketPointId).subscribe({
       next: (data) => {
-        const enterpriseId = typeof data.enterprise === 'string' 
-          ? data.enterprise 
+        const enterpriseId = typeof data.enterprise === 'string'
+          ? data.enterprise
           : data.enterprise?._id;
-        
+
         // Manejar tanto la estructura antigua (array simple) como la nueva (con prioridad)
         let serviceIds: string[] = [];
         const servicesWithPriorityData: Array<{ serviceId: string; priority: boolean }> = [];
@@ -105,10 +115,10 @@ export class TicketPointDetailComponent implements OnInit {
           if (typeof firstService === 'object' && 'service' in firstService && 'priority' in firstService) {
             // Nueva estructura con prioridad
             data.services.forEach((s: any) => {
-              const serviceId = typeof s.service === 'string' 
-                ? s.service 
-                : (typeof s.service === 'object' && s.service?._id 
-                  ? s.service._id 
+              const serviceId = typeof s.service === 'string'
+                ? s.service
+                : (typeof s.service === 'object' && s.service?._id
+                  ? s.service._id
                   : s.service);
               serviceIds.push(serviceId);
               servicesWithPriorityData.push({
@@ -118,7 +128,7 @@ export class TicketPointDetailComponent implements OnInit {
             });
           } else {
             // Estructura antigua (array simple)
-            serviceIds = data.services.map((s: any) => 
+            serviceIds = data.services.map((s: any) =>
               typeof s === 'string' ? s : s._id
             );
           }
@@ -200,8 +210,8 @@ export class TicketPointDetailComponent implements OnInit {
       }
 
       this.filteredServices = this.availableServices.filter(service => {
-        const serviceEnterpriseId = typeof service.enterprise === 'string' 
-          ? service.enterprise 
+        const serviceEnterpriseId = typeof service.enterprise === 'string'
+          ? service.enterprise
           : service.enterprise?._id;
         return serviceEnterpriseId === enterpriseId;
       });
@@ -212,6 +222,7 @@ export class TicketPointDetailComponent implements OnInit {
   updateServicesWithPriority(selectedServiceIds: string[]): void {
     if (!selectedServiceIds || selectedServiceIds.length === 0) {
       this.selectedServicesWithPriority = [];
+      this.selectedServicesWithPriority = [...this.selectedServicesWithPriority];
       return;
     }
 
@@ -227,13 +238,47 @@ export class TicketPointDetailComponent implements OnInit {
       .map(serviceId => {
         const service = this.filteredServices.find(s => s._id === serviceId);
         if (!service) return null;
-        
+
         return {
           service,
           priority: existingPriorityMap.get(serviceId) || false,
         };
       })
       .filter((item): item is { service: Service; priority: boolean } => item !== null);
+
+    this.selectedServicesWithPriority = [...this.selectedServicesWithPriority];
+  }
+
+  setupColumns() {
+    this.columnDefs = [
+      {
+        field: 'service',
+        headerName: 'Servicio',
+        valueGetter: params => {
+          return typeof params.data.service === 'string'
+            ? params.data.service
+            : params.data.service.name;
+        }
+      },
+      {
+        field: 'priority',
+        headerName: 'Prioritario',
+        width: 150,
+        flex: 0,
+        cellRenderer: (params: any) => {
+          const input = document.createElement('input');
+          input.type = 'checkbox';
+          input.checked = params.data.priority;
+          input.style.width = '18px';
+          input.style.height = '18px';
+          input.style.cursor = 'pointer';
+          input.onchange = () => {
+            params.data.priority = input.checked;
+          };
+          return input;
+        }
+      }
+    ];
   }
 
   togglePriority(serviceId: string): void {
@@ -249,7 +294,7 @@ export class TicketPointDetailComponent implements OnInit {
     if (this.ticketPointForm.invalid) return;
 
     const formValue = this.ticketPointForm.getRawValue();
-    
+
     // Transformar servicios a la estructura con prioridad
     const servicesWithPriority: ServiceWithPriority[] = this.selectedServicesWithPriority.map(item => ({
       service: typeof item.service === 'string' ? item.service : item.service._id,

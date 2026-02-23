@@ -4,102 +4,21 @@
       <h1 class="list-title">Lista de Puntos de Ticket</h1>
       <p class="list-subtitle">Gestiona los puntos de ticket del sistema</p>
     </div>
-    <button 
-      *ngIf="canCreate"
-      pButton 
-      label="Crear Punto de Ticket" 
-      icon="pi pi-plus" 
-      (click)="addTicketPoint()"
-      class="create-button"
-    ></button>
+    <button *ngIf="canCreate" pButton label="Crear Punto de Ticket" icon="pi pi-plus" (click)="addTicketPoint()"
+      class="create-button"></button>
   </div>
 
   <div class="list-content">
-    <p-table 
-      [value]="ticketPoints" 
-      [loading]="loading" 
-      styleClass="p-datatable-striped p-datatable-sm modern-table"
-      [paginator]="true"
-      [rows]="10"
-      [showCurrentPageReport]="true"
-      currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} puntos de ticket"
-      [rowsPerPageOptions]="[10, 25, 50]"
-    >
-      <ng-template pTemplate="header">
-        <tr>
-          <th>Nombre</th>
-          <th>Ubicación</th>
-          <th>Empresa</th>
-          <th>Servicios</th>
-          <th>Acciones</th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-ticketPoint>
-        <tr>
-          <td class="ticket-point-name">{{ ticketPoint.name }}</td>
-          <td>{{ ticketPoint.location || '-' }}</td>
-          <td>
-            <span class="enterprise-name">
-              {{ getEnterpriseName(ticketPoint.enterprise) }}
-            </span>
-          </td>
-          <td>
-            <span class="services-count">{{ getServicesCount(ticketPoint.services) }} servicio(s)</span>
-          </td>
-          <td>
-            <div class="action-buttons">
-              <button 
-                pButton 
-                icon="pi pi-eye" 
-                (click)="viewTicketPoint(ticketPoint._id!)" 
-                pTooltip="Ver"
-                tooltipPosition="top"
-                class="p-button-sm p-button-text action-button"
-              ></button>
-              <button 
-                pButton 
-                icon="pi pi-qrcode" 
-                (click)="showQR(ticketPoint)" 
-                pTooltip="Ver QR"
-                tooltipPosition="top"
-                class="p-button-sm p-button-text action-button"
-              ></button>
-              <button 
-                *ngIf="canCreate"
-                pButton 
-                icon="pi pi-pencil" 
-                (click)="editTicketPoint(ticketPoint._id!)" 
-                pTooltip="Editar"
-                tooltipPosition="top"
-                class="p-button-sm p-button-text action-button"
-              ></button>
-              <button 
-                *ngIf="canCreate"
-                pButton 
-                icon="pi pi-trash" 
-                (click)="deleteTicketPoint(ticketPoint._id!)" 
-                pTooltip="Eliminar"
-                tooltipPosition="top"
-                severity="danger"
-                class="p-button-sm p-button-text action-button"
-              ></button>
-            </div>
-          </td>
-        </tr>
-      </ng-template>
-    </p-table>
+    <ag-grid-angular style="width: 100%; height: 500px;" [class]="myTheme" [rowData]="ticketPoints"
+      [columnDefs]="columnDefs" [defaultColDef]="defaultColDef" [pagination]="true" [paginationPageSize]="10"
+      [paginationPageSizeSelector]="[10, 25, 50]">
+    </ag-grid-angular>
   </div>
 </div>
 
 <!-- Dialog para mostrar el QR -->
-<p-dialog 
-  [(visible)]="showQrDialog" 
-  [modal]="true" 
-  [style]="{width: '400px'}"
-  header="Código QR del Punto de Ticket"
-  [closable]="true"
-  (onHide)="closeQrDialog()"
->
+<p-dialog [(visible)]="showQrDialog" [modal]="true" [style]="{width: '400px'}" header="Código QR del Punto de Ticket"
+  [closable]="true" (onHide)="closeQrDialog()">
   <div class="qr-dialog-content" *ngIf="selectedTicketPoint">
     <p class="qr-ticket-point-name"><strong>{{ selectedTicketPoint.name }}</strong></p>
     <div class="qr-code-container">
@@ -107,13 +26,7 @@
     </div>
     <p class="qr-link-text">Escanea el código QR para acceder al punto de ticket</p>
     <div class="qr-actions">
-      <button 
-        pButton 
-        label="Copiar Enlace" 
-        icon="pi pi-copy"
-        (click)="copyQrLink()"
-        class="p-button-sm"
-      ></button>
+      <button pButton label="Copiar Enlace" icon="pi pi-copy" (click)="copyQrLink()" class="p-button-sm"></button>
     </div>
   </div>
 </p-dialog>

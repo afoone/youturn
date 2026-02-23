@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { TableModule } from 'primeng/table';
+import { AgGridAngular } from 'ag-grid-angular';
+import { ColDef, Theme, themeQuartz } from 'ag-grid-community';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { DialogModule } from 'primeng/dialog';
@@ -16,7 +17,7 @@ import * as QRCode from 'qrcode';
   standalone: true,
   templateUrl: './ticket-points.component.html',
   styleUrls: ['./ticket-points.component.css'],
-  imports: [CommonModule, TableModule, ButtonModule, TooltipModule, DialogModule],
+  imports: [CommonModule, AgGridAngular, ButtonModule, TooltipModule, DialogModule],
 })
 export class TicketPointsComponent implements OnInit {
   ticketPoints: TicketPoint[] = [];
@@ -27,19 +28,92 @@ export class TicketPointsComponent implements OnInit {
   qrCodeUrl: string = '';
   selectedTicketPoint: TicketPoint | null = null;
 
+  // AG Grid config
+  columnDefs: ColDef[] = [];
+  defaultColDef: ColDef = {
+    flex: 1,
+    minWidth: 100,
+    sortable: true,
+    filter: true,
+  };
+  myTheme: Theme | "legacy" = themeQuartz;
+
   constructor(
     private ticketPointService: TicketPointService,
     private authService: AuthService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
-    this.getTicketPoints();
     // Verificar permisos
     this.authService.currentUser$.subscribe(user => {
       this.isAdmin = user?.admin === true;
       this.canCreate = user?.admin === true || (user?.roles?.includes('ENTERPRISE_ADMIN') ?? false);
+      this.setupColumns();
+      this.getTicketPoints();
     });
+  }
+
+  setupColumns() {
+    this.columnDefs = [
+      { field: 'name', headerName: 'Nombre', cellClass: 'ticket-point-name' },
+      { field: 'location', headerName: 'Ubicación', valueFormatter: params => params.value || '-' },
+      {
+        field: 'enterprise',
+        headerName: 'Empresa',
+        cellRenderer: (params: any) => {
+          return `<span class="enterprise-name">${this.getEnterpriseName(params.value)}</span>`;
+        }
+      },
+      {
+        field: 'services',
+        headerName: 'Servicios',
+        cellRenderer: (params: any) => {
+          return `<span class="services-count">${this.getServicesCount(params.value)} servicio(s)</span>`;
+        }
+      },
+      {
+        headerName: 'Acciones',
+        width: 160,
+        flex: 0,
+        sortable: false,
+        filter: false,
+        cellRenderer: this.actionCellRenderer.bind(this)
+      }
+    ];
+  }
+
+  actionCellRenderer(params: any): HTMLElement {
+    const div = document.createElement('div');
+    div.className = 'action-buttons';
+
+    const viewBtn = document.createElement('button');
+    viewBtn.className = 'p-button-sm p-button-text action-button p-button p-component';
+    viewBtn.innerHTML = '<span class="pi pi-eye"></span>';
+    viewBtn.onclick = () => this.viewTicketPoint(params.data._id);
+    div.appendChild(viewBtn);
+
+    const qrBtn = document.createElement('button');
+    qrBtn.className = 'p-button-sm p-button-text action-button p-button p-component';
+    qrBtn.innerHTML = '<span class="pi pi-qrcode"></span>';
+    qrBtn.onclick = () => this.showQR(params.data);
+    div.appendChild(qrBtn);
+
+    if (this.canCreate) {
+      const editBtn = document.createElement('button');
+      editBtn.className = 'p-button-sm p-button-text action-button p-button p-component';
+      editBtn.innerHTML = '<span class="pi pi-pencil"></span>';
+      editBtn.onclick = () => this.editTicketPoint(params.data._id);
+
+      const delBtn = document.createElement('button');
+      delBtn.className = 'p-button-sm p-button-text p-button-danger action-button p-button p-component';
+      delBtn.innerHTML = '<span class="pi pi-trash"></span>';
+      delBtn.onclick = () => this.deleteTicketPoint(params.data._id);
+
+      div.appendChild(editBtn);
+      div.appendChild(delBtn);
+    }
+    return div;
   }
 
   getTicketPoints() {
@@ -93,7 +167,7 @@ export class TicketPointsComponent implements OnInit {
   showQR(ticketPoint: TicketPoint) {
     this.selectedTicketPoint = ticketPoint;
     const ticketPointUrl = `${window.location.origin}/ticket-point/${ticketPoint._id}`;
-    
+
     // Generar QR code
     QRCode.toDataURL(ticketPointUrl, { width: 300, margin: 2 })
       .then(url => {

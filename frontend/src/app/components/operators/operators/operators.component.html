@@ -4,72 +4,13 @@
       <h1 class="list-title">Lista de Operadores</h1>
       <p class="list-subtitle">Gestiona los operadores del sistema</p>
     </div>
-    <button 
-      pButton 
-      label="Crear Operador" 
-      icon="pi pi-plus" 
-      (click)="addOperator()"
-      class="create-button"
-    ></button>
+    <button pButton label="Crear Operador" icon="pi pi-plus" (click)="addOperator()" class="create-button"></button>
   </div>
 
   <div class="list-content">
-    <p-table 
-      [value]="operators" 
-      [loading]="loading" 
-      styleClass="p-datatable-striped p-datatable-sm modern-table"
-      [paginator]="true"
-      [rows]="10"
-      [showCurrentPageReport]="true"
-      currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} operadores"
-      [rowsPerPageOptions]="[10, 25, 50]"
-    >
-      <ng-template pTemplate="header">
-        <tr>
-          <th>Nombre del Puesto</th>
-          <th>Descripción</th>
-          <th>Servicios</th>
-          <th>Descripción de Ruta</th>
-          <th>Cliente</th>
-          <th>Acciones</th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-operator>
-        <tr>
-          <td class="operator-name">{{ operator.positionName }}</td>
-          <td>{{ operator.description || '-' }}</td>
-          <td>
-            <div class="services-list">
-              <span *ngFor="let service of operator.services" class="service-tag">
-                {{ service }}
-              </span>
-              <span *ngIf="!operator.services || operator.services.length === 0" class="text-muted">-</span>
-            </div>
-          </td>
-          <td>{{ operator.pathDescription || '-' }}</td>
-          <td>{{ operator.customer?.name || '-' }}</td>
-          <td>
-            <div class="action-buttons">
-              <button
-                pButton
-                icon="pi pi-desktop"
-                (click)="viewOperatorBoard(operator._id)"
-                pTooltip="Dashboard"
-                tooltipPosition="top"
-                class="p-button-sm p-button-text action-button"
-              ></button>
-              <button
-                pButton
-                icon="pi pi-pencil"
-                (click)="editOperator(operator._id)"
-                pTooltip="Editar"
-                tooltipPosition="top"
-                class="p-button-sm p-button-text action-button"
-              ></button>
-            </div>
-          </td>
-        </tr>
-      </ng-template>
-    </p-table>
+    <ag-grid-angular style="width: 100%; height: 500px;" [class]="myTheme" [rowData]="operators"
+      [columnDefs]="columnDefs" [defaultColDef]="defaultColDef" [pagination]="true" [paginationPageSize]="10"
+      [paginationPageSizeSelector]="[10, 25, 50]">
+    </ag-grid-angular>
   </div>
 </div>

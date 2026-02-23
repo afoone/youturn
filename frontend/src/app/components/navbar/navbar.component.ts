@@ -4,6 +4,7 @@ import { MenubarModule } from 'primeng/menubar';
 import { ButtonModule } from 'primeng/button';
 import { MenuItem } from 'primeng/api';
 import { CommonModule } from '@angular/common';
+import { TooltipModule } from 'primeng/tooltip';
 import { filter } from 'rxjs/operators';
 import { OperatorService } from '../../services/operator.service';
 import { Operator } from '../../models/operator.type';
@@ -18,13 +19,14 @@ interface MenuItemWithRoute extends MenuItem {
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [MenubarModule, CommonModule, ButtonModule],
+  imports: [CommonModule, ButtonModule, TooltipModule],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent implements OnInit, OnDestroy {
   items: MenuItemWithRoute[] = [];
   currentUser: User | null = null;
+  isCollapsed: boolean = false;
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -68,6 +70,25 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   logout(): void {
     this.authService.logout();
+  }
+
+  toggleSidebar(): void {
+    this.isCollapsed = !this.isCollapsed;
+    // Emitir o guardar en localstorage si se quiere recordar el estado
+  }
+
+  getIconForItem(label: string): string {
+    const iconMap: { [key: string]: string } = {
+      'Operator Board': 'pi-desktop',
+      'Ticket Points': 'pi-ticket',
+      'Services': 'pi-list',
+      'Operators': 'pi-users',
+      'Screens': 'pi-video',
+      'Enterprises': 'pi-building',
+      'Plans': 'pi-credit-card',
+      'Users': 'pi-user-plus'
+    };
+    return iconMap[label] || 'pi-circle';
   }
 
   private initializeMenuItems() {

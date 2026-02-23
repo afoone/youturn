@@ -1,5 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 @import 'primeicons/primeicons.css';
+@import 'ag-grid-community/styles/ag-grid.css';
+@import 'ag-grid-community/styles/ag-theme-quartz.css';
 
 /* Forzar modo claro - deshabilitar modo oscuro del sistema */
 :root {
@@ -28,6 +30,7 @@ body {
 
 /* Sobrescribir media queries de modo oscuro */
 @media (prefers-color-scheme: dark) {
+
   :root,
   html,
   body {
@@ -35,7 +38,7 @@ body {
     background-color: #ffffff !important;
     color: #1a202c !important;
   }
-  
+
   ::ng-deep * {
     color-scheme: light only !important;
   }

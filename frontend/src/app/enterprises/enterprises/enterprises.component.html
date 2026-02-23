@@ -4,66 +4,14 @@
       <h1 class="list-title">Lista de Empresas</h1>
       <p class="list-subtitle">Gestiona las empresas del sistema</p>
     </div>
-    <button 
-      *ngIf="isAdmin"
-      pButton 
-      label="Crear Empresa" 
-      icon="pi pi-plus" 
-      (click)="addEnterprise()"
-      class="create-button"
-    ></button>
+    <button *ngIf="isAdmin" pButton label="Crear Empresa" icon="pi pi-plus" (click)="addEnterprise()"
+      class="create-button"></button>
   </div>
 
   <div class="list-content">
-    <p-table 
-      [value]="enterprises" 
-      [loading]="loading" 
-      styleClass="p-datatable-striped p-datatable-sm modern-table"
-      [paginator]="true"
-      [rows]="10"
-      [showCurrentPageReport]="true"
-      currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} empresas"
-      [rowsPerPageOptions]="[10, 25, 50]"
-    >
-      <ng-template pTemplate="header">
-        <tr>
-          <th>Nombre</th>
-          <th>Email</th>
-          <th>Teléfono</th>
-          <th>Dirección</th>
-          <th>Acciones</th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-enterprise>
-        <tr>
-          <td class="enterprise-name">{{ enterprise.name }}</td>
-          <td>{{ enterprise.email }}</td>
-          <td>{{ enterprise.phone || '-' }}</td>
-          <td>{{ enterprise.address || '-' }}</td>
-          <td>
-            <div class="action-buttons" *ngIf="isAdmin">
-              <button 
-                pButton 
-                icon="pi pi-pencil" 
-                (click)="editEnterprise(enterprise._id)" 
-                pTooltip="Editar"
-                tooltipPosition="top"
-                class="p-button-sm p-button-text action-button"
-              ></button>
-              <button 
-                pButton 
-                icon="pi pi-trash" 
-                (click)="deleteEnterprise(enterprise._id)" 
-                pTooltip="Eliminar"
-                tooltipPosition="top"
-                severity="danger"
-                class="p-button-sm p-button-text action-button"
-              ></button>
-            </div>
-            <span *ngIf="!isAdmin" class="text-muted">-</span>
-          </td>
-        </tr>
-      </ng-template>
-    </p-table>
+    <ag-grid-angular style="width: 100%; height: 500px;" [class]="myTheme" [rowData]="enterprises"
+      [columnDefs]="columnDefs" [defaultColDef]="defaultColDef" [pagination]="true" [paginationPageSize]="10"
+      [paginationPageSizeSelector]="[10, 25, 50]">
+    </ag-grid-angular>
   </div>
 </div>

@@ -40,38 +40,4 @@
   border-top: 1px solid #e5e7eb;
 }
 
-/* Priority Table Styles */
-:host ::ng-deep .priority-table {
-  margin-top: 1rem;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.5rem;
-  overflow: hidden;
-}
-
-:host ::ng-deep .priority-table .p-datatable-thead > tr > th {
-  background-color: #f9fafb;
-  color: #374151;
-  font-weight: 600;
-  font-size: 0.875rem;
-  padding: 0.75rem 1rem;
-  border-bottom: 2px solid #e5e7eb;
-}
-
-:host ::ng-deep .priority-table .p-datatable-tbody > tr {
-  transition: background-color 0.15s ease-in-out;
-}
-
-:host ::ng-deep .priority-table .p-datatable-tbody > tr:hover {
-  background-color: #f9fafb;
-}
-
-:host ::ng-deep .priority-table .p-datatable-tbody > tr > td {
-  padding: 0.75rem 1rem;
-  color: #374151;
-  font-size: 0.875rem;
-  border-bottom: 1px solid #f3f4f6;
-}
-
-:host ::ng-deep .priority-table .p-datatable-tbody > tr:last-child > td {
-  border-bottom: none;
-}
+/* Obsolete PrimeNG CSS rules removed */

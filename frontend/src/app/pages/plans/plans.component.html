@@ -4,71 +4,14 @@
       <h1 class="list-title">Lista de Planes</h1>
       <p class="list-subtitle">Gestiona los planes del sistema</p>
     </div>
-    <button 
-      *ngIf="isAdmin"
-      pButton 
-      label="Crear Plan" 
-      icon="pi pi-plus" 
-      (click)="addPlan()"
-      class="create-button"
-    ></button>
+    <button *ngIf="isAdmin" pButton label="Crear Plan" icon="pi pi-plus" (click)="addPlan()"
+      class="create-button"></button>
   </div>
 
   <div class="list-content">
-    <p-table 
-      [value]="plans" 
-      [loading]="loading" 
-      styleClass="p-datatable-striped p-datatable-sm modern-table"
-      [paginator]="true"
-      [rows]="10"
-      [showCurrentPageReport]="true"
-      currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} planes"
-      [rowsPerPageOptions]="[10, 25, 50]"
-    >
-      <ng-template pTemplate="header">
-        <tr>
-          <th>Código</th>
-          <th>Descripción</th>
-          <th>Precio</th>
-          <th>Max Kioscos</th>
-          <th>Max Usuarios</th>
-          <th>Max Servicios</th>
-          <th>Acciones</th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-plan>
-        <tr>
-          <td class="plan-codigo">{{ plan.codigo }}</td>
-          <td>{{ plan.descripcion }}</td>
-          <td>{{ formatPrice(plan.precio) }}</td>
-          <td>{{ plan.maxTicketPoints }}</td>
-          <td>{{ plan.maxUsuarios }}</td>
-          <td>{{ plan.maxServicios }}</td>
-          <td>
-            <div class="action-buttons" *ngIf="isAdmin">
-              <button 
-                pButton 
-                icon="pi pi-pencil" 
-                (click)="editPlan(plan._id!)" 
-                pTooltip="Editar"
-                tooltipPosition="top"
-                class="p-button-sm p-button-text action-button"
-              ></button>
-              <button 
-                pButton 
-                icon="pi pi-trash" 
-                (click)="deletePlan(plan._id!)" 
-                pTooltip="Eliminar"
-                tooltipPosition="top"
-                severity="danger"
-                class="p-button-sm p-button-text action-button"
-              ></button>
-            </div>
-            <span *ngIf="!isAdmin" class="text-muted">-</span>
-          </td>
-        </tr>
-      </ng-template>
-    </p-table>
+    <ag-grid-angular style="width: 100%; height: 500px;" [class]="myTheme" [rowData]="plans" [columnDefs]="columnDefs"
+      [defaultColDef]="defaultColDef" [pagination]="true" [paginationPageSize]="10"
+      [paginationPageSizeSelector]="[10, 25, 50]">
+    </ag-grid-angular>
   </div>
 </div>
-

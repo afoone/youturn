@@ -7,12 +7,13 @@ import {
   Validators,
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { AgGridAngular } from 'ag-grid-angular';
+import { ColDef, Theme, themeQuartz } from 'ag-grid-community';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { MessageModule } from 'primeng/message';
 import { SelectModule } from 'primeng/select';
 import { MultiSelect } from 'primeng/multiselect';
-import { TableModule } from 'primeng/table';
 import { CheckboxModule } from 'primeng/checkbox';
 import { FormsModule } from '@angular/forms';
 import { TicketPointService } from '../../../services/ticket-point.service';
@@ -35,7 +36,7 @@ import { TicketPoint, ServiceWithPriority } from '../../../models/ticket-point.m
     MessageModule,
     SelectModule,
     MultiSelect,
-    TableModule,
+    AgGridAngular,
     CheckboxModule,
   ],
   templateUrl: './ticket-point-create.component.html',
@@ -49,6 +50,14 @@ export class TicketPointCreateComponent implements OnInit {
   currentUser: any = null;
   isEnterpriseAdmin: boolean = false;
   selectedServicesWithPriority: Array<{ service: Service; priority: boolean }> = [];
+
+  // AG Grid config
+  columnDefs: ColDef[] = [];
+  defaultColDef: ColDef = {
+    flex: 1,
+    minWidth: 100,
+  };
+  myTheme: Theme | "legacy" = themeQuartz;
 
   constructor(
     private fb: FormBuilder,
@@ -71,7 +80,7 @@ export class TicketPointCreateComponent implements OnInit {
     this.authService.currentUser$.subscribe(user => {
       this.currentUser = user;
       this.isEnterpriseAdmin = (user?.roles?.includes('ENTERPRISE_ADMIN') && !user?.admin) ?? false;
-      
+
       if (this.isEnterpriseAdmin && user?.enterprise) {
         // Si es ENTERPRISE_ADMIN, asignar automáticamente su empresa
         this.ticketPointForm.patchValue({ enterprise: user.enterprise });
@@ -81,6 +90,7 @@ export class TicketPointCreateComponent implements OnInit {
 
     this.loadEnterprises();
     this.loadServices();
+    this.setupColumns();
 
     // Filtrar servicios cuando cambie la empresa
     this.ticketPointForm.get('enterprise')?.valueChanges.subscribe(enterpriseId => {
@@ -128,8 +138,8 @@ export class TicketPointCreateComponent implements OnInit {
     }
 
     this.filteredServices = this.availableServices.filter(service => {
-      const serviceEnterpriseId = typeof service.enterprise === 'string' 
-        ? service.enterprise 
+      const serviceEnterpriseId = typeof service.enterprise === 'string'
+        ? service.enterprise
         : service.enterprise?._id;
       return serviceEnterpriseId === enterpriseId;
     });
@@ -138,6 +148,7 @@ export class TicketPointCreateComponent implements OnInit {
   updateServicesWithPriority(selectedServiceIds: string[]): void {
     if (!selectedServiceIds || selectedServiceIds.length === 0) {
       this.selectedServicesWithPriority = [];
+      this.selectedServicesWithPriority = [...this.selectedServicesWithPriority];
       return;
     }
 
@@ -153,13 +164,48 @@ export class TicketPointCreateComponent implements OnInit {
       .map(serviceId => {
         const service = this.filteredServices.find(s => s._id === serviceId);
         if (!service) return null;
-        
+
         return {
           service,
           priority: existingPriorityMap.get(serviceId) || false,
         };
       })
       .filter((item): item is { service: Service; priority: boolean } => item !== null);
+
+    // Reasignar el arreglo para gatillar el cambio en ag-grid
+    this.selectedServicesWithPriority = [...this.selectedServicesWithPriority];
+  }
+
+  setupColumns() {
+    this.columnDefs = [
+      {
+        field: 'service',
+        headerName: 'Servicio',
+        valueGetter: params => {
+          return typeof params.data.service === 'string'
+            ? params.data.service
+            : params.data.service.name;
+        }
+      },
+      {
+        field: 'priority',
+        headerName: 'Prioritario',
+        width: 150,
+        flex: 0,
+        cellRenderer: (params: any) => {
+          const input = document.createElement('input');
+          input.type = 'checkbox';
+          input.checked = params.data.priority;
+          input.style.width = '18px';
+          input.style.height = '18px';
+          input.style.cursor = 'pointer';
+          input.onchange = () => {
+            params.data.priority = input.checked;
+          };
+          return input;
+        }
+      }
+    ];
   }
 
   togglePriority(serviceId: string): void {
@@ -175,7 +221,7 @@ export class TicketPointCreateComponent implements OnInit {
     if (this.ticketPointForm.invalid) return;
 
     const formValue = this.ticketPointForm.getRawValue();
-    
+
     // Transformar servicios a la estructura con prioridad
     const servicesWithPriority: ServiceWithPriority[] = this.selectedServicesWithPriority.map(item => ({
       service: typeof item.service === 'string' ? item.service : item.service._id,
