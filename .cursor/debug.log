@@ -1,1 +1,2 @@
 {"location":"users.component.ts:38","message":"UsersComponent - check permissions","data":{"isAdmin":true,"isEnterpriseAdmin":false,"canCreate":true,"userRoles":[],"userEmail":"admin@yourturn.com"},"timestamp":1768244531516,"sessionId":"debug-session","runId":"run1","hypothesisId":"A"}
+{"location":"users.component.ts:38","message":"UsersComponent - check permissions","data":{"isAdmin":true,"isEnterpriseAdmin":false,"canCreate":true,"userRoles":[],"userEmail":"admin@yourturn.com"},"timestamp":1768244644474,"sessionId":"debug-session","runId":"run1","hypothesisId":"A"}
