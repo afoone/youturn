@@ -1,46 +1,36 @@
-<div class="app-form-layout">
-  <div class="app-form-card">
-    <h2 class="form-title">Editar Servicio</h2>
+<div class="form-page">
+  <div class="form-card">
+    <div class="form-card-header">
+      <h2 class="form-card-title">Editar Servicio</h2>
+      <p class="form-card-subtitle">Modifica la configuración del servicio</p>
+    </div>
     <form [formGroup]="serviceForm" (ngSubmit)="onSubmit()">
-      <div class="p-field">
-        <label for="name">Nombre *</label>
-        <input id="name" pInputText formControlName="name" class="p-inputtext" />
-        <small class="p-error" *ngIf="serviceForm.get('name')?.invalid && serviceForm.get('name')?.touched">
-          El nombre es requerido
-        </small>
+      <div class="field">
+        <label class="field-label" for="name">Nombre <span class="required">*</span></label>
+        <input id="name" pInputText formControlName="name" placeholder="Nombre del servicio"
+          [class.ng-invalid]="serviceForm.get('name')?.invalid && serviceForm.get('name')?.touched" />
+        <small class="field-error" *ngIf="serviceForm.get('name')?.invalid && serviceForm.get('name')?.touched">El nombre es requerido</small>
       </div>
-      <div class="p-field">
-        <label for="description">Descripción</label>
-        <input id="description" pInputText formControlName="description" class="p-inputtext" />
+      <div class="field">
+        <label class="field-label" for="description">Descripción</label>
+        <input id="description" pInputText formControlName="description" placeholder="Descripción (opcional)" />
       </div>
-      <div class="p-field">
-        <label for="prefix">Prefijo *</label>
-        <input id="prefix" pInputText formControlName="prefix" class="p-inputtext" />
-        <small class="p-error" *ngIf="serviceForm.get('prefix')?.invalid && serviceForm.get('prefix')?.touched">
-          El prefijo es requerido
-        </small>
+      <div class="field">
+        <label class="field-label" for="prefix">Prefijo <span class="required">*</span></label>
+        <input id="prefix" pInputText formControlName="prefix" placeholder="Ej: A, B, VIP"
+          [class.ng-invalid]="serviceForm.get('prefix')?.invalid && serviceForm.get('prefix')?.touched" />
+        <small class="field-error" *ngIf="serviceForm.get('prefix')?.invalid && serviceForm.get('prefix')?.touched">El prefijo es requerido</small>
       </div>
-      <div class="p-field">
-        <label for="enterprise">Empresa *</label>
-        <p-select
-          id="enterprise"
-          formControlName="enterprise"
-          [options]="enterprises"
-          optionLabel="name"
-          optionValue="_id"
-          placeholder="Selecciona una empresa"
-          [disabled]="isEnterpriseAdmin"
-        ></p-select>
-        <small class="p-error" *ngIf="serviceForm.get('enterprise')?.invalid && serviceForm.get('enterprise')?.touched">
-          La empresa es requerida
-        </small>
-        <small *ngIf="isEnterpriseAdmin" class="p-text-secondary">
-          Su empresa ha sido asignada automáticamente
-        </small>
+      <div class="field">
+        <label class="field-label" for="enterprise">Empresa <span class="required">*</span></label>
+        <p-select id="enterprise" formControlName="enterprise" [options]="enterprises"
+          optionLabel="name" optionValue="_id" placeholder="Selecciona una empresa" [disabled]="isEnterpriseAdmin"></p-select>
+        <small class="field-error" *ngIf="serviceForm.get('enterprise')?.invalid && serviceForm.get('enterprise')?.touched">La empresa es requerida</small>
+        <small class="field-hint" *ngIf="isEnterpriseAdmin">Su empresa ha sido asignada automáticamente</small>
       </div>
       <div class="form-actions">
-        <button pButton type="button" label="Cancelar" icon="pi pi-times" class="p-button-secondary" (click)="onCancel()"></button>
-        <button pButton type="submit" label="Guardar" icon="pi pi-check" class="p-button-success" [disabled]="serviceForm.invalid"></button>
+        <button pButton type="button" label="Cancelar" icon="pi pi-times" severity="secondary" (click)="onCancel()"></button>
+        <button pButton type="submit" label="Guardar Cambios" icon="pi pi-check" [disabled]="serviceForm.invalid"></button>
       </div>
     </form>
   </div>

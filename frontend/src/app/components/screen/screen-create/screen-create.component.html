@@ -1,71 +1,29 @@
-<div class="app-form-layout">
-  <div class="app-form-card">
-    <h2 class="form-title">Crear Pantalla</h2>
+<div class="form-page">
+  <div class="form-card">
+    <div class="form-card-header">
+      <h2 class="form-card-title">Crear Pantalla</h2>
+      <p class="form-card-subtitle">Configura una nueva pantalla de visualización</p>
+    </div>
     <form [formGroup]="screenForm" (ngSubmit)="onSubmit()">
-      <div class="p-field">
-        <label for="name">Screen Name</label>
-        <input
-          id="name"
-          pInputText
-          formControlName="name"
-          class="p-inputtext"
-        />
-        <small
-          class="p-error"
-          *ngIf="
-            screenForm.get('name')?.invalid && screenForm.get('name')?.touched
-          "
-        >
-          Screen Name is required
-        </small>
+      <div class="field">
+        <label class="field-label" for="name">Nombre <span class="required">*</span></label>
+        <input id="name" pInputText formControlName="name" placeholder="Nombre de la pantalla"
+          [class.ng-invalid]="screenForm.get('name')?.invalid && screenForm.get('name')?.touched" />
+        <small class="field-error" *ngIf="screenForm.get('name')?.invalid && screenForm.get('name')?.touched">El nombre es requerido</small>
       </div>
-
-      <div class="p-field">
-        <label for="description">Description</label>
-        <input
-          id="description"
-          pInputText
-          formControlName="description"
-          class="p-inputtext"
-        />
-        <small
-          class="p-error"
-          *ngIf="
-            screenForm.get('description')?.invalid &&
-            screenForm.get('description')?.touched
-          "
-        >
-          Description is required
-        </small>
+      <div class="field">
+        <label class="field-label" for="description">Descripción</label>
+        <input id="description" pInputText formControlName="description" placeholder="Descripción (opcional)" />
       </div>
-
-      <div class="p-field">
-        <label for="services">Services</label>
-        <p-multiSelect
-          id="services"
-          formControlName="services"
-          [options]="availableServices"
-          optionLabel="name"
-          optionValue="_id"
-          placeholder="Select Services"
-          [filter]="true"
-          [showClear]="true"
-        ></p-multiSelect>
-
-        <small
-          class="p-error"
-          *ngIf="
-            screenForm.get('services')?.invalid &&
-            screenForm.get('services')?.touched
-          "
-        >
-          At least one service must be selected
-        </small>
+      <div class="field">
+        <label class="field-label" for="services">Servicios</label>
+        <p-multiSelect id="services" formControlName="services" [options]="availableServices"
+          optionLabel="name" optionValue="_id" placeholder="Selecciona los servicios"
+          [filter]="true" [showClear]="true"></p-multiSelect>
       </div>
-
       <div class="form-actions">
-        <button pButton type="button" label="Cancelar" icon="pi pi-times" class="p-button-secondary" (click)="onCancel()"></button>
-        <button pButton type="submit" label="Crear Pantalla" icon="pi pi-check" class="p-button-success" [disabled]="screenForm.invalid"></button>
+        <button pButton type="button" label="Cancelar" icon="pi pi-times" severity="secondary" (click)="onCancel()"></button>
+        <button pButton type="submit" label="Crear Pantalla" icon="pi pi-check" [disabled]="screenForm.invalid"></button>
       </div>
     </form>
   </div>

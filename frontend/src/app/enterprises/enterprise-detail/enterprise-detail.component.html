@@ -1,32 +1,33 @@
-<div class="app-form-layout">
-  <div class="app-form-card">
-    <h2 class="form-title">Editar Empresa</h2>
+<div class="form-page">
+  <div class="form-card">
+    <div class="form-card-header">
+      <h2 class="form-card-title">Editar Empresa</h2>
+      <p class="form-card-subtitle">Modifica los datos de la empresa</p>
+    </div>
     <form [formGroup]="enterpriseForm" (ngSubmit)="onSubmit()">
-      <div class="p-field">
-        <label for="name">Nombre *</label>
-        <input id="name" pInputText formControlName="name" class="p-inputtext" placeholder="Nombre de la empresa" />
-        <small class="p-error" *ngIf="enterpriseForm.get('name')?.invalid && enterpriseForm.get('name')?.touched">
-          El nombre es requerido
-        </small>
+      <div class="field">
+        <label class="field-label" for="name">Nombre <span class="required">*</span></label>
+        <input id="name" pInputText formControlName="name" placeholder="Nombre de la empresa"
+          [class.ng-invalid]="enterpriseForm.get('name')?.invalid && enterpriseForm.get('name')?.touched" />
+        <small class="field-error" *ngIf="enterpriseForm.get('name')?.invalid && enterpriseForm.get('name')?.touched">El nombre es requerido</small>
       </div>
-      <div class="p-field">
-        <label for="email">Email *</label>
-        <input id="email" type="email" pInputText formControlName="email" class="p-inputtext" placeholder="email@empresa.com" />
-        <small class="p-error" *ngIf="enterpriseForm.get('email')?.invalid && enterpriseForm.get('email')?.touched">
-          Email válido requerido
-        </small>
+      <div class="field">
+        <label class="field-label" for="email">Email <span class="required">*</span></label>
+        <input id="email" type="email" pInputText formControlName="email" placeholder="email@empresa.com"
+          [class.ng-invalid]="enterpriseForm.get('email')?.invalid && enterpriseForm.get('email')?.touched" />
+        <small class="field-error" *ngIf="enterpriseForm.get('email')?.invalid && enterpriseForm.get('email')?.touched">Email válido requerido</small>
       </div>
-      <div class="p-field">
-        <label for="phone">Teléfono</label>
-        <input id="phone" pInputText formControlName="phone" class="p-inputtext" placeholder="Opcional" />
+      <div class="field">
+        <label class="field-label" for="phone">Teléfono</label>
+        <input id="phone" pInputText formControlName="phone" placeholder="Opcional" />
       </div>
-      <div class="p-field">
-        <label for="address">Dirección</label>
-        <input id="address" pInputText formControlName="address" class="p-inputtext" placeholder="Opcional" />
+      <div class="field">
+        <label class="field-label" for="address">Dirección</label>
+        <input id="address" pInputText formControlName="address" placeholder="Opcional" />
       </div>
       <div class="form-actions">
-        <button pButton type="button" label="Cancelar" icon="pi pi-times" class="p-button-secondary" (click)="onCancel()"></button>
-        <button pButton type="submit" label="Guardar" icon="pi pi-check" class="p-button-success" [disabled]="enterpriseForm.invalid"></button>
+        <button pButton type="button" label="Cancelar" icon="pi pi-times" severity="secondary" (click)="onCancel()"></button>
+        <button pButton type="submit" label="Guardar Cambios" icon="pi pi-check" [disabled]="enterpriseForm.invalid"></button>
       </div>
     </form>
   </div>

@@ -1,148 +1,54 @@
-<div class="app-form-layout">
-  <div class="app-form-card form-container">
-    <h2 class="form-title">Crear Plan</h2>
+<div class="form-page">
+  <div class="form-card">
+    <div class="form-card-header">
+      <h2 class="form-card-title">Crear Plan</h2>
+      <p class="form-card-subtitle">Define un nuevo plan de suscripción</p>
+    </div>
     <form [formGroup]="planForm" (ngSubmit)="onSubmit()">
-        <div class="p-field">
-          <label for="codigo">Código *</label>
-          <input
-            id="codigo"
-            pInputText
-            formControlName="codigo"
-            class="p-inputtext"
-            placeholder="Ej: BASIC, PRO, ENTERPRISE"
-          />
-          <small
-            class="p-error"
-            *ngIf="planForm.get('codigo')?.invalid && planForm.get('codigo')?.touched"
-          >
-            El código es requerido
-          </small>
-        </div>
-
-        <div class="p-field">
-          <label for="descripcion">Descripción *</label>
-          <input
-            id="descripcion"
-            pInputText
-            formControlName="descripcion"
-            class="p-inputtext"
-            placeholder="Descripción del plan"
-          />
-          <small
-            class="p-error"
-            *ngIf="planForm.get('descripcion')?.invalid && planForm.get('descripcion')?.touched"
-          >
-            La descripción es requerida
-          </small>
-        </div>
-
-        <div class="p-field">
-          <label for="precio">Precio (€)</label>
-          <input
-            id="precio"
-            type="number"
-            pInputText
-            formControlName="precio"
-            class="p-inputtext"
-            step="0.01"
-            min="0"
-            placeholder="0.00 (gratis si se deja vacío)"
-          />
-          <small
-            class="p-error"
-            *ngIf="planForm.get('precio')?.invalid && planForm.get('precio')?.touched"
-          >
-            El precio debe ser mayor o igual a 0
-          </small>
-        </div>
-
-        <div class="p-field">
-          <label for="detalles">Detalles</label>
-          <textarea
-            id="detalles"
-            pInputTextarea
-            formControlName="detalles"
-            rows="4"
-            placeholder="Detalles adicionales del plan"
-          ></textarea>
-        </div>
-
-        <div class="p-field">
-          <label for="maxTicketPoints">Máximo de Kioscos (Ticket Points) *</label>
-          <input
-            id="maxTicketPoints"
-            type="number"
-            pInputText
-            formControlName="maxTicketPoints"
-            class="p-inputtext"
-            min="0"
-            placeholder="0"
-          />
-          <small
-            class="p-error"
-            *ngIf="planForm.get('maxTicketPoints')?.invalid && planForm.get('maxTicketPoints')?.touched"
-          >
-            El máximo de kioscos es requerido y debe ser mayor o igual a 0
-          </small>
-        </div>
-
-        <div class="p-field">
-          <label for="maxUsuarios">Máximo de Usuarios *</label>
-          <input
-            id="maxUsuarios"
-            type="number"
-            pInputText
-            formControlName="maxUsuarios"
-            class="p-inputtext"
-            min="0"
-            placeholder="0"
-          />
-          <small
-            class="p-error"
-            *ngIf="planForm.get('maxUsuarios')?.invalid && planForm.get('maxUsuarios')?.touched"
-          >
-            El máximo de usuarios es requerido y debe ser mayor o igual a 0
-          </small>
-        </div>
-
-        <div class="p-field">
-          <label for="maxServicios">Máximo de Servicios *</label>
-          <input
-            id="maxServicios"
-            type="number"
-            pInputText
-            formControlName="maxServicios"
-            class="p-inputtext"
-            min="0"
-            placeholder="0"
-          />
-          <small
-            class="p-error"
-            *ngIf="planForm.get('maxServicios')?.invalid && planForm.get('maxServicios')?.touched"
-          >
-            El máximo de servicios es requerido y debe ser mayor o igual a 0
-          </small>
-        </div>
-
-        <div class="form-actions">
-          <button
-            pButton
-            type="button"
-            label="Cancelar"
-            icon="pi pi-times"
-            class="p-button-secondary"
-            (click)="onCancel()"
-          ></button>
-          <button
-            pButton
-            type="submit"
-            label="Crear Plan"
-            icon="pi pi-check"
-            class="p-button-success"
-            [disabled]="planForm.invalid"
-          ></button>
-        </div>
-      </form>
+      <div class="field">
+        <label class="field-label" for="codigo">Código <span class="required">*</span></label>
+        <input id="codigo" pInputText formControlName="codigo" placeholder="Ej: BASIC, PRO, ENTERPRISE"
+          [class.ng-invalid]="planForm.get('codigo')?.invalid && planForm.get('codigo')?.touched" />
+        <small class="field-error" *ngIf="planForm.get('codigo')?.invalid && planForm.get('codigo')?.touched">El código es requerido</small>
+      </div>
+      <div class="field">
+        <label class="field-label" for="descripcion">Descripción <span class="required">*</span></label>
+        <input id="descripcion" pInputText formControlName="descripcion" placeholder="Descripción del plan"
+          [class.ng-invalid]="planForm.get('descripcion')?.invalid && planForm.get('descripcion')?.touched" />
+        <small class="field-error" *ngIf="planForm.get('descripcion')?.invalid && planForm.get('descripcion')?.touched">La descripción es requerida</small>
+      </div>
+      <div class="field">
+        <label class="field-label" for="precio">Precio (€)</label>
+        <input id="precio" type="number" pInputText formControlName="precio" step="0.01" min="0" placeholder="0.00 (gratis si se deja vacío)"
+          [class.ng-invalid]="planForm.get('precio')?.invalid && planForm.get('precio')?.touched" />
+        <small class="field-error" *ngIf="planForm.get('precio')?.invalid && planForm.get('precio')?.touched">El precio debe ser mayor o igual a 0</small>
+      </div>
+      <div class="field">
+        <label class="field-label" for="detalles">Detalles</label>
+        <textarea id="detalles" pInputTextarea formControlName="detalles" rows="4" placeholder="Detalles adicionales del plan"></textarea>
+      </div>
+      <div class="field">
+        <label class="field-label" for="maxTicketPoints">Máx. Kioscos (Ticket Points) <span class="required">*</span></label>
+        <input id="maxTicketPoints" type="number" pInputText formControlName="maxTicketPoints" min="0" placeholder="0"
+          [class.ng-invalid]="planForm.get('maxTicketPoints')?.invalid && planForm.get('maxTicketPoints')?.touched" />
+        <small class="field-error" *ngIf="planForm.get('maxTicketPoints')?.invalid && planForm.get('maxTicketPoints')?.touched">Requerido, debe ser ≥ 0</small>
+      </div>
+      <div class="field">
+        <label class="field-label" for="maxUsuarios">Máx. Usuarios <span class="required">*</span></label>
+        <input id="maxUsuarios" type="number" pInputText formControlName="maxUsuarios" min="0" placeholder="0"
+          [class.ng-invalid]="planForm.get('maxUsuarios')?.invalid && planForm.get('maxUsuarios')?.touched" />
+        <small class="field-error" *ngIf="planForm.get('maxUsuarios')?.invalid && planForm.get('maxUsuarios')?.touched">Requerido, debe ser ≥ 0</small>
+      </div>
+      <div class="field">
+        <label class="field-label" for="maxServicios">Máx. Servicios <span class="required">*</span></label>
+        <input id="maxServicios" type="number" pInputText formControlName="maxServicios" min="0" placeholder="0"
+          [class.ng-invalid]="planForm.get('maxServicios')?.invalid && planForm.get('maxServicios')?.touched" />
+        <small class="field-error" *ngIf="planForm.get('maxServicios')?.invalid && planForm.get('maxServicios')?.touched">Requerido, debe ser ≥ 0</small>
+      </div>
+      <div class="form-actions">
+        <button pButton type="button" label="Cancelar" icon="pi pi-times" severity="secondary" (click)="onCancel()"></button>
+        <button pButton type="submit" label="Crear Plan" icon="pi pi-check" [disabled]="planForm.invalid"></button>
+      </div>
+    </form>
   </div>
 </div>
-

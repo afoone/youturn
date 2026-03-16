@@ -9,8 +9,9 @@ import { CardModule } from 'primeng/card';
 import { BadgeModule } from 'primeng/badge';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { Select } from 'primeng/select';
+import { Tag } from 'primeng/tag';
 import { Customer } from '../../models/customer.type';
-import { CommonModule } from '@angular/common';
+import { CommonModule, LowerCasePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subject, takeUntil, interval } from 'rxjs';
 
@@ -29,7 +30,9 @@ interface WaitingService {
     BadgeModule,
     ProgressSpinnerModule,
     Select,
+    Tag,
     CommonModule,
+    LowerCasePipe,
     FormsModule
   ],
   templateUrl: './operator.component.html',

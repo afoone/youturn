@@ -1,32 +1,25 @@
-<div class="app-form-layout">
-  <div class="app-form-card">
-    <h2 class="form-title">Editar Pantalla</h2>
+<div class="form-page">
+  <div class="form-card">
+    <div class="form-card-header">
+      <h2 class="form-card-title">Editar Pantalla</h2>
+      <p class="form-card-subtitle">Modifica la configuración de la pantalla</p>
+    </div>
     <form [formGroup]="operatorForm" (ngSubmit)="onSubmit()">
-      <div class="p-fluid">
-        <label for="name">Name</label>
-        <input pInputText id="name" formControlName="name" />
-        <small *ngIf="operatorForm.get('name')?.invalid && operatorForm.get('name')?.touched" class="p-error">
-          Name is required
+      <div class="field">
+        <label class="field-label" for="positionName">Nombre <span class="required">*</span></label>
+        <input id="positionName" pInputText formControlName="positionName" placeholder="Nombre de la pantalla"
+          [class.ng-invalid]="operatorForm.get('positionName')?.invalid && operatorForm.get('positionName')?.touched" />
+        <small class="field-error" *ngIf="operatorForm.get('positionName')?.invalid && operatorForm.get('positionName')?.touched">
+          El nombre es requerido
         </small>
-        <label for="email">Email</label>
-        <input pInputText id="email" formControlName="email" />
-        <small *ngIf="operatorForm.get('email')?.invalid && operatorForm.get('email')?.touched" class="p-error">
-          Enter a valid email
-        </small>
-        <label for="phone">Phone</label>
-        <input pInputText id="phone" formControlName="phone" />
-        <small *ngIf="operatorForm.get('phone')?.invalid && operatorForm.get('phone')?.touched" class="p-error">
-          Phone is required
-        </small>
-        <label for="address">Address</label>
-        <input pInputText id="address" formControlName="address" />
-        <small *ngIf="operatorForm.get('address')?.invalid && operatorForm.get('address')?.touched" class="p-error">
-          Address is required
-        </small>
-        <div class="form-actions">
-          <button pButton type="button" label="Cancelar" icon="pi pi-times" class="p-button-secondary" (click)="onCancel()"></button>
-          <button pButton type="submit" label="Guardar" icon="pi pi-check" class="p-button-success" [disabled]="operatorForm.invalid"></button>
-        </div>
+      </div>
+      <div class="field">
+        <label class="field-label" for="description">Descripción</label>
+        <input id="description" pInputText formControlName="description" placeholder="Descripción (opcional)" />
+      </div>
+      <div class="form-actions">
+        <button pButton type="button" label="Cancelar" icon="pi pi-times" severity="secondary" (click)="onCancel()"></button>
+        <button pButton type="submit" label="Guardar Cambios" icon="pi pi-check" [disabled]="operatorForm.invalid"></button>
       </div>
     </form>
   </div>
