@@ -1,50 +1,47 @@
-<div class="list-container">
-  <div class="list-header">
-    <div class="list-title-section">
-      <h1 class="list-title">Lista de Planes</h1>
-      <p class="list-subtitle">Gestiona los planes del sistema</p>
+<div class="page-container">
+  <div class="page-header">
+    <div class="page-header-info">
+      <h1 class="page-title">Planes</h1>
+      <p class="page-subtitle">Gestiona los planes del sistema</p>
     </div>
-    <button *ngIf="isAdmin" pButton label="Crear Plan" icon="pi pi-plus" (click)="addPlan()"
-      class="create-button"></button>
+    <button *ngIf="isAdmin" pButton label="Crear Plan" icon="pi pi-plus"
+      (click)="addPlan()" class="btn-primary"></button>
   </div>
 
-  <div class="list-content">
-    <p-table [value]="plans" [loading]="loading" [paginator]="true" [rows]="10"
-      [rowsPerPageOptions]="[10, 25, 50]" [showCurrentPageReport]="true" currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords}"
-      styleClass="p-datatable-sm p-datatable-striped" [tableStyle]="{ 'min-width': '50rem' }">
+  <div class="content-card">
+    <p-table [value]="plans" [loading]="loading" styleClass="p-datatable-sm app-table"
+      [paginator]="true" [rows]="10" [showCurrentPageReport]="true"
+      currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} planes"
+      [rowsPerPageOptions]="[10, 25, 50]">
       <ng-template pTemplate="header">
         <tr>
-          <th pSortableColumn="codigo">Código <p-sortIcon field="codigo"></p-sortIcon></th>
-          <th pSortableColumn="descripcion">Descripción <p-sortIcon field="descripcion"></p-sortIcon></th>
-          <th pSortableColumn="precio">Precio <p-sortIcon field="precio"></p-sortIcon></th>
-          <th>Max Kioscos</th>
-          <th>Max Usuarios</th>
-          <th>Max Servicios</th>
-          <th style="width: 120px;">Acciones</th>
+          <th>Código</th>
+          <th>Descripción</th>
+          <th>Precio</th>
+          <th>Kioscos</th>
+          <th>Usuarios</th>
+          <th>Servicios</th>
+          <th>Acciones</th>
         </tr>
       </ng-template>
-      <ng-template pTemplate="body" let-row>
+      <ng-template pTemplate="body" let-plan>
         <tr>
-          <td>{{ row.codigo }}</td>
-          <td>{{ row.descripcion }}</td>
-          <td>{{ formatPrice(row.precio) }}</td>
-          <td>{{ row.maxTicketPoints }}</td>
-          <td>{{ row.maxUsuarios }}</td>
-          <td>{{ row.maxServicios }}</td>
+          <td><span class="cell-code">{{ plan.codigo }}</span></td>
+          <td class="cell-secondary">{{ plan.descripcion }}</td>
+          <td class="cell-secondary">{{ formatPrice(plan.precio) }}</td>
+          <td class="cell-secondary">{{ plan.maxTicketPoints }}</td>
+          <td class="cell-secondary">{{ plan.maxUsuarios }}</td>
+          <td class="cell-secondary">{{ plan.maxServicios }}</td>
           <td>
-            <span *ngIf="!isAdmin">-</span>
-            <span *ngIf="isAdmin" class="action-buttons">
-              <button pButton icon="pi pi-pencil" class="p-button-text p-button-sm" pTooltip="Editar" (click)="editPlan(row._id)"></button>
-              <button pButton icon="pi pi-trash" class="p-button-text p-button-sm p-button-danger" pTooltip="Eliminar" (click)="deletePlan(row._id)"></button>
-            </span>
+            <div class="action-buttons" *ngIf="isAdmin">
+              <button pButton icon="pi pi-pencil" (click)="editPlan(plan._id!)"
+                pTooltip="Editar" tooltipPosition="top" class="btn-icon"></button>
+              <button pButton icon="pi pi-trash" (click)="deletePlan(plan._id!)"
+                pTooltip="Eliminar" tooltipPosition="top" class="btn-icon danger"></button>
+            </div>
+            <span *ngIf="!isAdmin" class="cell-muted">-</span>
           </td>
         </tr>
-      </ng-template>
-      <ng-template pTemplate="emptymessage">
-        <tr><td [attr.colspan]="7">Sin datos</td></tr>
-      </ng-template>
-      <ng-template pTemplate="loadingbody">
-        <tr><td [attr.colspan]="7">Cargando...</td></tr>
       </ng-template>
     </p-table>
   </div>

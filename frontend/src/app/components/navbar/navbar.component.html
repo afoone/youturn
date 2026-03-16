@@ -1,59 +1,28 @@
-<div class="sidebar-wrapper" [class.collapsed]="isCollapsed">
-  <!-- Toggle Button (Floating outside the sidebar when collapsed on mobile, or inside the header) -->
-  <button pButton icon="pi pi-bars" class="p-button-rounded p-button-text sidebar-toggle-btn" (click)="toggleSidebar()">
-  </button>
-
-  <div class="sidebar-container">
-    <!-- Header: Logo -->
-    <div class="sidebar-header">
-      <img src="/assets/img/logo.png" alt="YourTurn Logo" class="sidebar-logo" *ngIf="!isCollapsed" />
-      <img src="/assets/img/logo.png" alt="Logo" class="sidebar-logo-icon" *ngIf="isCollapsed" />
+<p-menubar [model]="items" styleClass="app-navbar">
+  <ng-template pTemplate="start">
+    <div class="navbar-logo">
+      <img src="/assets/img/logo.png" alt="YourTurn Manager" class="logo-image" />
     </div>
-
-    <!-- User Profile area -->
-    <div class="sidebar-profile" *ngIf="currentUser && !isCollapsed">
-      <div class="avatar-circle">
-        {{ currentUser.email.charAt(0).toUpperCase() }}
+  </ng-template>
+  <ng-template pTemplate="end">
+    <div class="user-section" *ngIf="currentUser">
+      <div class="user-avatar">
+        {{ currentUser.email?.charAt(0)?.toUpperCase() }}
       </div>
       <div class="user-info">
         <span class="user-email">{{ currentUser.email }}</span>
-        <span class="user-role" *ngIf="currentUser.roles?.length">{{ currentUser.roles[0] }}</span>
+        <span class="user-roles" *ngIf="currentUser.roles?.length">
+          {{ currentUser.roles.join(', ') }}
+        </span>
       </div>
+      <button
+        pButton
+        icon="pi pi-sign-out"
+        (click)="logout()"
+        class="btn-logout p-button-sm"
+        pTooltip="Cerrar sesión"
+        tooltipPosition="bottom"
+      ></button>
     </div>
-
-    <!-- Navigation Menu -->
-    <div class="sidebar-menu">
-      <ul class="menu-list">
-        <ng-container *ngFor="let item of items">
-          <li class="menu-item" [class.active-menu-item]="item.styleClass === 'active-menu-item'">
-            <a (click)="item.command ? item.command({}) : null" class="menu-link"
-              [pTooltip]="isCollapsed ? item.label : ''" tooltipPosition="right">
-              <!-- Icon mapping for standard strings since original items didn't have icons -->
-              <i class="pi" [ngClass]="getIconForItem(item.label || '')"></i>
-              <span class="menu-label" *ngIf="!isCollapsed">{{ item.label }}</span>
-            </a>
-
-            <!-- Submenu for Operator Boards -->
-            <ul class="submenu-list" *ngIf="item.items && item.items.length > 0 && !isCollapsed">
-              <li *ngFor="let subItem of item.items" class="submenu-item">
-                <a (click)="subItem.command ? subItem.command({}) : null" class="submenu-link"
-                  [class.active-submenu-item]="subItem.styleClass === 'active-menu-item'">
-                  <i class="pi pi-minus submenu-bullet"></i>
-                  <span>{{ subItem.label }}</span>
-                </a>
-              </li>
-            </ul>
-          </li>
-        </ng-container>
-      </ul>
-    </div>
-
-    <!-- Footer: Logout -->
-    <div class="sidebar-footer" *ngIf="currentUser">
-      <button pButton [label]="isCollapsed ? '' : 'Logout'" icon="pi pi-sign-out"
-        class="p-button-danger p-button-text logout-btn" (click)="logout()" [pTooltip]="isCollapsed ? 'Logout' : ''"
-        tooltipPosition="right">
-      </button>
-    </div>
-  </div>
-</div>
+  </ng-template>
+</p-menubar>

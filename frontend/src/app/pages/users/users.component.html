@@ -1,62 +1,63 @@
-<div class="list-container">
-  <div class="list-header">
-    <div class="list-title-section">
-      <h1 class="list-title">Lista de Usuarios</h1>
-      <p class="list-subtitle">Gestiona los usuarios del sistema</p>
+<div class="page-container">
+  <div class="page-header">
+    <div class="page-header-info">
+      <h1 class="page-title">Usuarios</h1>
+      <p class="page-subtitle">Gestiona los usuarios del sistema</p>
     </div>
-    <button *ngIf="canCreate" pButton label="Crear Usuario" icon="pi pi-plus" (click)="addUser()"
-      class="create-button"></button>
+    <button *ngIf="canCreate" pButton label="Crear Usuario" icon="pi pi-plus"
+      (click)="addUser()" class="btn-primary"></button>
   </div>
 
-  <div class="list-content">
-    <p-table [value]="users" [loading]="loading" [paginator]="true" [rows]="10"
-      [rowsPerPageOptions]="[10, 25, 50]" [showCurrentPageReport]="true" currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords}"
-      styleClass="p-datatable-sm p-datatable-striped" [tableStyle]="{ 'min-width': '50rem' }">
+  <div class="content-card">
+    <p-table [value]="users" [loading]="loading" styleClass="p-datatable-sm app-table"
+      [paginator]="true" [rows]="10" [showCurrentPageReport]="true"
+      currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} usuarios"
+      [rowsPerPageOptions]="[10, 25, 50]">
       <ng-template pTemplate="header">
         <tr>
-          <th pSortableColumn="email">Email <p-sortIcon field="email"></p-sortIcon></th>
-          <th pSortableColumn="nombre">Nombre <p-sortIcon field="nombre"></p-sortIcon></th>
+          <th>Email</th>
+          <th>Nombre</th>
           <th>Apellidos</th>
-          <th>Admin</th>
+          <th>Rol</th>
           <th>Empresa</th>
-          <th>Roles</th>
-          <th>Activo</th>
-          <th style="width: 120px;">Acciones</th>
+          <th>Permisos</th>
+          <th>Estado</th>
+          <th>Acciones</th>
         </tr>
       </ng-template>
-      <ng-template pTemplate="body" let-row>
+      <ng-template pTemplate="body" let-user>
         <tr>
-          <td>{{ row.email }}</td>
-          <td>{{ row.nombre || '-' }}</td>
-          <td>{{ row.apellidos || '-' }}</td>
+          <td class="cell-primary">{{ user.email }}</td>
+          <td class="cell-secondary">{{ user.nombre || '-' }}</td>
+          <td class="cell-secondary">{{ user.apellidos || '-' }}</td>
           <td>
-            <span [class]="row.admin ? 'status-badge status-badge-primary' : 'status-badge status-badge-secondary'">
-              {{ row.admin ? 'Admin' : 'Usuario' }}
+            <span [class]="user.admin ? 'badge badge-primary' : 'badge badge-neutral'">
+              {{ user.admin ? 'Admin' : 'Usuario' }}
             </span>
           </td>
-          <td>{{ getEnterpriseName(row.enterprise) }}</td>
+          <td class="cell-secondary">
+            {{ user.enterprise ? getEnterpriseName(user.enterprise) : '-' }}
+          </td>
           <td>
-            <span *ngIf="!row.roles?.length" class="text-muted">Sin roles</span>
-            <span *ngIf="row.roles?.length" class="roles-container">
-              <span *ngFor="let r of row.roles" [class]="'role-badge role-' + r.toLowerCase().replace('_', '-')">{{ r }}</span>
+            <div class="roles-container">
+              <span *ngFor="let role of user.roles" class="badge badge-neutral">{{ role }}</span>
+              <span *ngIf="!user.roles || user.roles.length === 0" class="cell-muted">Sin roles</span>
+            </div>
+          </td>
+          <td>
+            <span [class]="user.active ? 'badge badge-success' : 'badge badge-danger'">
+              {{ user.active ? 'Activo' : 'Inactivo' }}
             </span>
           </td>
           <td>
-            <span [class]="row.active !== false ? 'status-badge status-badge-success' : 'status-badge status-badge-danger'">
-              {{ row.active !== false ? 'Activo' : 'Inactivo' }}
-            </span>
-          </td>
-          <td class="action-buttons">
-            <button pButton icon="pi pi-pencil" class="p-button-text p-button-sm" pTooltip="Editar" (click)="editUser(row._id)"></button>
-            <button pButton icon="pi pi-trash" class="p-button-text p-button-sm p-button-danger" pTooltip="Eliminar" (click)="deleteUser(row._id)"></button>
+            <div class="action-buttons">
+              <button pButton icon="pi pi-pencil" (click)="editUser(user._id)"
+                pTooltip="Editar" tooltipPosition="top" class="btn-icon"></button>
+              <button pButton icon="pi pi-trash" (click)="deleteUser(user._id)"
+                pTooltip="Eliminar" tooltipPosition="top" class="btn-icon danger"></button>
+            </div>
           </td>
         </tr>
-      </ng-template>
-      <ng-template pTemplate="emptymessage">
-        <tr><td [attr.colspan]="8">Sin datos</td></tr>
-      </ng-template>
-      <ng-template pTemplate="loadingbody">
-        <tr><td [attr.colspan]="8">Cargando...</td></tr>
       </ng-template>
     </p-table>
   </div>

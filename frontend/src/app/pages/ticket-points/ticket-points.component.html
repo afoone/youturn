@@ -1,52 +1,73 @@
-<div class="list-container">
-  <div class="list-header">
-    <div class="list-title-section">
-      <h1 class="list-title">Lista de Puntos de Ticket</h1>
-      <p class="list-subtitle">Gestiona los puntos de ticket del sistema</p>
+<div class="page-container">
+  <div class="page-header">
+    <div class="page-header-info">
+      <h1 class="page-title">Puntos de Ticket</h1>
+      <p class="page-subtitle">Gestiona los puntos de ticket del sistema</p>
     </div>
-    <button *ngIf="canCreate" pButton label="Crear Punto de Ticket" icon="pi pi-plus" (click)="addTicketPoint()"
-      class="create-button"></button>
+    <button
+      *ngIf="canCreate"
+      pButton
+      label="Crear Punto de Ticket"
+      icon="pi pi-plus"
+      (click)="addTicketPoint()"
+      class="btn-primary"
+    ></button>
   </div>
 
-  <div class="list-content">
-    <p-table [value]="ticketPoints" [loading]="loading" [paginator]="true" [rows]="10"
-      [rowsPerPageOptions]="[10, 25, 50]" [showCurrentPageReport]="true" currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords}"
-      styleClass="p-datatable-sm p-datatable-striped" [tableStyle]="{ 'min-width': '50rem' }">
+  <div class="content-card">
+    <p-table
+      [value]="ticketPoints"
+      [loading]="loading"
+      styleClass="p-datatable-sm app-table"
+      [paginator]="true"
+      [rows]="10"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} puntos de ticket"
+      [rowsPerPageOptions]="[10, 25, 50]"
+    >
       <ng-template pTemplate="header">
         <tr>
-          <th pSortableColumn="name">Nombre <p-sortIcon field="name"></p-sortIcon></th>
+          <th>Nombre</th>
           <th>Ubicación</th>
           <th>Empresa</th>
           <th>Servicios</th>
-          <th style="width: 160px;">Acciones</th>
+          <th>Acciones</th>
         </tr>
       </ng-template>
-      <ng-template pTemplate="body" let-row>
+      <ng-template pTemplate="body" let-ticketPoint>
         <tr>
-          <td>{{ row.name }}</td>
-          <td>{{ row.location || '-' }}</td>
-          <td>{{ getEnterpriseName(row.enterprise) }}</td>
-          <td>{{ getServicesCount(row.services) }} servicio(s)</td>
-          <td class="action-buttons">
-            <button pButton icon="pi pi-eye" class="p-button-text p-button-sm" pTooltip="Ver" (click)="viewTicketPoint(row._id)"></button>
-            <button pButton icon="pi pi-qrcode" class="p-button-text p-button-sm" pTooltip="QR" (click)="showQR(row)"></button>
-            <button *ngIf="canCreate" pButton icon="pi pi-pencil" class="p-button-text p-button-sm" pTooltip="Editar" (click)="editTicketPoint(row._id)"></button>
-            <button *ngIf="canCreate" pButton icon="pi pi-trash" class="p-button-text p-button-sm p-button-danger" pTooltip="Eliminar" (click)="deleteTicketPoint(row._id)"></button>
+          <td class="cell-primary">{{ ticketPoint.name }}</td>
+          <td class="cell-secondary">{{ ticketPoint.location || '-' }}</td>
+          <td class="cell-secondary">{{ getEnterpriseName(ticketPoint.enterprise) }}</td>
+          <td class="cell-secondary">{{ getServicesCount(ticketPoint.services) }} servicio(s)</td>
+          <td>
+            <div class="action-buttons">
+              <button pButton icon="pi pi-eye" (click)="viewTicketPoint(ticketPoint._id!)"
+                pTooltip="Ver" tooltipPosition="top" class="btn-icon"></button>
+              <button pButton icon="pi pi-qrcode" (click)="showQR(ticketPoint)"
+                pTooltip="Ver QR" tooltipPosition="top" class="btn-icon"></button>
+              <button *ngIf="canCreate" pButton icon="pi pi-pencil" (click)="editTicketPoint(ticketPoint._id!)"
+                pTooltip="Editar" tooltipPosition="top" class="btn-icon"></button>
+              <button *ngIf="canCreate" pButton icon="pi pi-trash" (click)="deleteTicketPoint(ticketPoint._id!)"
+                pTooltip="Eliminar" tooltipPosition="top" class="btn-icon danger"></button>
+            </div>
           </td>
         </tr>
-      </ng-template>
-      <ng-template pTemplate="emptymessage">
-        <tr><td [attr.colspan]="5">Sin datos</td></tr>
-      </ng-template>
-      <ng-template pTemplate="loadingbody">
-        <tr><td [attr.colspan]="5">Cargando...</td></tr>
       </ng-template>
     </p-table>
   </div>
 </div>
 
-<p-dialog [(visible)]="showQrDialog" [modal]="true" [style]="{width: '400px'}" header="Código QR del Punto de Ticket"
-  [closable]="true" (onHide)="closeQrDialog()">
+
+<!-- Dialog para mostrar el QR -->
+<p-dialog 
+  [(visible)]="showQrDialog" 
+  [modal]="true" 
+  [style]="{width: '400px'}"
+  header="Código QR del Punto de Ticket"
+  [closable]="true"
+  (onHide)="closeQrDialog()"
+>
   <div class="qr-dialog-content" *ngIf="selectedTicketPoint">
     <p class="qr-ticket-point-name"><strong>{{ selectedTicketPoint.name }}</strong></p>
     <div class="qr-code-container">
@@ -54,7 +75,13 @@
     </div>
     <p class="qr-link-text">Escanea el código QR para acceder al punto de ticket</p>
     <div class="qr-actions">
-      <button pButton label="Copiar Enlace" icon="pi pi-copy" (click)="copyQrLink()" class="p-button-sm"></button>
+      <button 
+        pButton 
+        label="Copiar Enlace" 
+        icon="pi pi-copy"
+        (click)="copyQrLink()"
+        class="p-button-sm"
+      ></button>
     </div>
   </div>
 </p-dialog>

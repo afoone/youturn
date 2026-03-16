@@ -1,45 +1,64 @@
-<div class="login-container">
-  <p-card class="login-card">
-    <ng-template pTemplate="header">
-      <div class="login-header">
-        <h2>Iniciar Sesión</h2>
+<div class="auth-layout">
+  <!-- Brand Panel -->
+  <div class="auth-brand">
+    <div class="brand-content">
+      <img src="/assets/img/logo.png" alt="YourTurn" class="brand-logo" />
+      <h1 class="brand-headline">Gestión de turnos<br>sin fricciones</h1>
+      <p class="brand-subline">Digitaliza tu sala de espera y atiende a tus clientes de forma eficiente.</p>
+      <div class="brand-features">
+        <div class="brand-feature">
+          <span class="brand-feature-icon"><i class="pi pi-ticket"></i></span>
+          Tickets digitales con QR
+        </div>
+        <div class="brand-feature">
+          <span class="brand-feature-icon"><i class="pi pi-desktop"></i></span>
+          Pantallas de sala en tiempo real
+        </div>
+        <div class="brand-feature">
+          <span class="brand-feature-icon"><i class="pi pi-chart-bar"></i></span>
+          Panel de operador intuitivo
+        </div>
       </div>
-    </ng-template>
-    
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-      <div class="p-fluid">
-        <div class="p-field">
+    </div>
+  </div>
+
+  <!-- Form Panel -->
+  <div class="auth-form-panel">
+    <div class="auth-form-box">
+      <div class="auth-form-header">
+        <h2 class="auth-form-title">Bienvenido de nuevo</h2>
+        <p class="auth-form-subtitle">Introduce tus credenciales para continuar</p>
+      </div>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <div class="auth-field">
           <label for="email">Email</label>
           <input
             id="email"
             type="email"
             pInputText
             formControlName="email"
-            placeholder="Ingresa tu email"
+            placeholder="tu@empresa.com"
             autocomplete="email"
             [class.ng-invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
           />
-          <small
-            class="p-error"
-            *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
-          >
+          <small class="p-error" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
             Email válido requerido
           </small>
         </div>
 
-        <div class="p-field">
+        <div class="auth-field">
           <label for="password">Contraseña</label>
           <input
             id="password"
             type="password"
             pInputText
             formControlName="password"
+            placeholder="••••••••"
+            autocomplete="current-password"
             [class.ng-invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
           />
-          <small
-            class="p-error"
-            *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
-          >
+          <small class="p-error" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
             La contraseña es requerida
           </small>
         </div>
@@ -57,10 +76,13 @@
           icon="pi pi-sign-in"
           [loading]="loading"
           [disabled]="loginForm.invalid"
-          styleClass="p-button-primary p-button-block"
+          styleClass="auth-submit"
         ></p-button>
-      </div>
-    </form>
-  </p-card>
-</div>
+      </form>
 
+      <div class="auth-footer">
+        ¿No tienes cuenta? <a routerLink="/register">Solicitar acceso</a>
+      </div>
+    </div>
+  </div>
+</div>
